@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mierp_apps/core/utils/loading_controller.dart';
 import 'package:mierp_apps/core/controller/move_page_controller.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
-import 'package:mierp_apps/core/models/user_model.dart';
-import 'package:mierp_apps/data/warehouse/add/add_product_order_repository.dart';
-import 'package:mierp_apps/data/warehouse/warehouse_repository.dart';
 import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/models/product.dart';
+import 'package:mierp_apps/core/models/user_model.dart';
+import 'package:mierp_apps/core/utils/loading_controller.dart';
+import 'package:mierp_apps/data/warehouse/add/add_product_order_repository.dart';
+import 'package:mierp_apps/data/warehouse/warehouse_repository.dart';
 
 class AddProductOrderViewModel extends GetxController {
-
   final addProductOrderR = AddProductOrderRepository();
   final warehouseR = WarehouseRepository();
   final loadingC = Get.find<LoadingController>();
@@ -32,8 +31,6 @@ class AddProductOrderViewModel extends GetxController {
   final purchasedDateC = TextEditingController();
   String? unitPriceC = "";
 
-
-
   @override
   void onInit() {
     // TODO: implement onInit
@@ -51,25 +48,41 @@ class AddProductOrderViewModel extends GetxController {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (context, child) => Theme(data: Theme.of(context).copyWith(datePickerTheme: DatePickerThemeData(backgroundColor: Colors.white)), child: child!),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          datePickerTheme: DatePickerThemeData(backgroundColor: Colors.white),
+        ),
+        child: child!,
+      ),
     );
     if (pickedDate != null) {
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
-        builder: (context, child) => Theme(data: Theme.of(context).copyWith(timePickerTheme: TimePickerThemeData(backgroundColor: Colors.white)), child: child!),
+        builder: (context, child) => Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: TimePickerThemeData(backgroundColor: Colors.white),
+          ),
+          child: child!,
+        ),
       );
       if (pickedTime != null) {
-        final dateTime = DateTime(pickedDate.year,pickedDate.month,pickedDate.day,pickedTime.hour,pickedTime.minute);
-        final formatDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+        final dateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        final formatDateTime = DateFormat(
+          'yyyy-MM-dd HH:mm:ss',
+        ).format(dateTime);
         orderDateC.text = formatDateTime;
       }
     }
   }
 
-
   Future<void> addProductOrder() async {
-
     try {
       final userDataC = UserDataController();
 
@@ -90,6 +103,7 @@ class AddProductOrderViewModel extends GetxController {
         unitPrice: selectedProduct.value!.unitPrice,
         userId: userModel.uid.toString(),
         firstName: userModel.firstName!,
+        imageProduct: selectedProduct.value!.imageProduct!,
       );
 
       await addProductOrderR.addProductOrderToFireStore(orderProduct);
@@ -107,8 +121,8 @@ class AddProductOrderViewModel extends GetxController {
   }
 
   void getDataRaw() {
-
-    final totalCost = selectedProduct.value!.unitPrice * int.parse(quantityC.text);
+    final totalCost =
+        selectedProduct.value!.unitPrice * int.parse(quantityC.text);
 
     productIdC = selectedProduct.value!.id;
     productCodeC = selectedProduct.value!.productCode;

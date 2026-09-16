@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/utils/loading_controller.dart';
 import 'package:mierp_apps/data/finance/services/detail_product_services.dart';
 import 'package:mierp_apps/data/warehouse/detail/detail_product_repository.dart';
-import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/domain/item/repositories/item_repository.dart';
 import 'package:mierp_apps/state/item_store.dart';
 
 class DetailProductViewModel extends GetxController {
-
   final id;
   final ItemRepository itemRepository;
   final ItemStore itemStore;
   final DetailProductServices detailProductServices;
-  DetailProductViewModel({required this.id, required this.itemRepository, required this.itemStore, required this.detailProductServices});
+  DetailProductViewModel({
+    required this.id,
+    required this.itemRepository,
+    required this.itemStore,
+    required this.detailProductServices,
+  });
 
   final detailProductR = DetailProductRepository();
   final loadingC = Get.find<LoadingController>();
@@ -26,6 +30,7 @@ class DetailProductViewModel extends GetxController {
   TextEditingController quantityC = TextEditingController();
   TextEditingController unitPriceC = TextEditingController();
   RxString categoryProductC = "electronics".obs;
+  RxString imageProduct = "".obs;
 
   @override
   void onInit() {
@@ -44,7 +49,7 @@ class DetailProductViewModel extends GetxController {
       await itemRepository.getDetailDataStock(id);
       updateDataController();
       isLoading.value = false;
-    } catch(e) {
+    } catch (e) {
       isLoading.value = false;
       Get.snackbar("Failed", "$e");
     }
@@ -56,17 +61,30 @@ class DetailProductViewModel extends GetxController {
     createdOnC.text = detailProduct.value!.createdOn;
     quantityC.text = detailProduct.value!.quantity.toString();
     unitPriceC.text = detailProduct.value!.unitPrice.toString();
+    imageProduct.value = detailProduct.value!.imageProduct!;
     categoryProductC.value = detailProduct.value!.category;
   }
 
   Future<void> updateSingleProduct() async {
     try {
       isLoading.value = true;
-      Product product = Product(id: detailProduct.value!.id, category: categoryProductC.value, createdOn: createdOnC.text, imageProduct: "", productName: nameProductC.text, productCode: productCodeC.text, quantity: int.parse(quantityC.text), unitPrice: int.parse(unitPriceC.text));
-      await detailProductServices.updateDataProduct(detailProduct.value!.id, product);
+      Product product = Product(
+        id: detailProduct.value!.id,
+        category: categoryProductC.value,
+        createdOn: createdOnC.text,
+        imageProduct: detailProduct.value!.imageProduct!,
+        productName: nameProductC.text,
+        productCode: productCodeC.text,
+        quantity: int.parse(quantityC.text),
+        unitPrice: int.parse(unitPriceC.text),
+      );
+      await detailProductServices.updateDataProduct(
+        detailProduct.value!.id,
+        product,
+      );
       isLoading.value = false;
       Get.snackbar("Success", "Update data success");
-    } catch(e) {
+    } catch (e) {
       Get.snackbar("Failed", "$e");
     }
   }
@@ -80,8 +98,8 @@ class DetailProductViewModel extends GetxController {
         Get.snackbar("Success", "Delete data success");
         isLoading.value = false;
         Get.toNamed("warehouse_main_page");
-      },);
-    } catch(e) {
+      });
+    } catch (e) {
       isLoading.value = false;
       Get.snackbar("Failed", "$e");
     }
@@ -92,6 +110,6 @@ class DetailProductViewModel extends GetxController {
     Future.delayed(Duration(seconds: 2), () {
       isLoading.value = false;
       Get.back();
-    },);
+    });
   }
 }

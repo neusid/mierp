@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
-import 'package:mierp_apps/core/session/auth_session.dart';
-import 'package:mierp_apps/data/login/login_repository.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
+import 'package:mierp_apps/data/login/login_repository.dart';
 
 class ProfileViewModel extends GetxController {
-
   final role = "warehouse".obs;
   final userDataC = UserDataController();
   final isLoading = false.obs;
@@ -38,7 +36,7 @@ class ProfileViewModel extends GetxController {
       isVerif.value = userModel.allowGoogleLogin;
       uid.value = userModel.uid!;
       print(userModel.role);
-    } catch(e) {
+    } catch (e) {
       Get.snackbar("Failed", "$e");
     }
   }
@@ -48,7 +46,7 @@ class ProfileViewModel extends GetxController {
       await loginRepository.linkToAnotherAccount(uid.value);
       Get.snackbar("Success", "Link account to Google");
       isVerif.value = true;
-    } catch(e) {
+    } catch (e) {
       Get.snackbar("Failed", "Link account to Google");
     }
   }
@@ -61,9 +59,9 @@ class ProfileViewModel extends GetxController {
       });
       isLoading.value = false;
       Get.offAllNamed("/login");
-      Get.snackbar('Success','User deleted successfully.');
-    } catch(e) {
-      Get.snackbar('Failed','Error deleted account: $e');
+      Get.snackbar('Success', 'User deleted successfully.');
+    } catch (e) {
+      Get.snackbar('Failed', 'Error deleted account: $e');
     }
   }
 
@@ -80,7 +78,7 @@ class ProfileViewModel extends GetxController {
 
       Get.offAllNamed("/login");
       print('User signed out successfully.');
-    } catch(e) {
+    } catch (e) {
       print('Error signing out: $e');
     }
   }

@@ -13,6 +13,7 @@ class SalesOrder {
   int totalPrice;
   int unitPrice;
   String userId;
+  String imageProduct;
 
   SalesOrder({
     required this.id,
@@ -29,13 +30,17 @@ class SalesOrder {
     required this.totalPrice,
     required this.unitPrice,
     required this.userId,
+    required this.imageProduct,
   });
 
-  factory SalesOrder.fromJson(Map<String, dynamic> json, {required String? docId}) => SalesOrder(
+  factory SalesOrder.fromJson(
+    Map<String, dynamic> json, {
+    required String? docId,
+  }) => SalesOrder(
     id: docId,
     companyName: json["company_name"],
     financeApproved: json["finance_approved"],
-    financeApprovedDate: json["finance_approved_date"]??'',
+    financeApprovedDate: json["finance_approved_date"] ?? '',
     firstName: json["first_name"],
     paymentStatus: json["payment_status"],
     productCode: json["product_code"],
@@ -46,6 +51,7 @@ class SalesOrder {
     totalPrice: json["total_price"],
     unitPrice: json["unit_price"],
     userId: json["user_id"],
+    imageProduct: json["image_product"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -63,5 +69,6 @@ class SalesOrder {
     "total_price": totalPrice,
     "unit_price": unitPrice,
     "user_id": userId,
+    "image_product": imageProduct,
   };
 }

@@ -11,6 +11,7 @@ class OrderProduct {
   int unitPrice;
   String userId;
   String firstName;
+  String imageProduct;
 
   OrderProduct({
     required this.id,
@@ -25,12 +26,18 @@ class OrderProduct {
     required this.unitPrice,
     required this.userId,
     required this.firstName,
+    required this.imageProduct,
   });
 
-  factory OrderProduct.fromJson(Map<String, dynamic> json, {required String? docId}) => OrderProduct(
+  factory OrderProduct.fromJson(
+    Map<String, dynamic> json, {
+    required String? docId,
+  }) => OrderProduct(
     id: docId,
-    financeApproved: json["finance_approved"]??false,
-    financeApprovedDate: json["finance_approved_date"] != null? DateTime.tryParse(json["finance_approved_date"]):null,
+    financeApproved: json["finance_approved"] ?? false,
+    financeApprovedDate: json["finance_approved_date"] != null
+        ? DateTime.tryParse(json["finance_approved_date"])
+        : null,
     orderDate: json["order_date"],
     productId: json["product_id"],
     productCode: json["product_code"],
@@ -40,11 +47,12 @@ class OrderProduct {
     unitPrice: json["unit_price"],
     userId: json["user_id"],
     firstName: json["first_name"],
+    imageProduct: json["image_product"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "finance_approved": financeApproved! ,
+    "finance_approved": financeApproved!,
     "finance_approved_date": financeApprovedDate!.toIso8601String(),
     "order_date": orderDate!,
     "product_id": productId,
@@ -55,6 +63,6 @@ class OrderProduct {
     "unit_price": unitPrice,
     "user_id": userId,
     "first_name": firstName,
+    "image_product": imageProduct,
   };
 }
-

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mierp_apps/core/models/order.dart';
 
 class AddProductOrderRepository {
-
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> addProductOrderToFireStore(OrderProduct order) async {
@@ -18,9 +17,10 @@ class AddProductOrderRepository {
         "quantity": order.quantity,
         "total_cost": order.totalCost,
         "unit_price": order.unitPrice,
-        "user_id": order.userId
+        "user_id": order.userId,
+        "image_product": order.imageProduct,
       });
-    } catch(e) {
+    } catch (e) {
       rethrow;
     }
   }

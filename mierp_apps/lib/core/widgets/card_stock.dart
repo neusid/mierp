@@ -1,18 +1,24 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/features/dashboard/presentation/warehouse/warehouse_view_model.dart';
+import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
 class CardStock extends StatelessWidget {
-  CardStock({super.key, required this.idBarang, required this.namaBarang, required this.quantity, required this.unitPrice, required this.lineTotal, required this.type});
+  CardStock({
+    super.key,
+    required this.idBarang,
+    required this.namaBarang,
+    required this.quantity,
+    required this.unitPrice,
+    required this.lineTotal,
+    required this.type,
+    required this.image,
+  });
 
-  final idBarang, namaBarang, quantity, unitPrice, lineTotal, type;
-
+  final idBarang, namaBarang, quantity, unitPrice, lineTotal, type, image;
 
   final convertDollar = ConvertDollar();
 
@@ -27,14 +33,14 @@ class CardStock extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.w),
             color: Colors.white,
-              boxShadow: [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.shadowBox,
                 spreadRadius: -3.w,
                 offset: Offset(0, 4),
                 blurRadius: 21.w,
-              )
-            ]
+              ),
+            ],
           ),
           child: Column(
             children: [
@@ -48,13 +54,17 @@ class CardStock extends StatelessWidget {
                         width: 69.w,
                         height: 69.h,
                         decoration: BoxDecoration(
-                          color: Color(0xFFF1F4FF),
-                          borderRadius: BorderRadius.circular(10.w)
+                          // color: Color(0xFFF1F4FF),
+                          image: DecorationImage(
+                            image: image == null
+                                ? AssetImage("assets/images/google.png")
+                                : NetworkImage(image),
+                            fit: BoxFit.fill,
+                          ),
+                          borderRadius: BorderRadius.circular(10.w),
                         ),
                       ),
-                      SizedBox(
-                        width: 19.w,
-                      ),
+                      SizedBox(width: 19.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -78,9 +88,7 @@ class CardStock extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 12.w,
-                          ),
+                          SizedBox(height: 12.w),
                           DottedLine(
                             direction: Axis.horizontal,
                             dashColor: AppColors.grayDashline,
@@ -89,9 +97,7 @@ class CardStock extends StatelessWidget {
                             dashLength: 5.w,
                             dashGapLength: 5.w,
                           ),
-                          SizedBox(
-                            height: 6.w,
-                          ),
+                          SizedBox(height: 6.w),
                           Container(
                             width: 225.w,
                             child: Row(
@@ -120,7 +126,7 @@ class CardStock extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 9.w,),
+                                    SizedBox(width: 9.w),
                                     Column(
                                       children: [
                                         Text(
@@ -141,7 +147,7 @@ class CardStock extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 9.w,),
+                                    SizedBox(width: 9.w),
                                     Column(
                                       children: [
                                         Text(
@@ -172,32 +178,35 @@ class CardStock extends StatelessWidget {
                                     color: AppColors.coolGray,
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         "View More",
                                         style: GoogleFonts.inter(
                                           fontSize: 6.sp,
-                                          color: AppColors.grayThin
+                                          color: AppColors.grayThin,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 3.w,
+                                      SizedBox(width: 3.w),
+                                      Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 6.w,
+                                        color: AppColors.grayThin,
                                       ),
-                                      Icon(Icons.arrow_forward_ios,size: 6.w, color: AppColors.grayThin,)
                                     ],
                                   ),
-                                )
+                                ),
                               ],
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -208,8 +217,8 @@ class CardStock extends StatelessWidget {
             width: 60.w,
             height: 20.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10.w)),
-                color: AppColors.purpleTransparent
+              borderRadius: BorderRadius.only(topRight: Radius.circular(10.w)),
+              color: AppColors.purpleTransparent,
             ),
             child: Center(
               child: Text(
@@ -217,7 +226,7 @@ class CardStock extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 9.sp,
                   fontWeight: AppFontWeight.regular,
-                  color: AppColors.blueBold
+                  color: AppColors.blueBold,
                 ),
               ),
             ),

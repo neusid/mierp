@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mierp_apps/core/utils/convert_dollar.dart';
-import 'package:mierp_apps/core/utils/loading_controller.dart';
 import 'package:mierp_apps/core/controller/move_page_controller.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
+import 'package:mierp_apps/core/utils/convert_dollar.dart';
+import 'package:mierp_apps/core/utils/loading_controller.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product_order/detail_product_order_view_model.dart';
 
 class DetailProductOrderView extends StatelessWidget {
@@ -21,24 +21,19 @@ class DetailProductOrderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ever(
-      detailProductOrderVM.success,
-          (check) {
-        if (check == true) {
-          Get.snackbar("Success", "Payment success");
-          detailProductOrderVM.success.value = false;
-        }
-      },
-    );
+    ever(detailProductOrderVM.success, (check) {
+      if (check == true) {
+        Get.snackbar("Success", "Payment success");
+        detailProductOrderVM.success.value = false;
+      }
+    });
 
-    ever(
-      detailProductOrderVM.errorMessage,
-          (msg) {
-        if (msg.isNotEmpty) {
-          Get.snackbar("Failed", msg);detailProductOrderVM.errorMessage.value = "";
-        }
-      },
-    );
+    ever(detailProductOrderVM.errorMessage, (msg) {
+      if (msg.isNotEmpty) {
+        Get.snackbar("Failed", msg);
+        detailProductOrderVM.errorMessage.value = "";
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -46,9 +41,15 @@ class DetailProductOrderView extends StatelessWidget {
         children: [
           Obx(() {
             if (detailProductOrderVM.orderProducts.value == null) {
-              return Container(color: Colors.black12,
-                  child: Center(child: LoadingAnimationWidget.stretchedDots(
-                    color: AppColors.softWhite, size: 70.w,)));
+              return Container(
+                color: Colors.black12,
+                child: Center(
+                  child: LoadingAnimationWidget.stretchedDots(
+                    color: AppColors.softWhite,
+                    size: 70.w,
+                  ),
+                ),
+              );
             }
             return Container(
               width: double.infinity,
@@ -60,18 +61,22 @@ class DetailProductOrderView extends StatelessWidget {
                     width: 346.w,
                     height: 400.h,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.w),
-                        boxShadow: [
-                          BoxShadow(
-                              color: AppColors.shadowBox2,
-                              spreadRadius: 0,
-                              blurRadius: 9.w
-                          )
-                        ]
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.w),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadowBox2,
+                          spreadRadius: 0,
+                          blurRadius: 9.w,
+                        ),
+                      ],
                     ),
                     padding: EdgeInsets.only(
-                        top: 22.h, left: 27.w, right: 27.w, bottom: 14.h),
+                      top: 22.h,
+                      left: 27.w,
+                      right: 27.w,
+                      bottom: 14.h,
+                    ),
                     child: Obx(() {
                       return Column(
                         spacing: 10.h,
@@ -85,66 +90,77 @@ class DetailProductOrderView extends StatelessWidget {
                                 height: 77.h,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      detailProductOrderVM.orderProducts.value!
+                                      detailProductOrderVM
+                                          .orderProducts
+                                          .value!
                                           .productName,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.gray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.gray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                     Text(
-                                      detailProductOrderVM.orderProducts.value!
+                                      detailProductOrderVM
+                                          .orderProducts
+                                          .value!
                                           .productCode,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                    SizedBox(height: 12.h,),
-                                    detailProductOrderVM.orderProducts!.value!
-                                        .financeApproved! == true ? Container(
-                                      width: double.infinity,
-                                      height: 24.w,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.mintGreen,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "PAID",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.inter(
-                                              fontSize: 12.sp,
-                                              color: AppColors.neonGreen,
-                                              fontWeight: AppFontWeight.regular
+                                    SizedBox(height: 12.h),
+                                    detailProductOrderVM
+                                                .orderProducts!
+                                                .value!
+                                                .financeApproved! ==
+                                            true
+                                        ? Container(
+                                            width: double.infinity,
+                                            height: 24.w,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.mintGreen,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "PAID",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.neonGreen,
+                                                  fontWeight:
+                                                      AppFontWeight.regular,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: double.infinity,
+                                            height: 24.w,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.softCream,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "UNPAID",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12.sp,
+                                                  color: AppColors.cream,
+                                                  fontWeight:
+                                                      AppFontWeight.regular,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ) : Container(
-                                      width: double.infinity,
-                                      height: 24.w,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.softCream,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "UNPAID",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.inter(
-                                              fontSize: 12.sp,
-                                              color: AppColors.cream,
-                                              fontWeight: AppFontWeight.regular
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -152,8 +168,25 @@ class DetailProductOrderView extends StatelessWidget {
                                 width: 75.w,
                                 height: 75.h,
                                 decoration: BoxDecoration(
-                                    color: Color(0xFFF1F4FF),
-                                    borderRadius: BorderRadius.circular(10.w)
+                                  image: DecorationImage(
+                                    image:
+                                        detailProductOrderVM
+                                            .orderProducts
+                                            .value!
+                                            .imageProduct
+                                            .isEmpty
+                                        ? AssetImage(
+                                            "assets/images/dummy_item.jpg",
+                                          )
+                                        : NetworkImage(
+                                            detailProductOrderVM
+                                                .orderProducts
+                                                .value!
+                                                .imageProduct,
+                                          ),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10.w),
                                 ),
                               ),
                             ],
@@ -169,27 +202,29 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Order Id",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
                                   Container(
                                     width: 119.w,
                                     child: Text(
-                                      detailProductOrderVM.orderProducts.value!
+                                      detailProductOrderVM
+                                          .orderProducts
+                                          .value!
                                           .id!,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 15.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 15.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                           Row(
@@ -204,25 +239,27 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Created On",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
                                   Container(
                                     width: 119.w,
                                     child: Text(
-                                      detailProductOrderVM.orderProducts.value!
+                                      detailProductOrderVM
+                                          .orderProducts
+                                          .value!
                                           .orderDate!,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                               Column(
@@ -234,9 +271,9 @@ class DetailProductOrderView extends StatelessWidget {
                                       "From",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
@@ -246,14 +283,14 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Warehouse",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
                           Row(
@@ -268,25 +305,28 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Quantity",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
                                   Container(
                                     width: 119.w,
                                     child: Text(
-                                      detailProductOrderVM.orderProducts.value!
-                                          .quantity.toString(),
+                                      detailProductOrderVM
+                                          .orderProducts
+                                          .value!
+                                          .quantity
+                                          .toString(),
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                               Column(
@@ -298,29 +338,34 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Unit Price",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
                                   Container(
                                     width: 119.w,
                                     child: Text(
-                                      converDollar.intToDollar(detailProductOrderVM.orderProducts.value!.unitPrice),
+                                      converDollar.intToDollar(
+                                        detailProductOrderVM
+                                            .orderProducts
+                                            .value!
+                                            .unitPrice,
+                                      ),
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
                           ),
-                          SizedBox(height: 2.h,),
+                          SizedBox(height: 2.h),
                           Container(
                             width: double.infinity,
                             child: DottedLine(
@@ -342,104 +387,291 @@ class DetailProductOrderView extends StatelessWidget {
                                       "Line Total",
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          color: AppColors.coolGray,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 12.sp,
+                                        color: AppColors.coolGray,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
                                   ),
                                   Container(
                                     width: 119.w,
                                     child: Text(
-                                      converDollar.intToDollar(detailProductOrderVM.orderProducts.value!.totalCost),
+                                      converDollar.intToDollar(
+                                        detailProductOrderVM
+                                            .orderProducts
+                                            .value!
+                                            .totalCost,
+                                      ),
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
-                                          fontSize: 15.sp,
-                                          color: AppColors.charcoal,
-                                          fontWeight: AppFontWeight.regular
+                                        fontSize: 15.sp,
+                                        color: AppColors.charcoal,
+                                        fontWeight: AppFontWeight.regular,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
-                              detailProductOrderVM.role.value == "warehouse" ?
-                              Container(
-                                width: 116.w,
-                                height: 30.h,
-                                child: ElevatedButton(
-                                  onPressed: detailProductOrderVM.orderProducts
-                                      .value!.financeApproved! != true
-                                      ? () {
-                                    detailProductOrderVM
-                                        .requestDeleteProductOrder(
-                                        detailProductOrderVM.orderProducts
-                                            .value!.id);
-                                  }
-                                      : null,
-                                  child: Text(
-                                    "Delete",
-                                    style: GoogleFonts.inter(
-                                        fontSize: 12.sp,
-                                        color: Colors.white,
-                                        fontWeight: AppFontWeight.regular
+                              detailProductOrderVM.role.value == "warehouse"
+                                  ? Container(
+                                      width: 116.w,
+                                      height: 30.h,
+                                      child: ElevatedButton(
+                                        onPressed:
+                                            detailProductOrderVM
+                                                    .orderProducts
+                                                    .value!
+                                                    .financeApproved! !=
+                                                true
+                                            ? () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  isScrollControlled: true,
+                                                  builder: (context) => Center(
+                                                    child: Container(
+                                                      width: 345.w,
+                                                      height: 270.w,
+                                                      padding:
+                                                          EdgeInsetsGeometry.all(
+                                                            30.w,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20.w,
+                                                            ),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          Image.asset(
+                                                            "assets/icons/warning.png",
+                                                            width: 50.w,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10.w,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                "ARE YOU SURE?",
+                                                                style: GoogleFonts.inter(
+                                                                  fontSize:
+                                                                      14.sp,
+                                                                  color:
+                                                                      AppColors
+                                                                          .gray,
+                                                                  fontWeight:
+                                                                      AppFontWeight
+                                                                          .medium,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Text(
+                                                            "Please confirm if you want to delete this item. This action cannot be undone.",
+                                                            style: GoogleFonts.inter(
+                                                              fontSize: 12.sp,
+                                                              color: AppColors
+                                                                  .grayThin,
+                                                              fontWeight:
+                                                                  AppFontWeight
+                                                                      .regular,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 20.w,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 116.w,
+                                                                height: 35.h,
+                                                                child: ElevatedButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                        context,
+                                                                      ),
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadiusGeometry.circular(
+                                                                            5.w,
+                                                                          ),
+                                                                    ),
+                                                                  ),
+                                                                  child: Text(
+                                                                    "Close",
+                                                                    style: GoogleFonts.inter(
+                                                                      fontSize:
+                                                                          12.sp,
+                                                                      color: AppColors
+                                                                          .grayTitle,
+                                                                      fontWeight:
+                                                                          AppFontWeight
+                                                                              .regular,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                width: 116.w,
+                                                                height: 35.h,
+                                                                child: ElevatedButton(
+                                                                  onPressed: () {
+                                                                    Navigator.pop(
+                                                                      context,
+                                                                    );
+                                                                    detailProductOrderVM.requestDeleteProductOrder(
+                                                                      detailProductOrderVM
+                                                                          .orderProducts
+                                                                          .value!
+                                                                          .id,
+                                                                    );
+                                                                  },
+                                                                  style: ElevatedButton.styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .vibrantOrange,
+                                                                    shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadiusGeometry.circular(
+                                                                            5.w,
+                                                                          ),
+                                                                    ),
+                                                                  ),
+                                                                  child: Text(
+                                                                    "Confirm",
+                                                                    style: GoogleFonts.inter(
+                                                                      fontSize:
+                                                                          12.sp,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          AppFontWeight
+                                                                              .regular,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            : null,
+                                        child: Text(
+                                          "Delete",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12.sp,
+                                            color: Colors.white,
+                                            fontWeight: AppFontWeight.regular,
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              detailProductOrderVM
+                                                      .orderProducts!
+                                                      .value!
+                                                      .financeApproved! !=
+                                                  true
+                                              ? AppColors.vibrantOrange
+                                              : AppColors.coolGray,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadiusGeometry.circular(
+                                                  5.w,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 116.w,
+                                      height: 30.h,
+                                      child: ElevatedButton(
+                                        onPressed:
+                                            detailProductOrderVM
+                                                    .orderProducts
+                                                    .value!
+                                                    .financeApproved! !=
+                                                true
+                                            ? () {
+                                                detailProductOrderVM
+                                                    .requestPayProductOrder(
+                                                      detailProductOrderVM
+                                                          .orderProducts
+                                                          .value!
+                                                          .id,
+                                                      detailProductOrderVM
+                                                          .orderProducts
+                                                          .value!
+                                                          .productId,
+                                                      detailProductOrderVM
+                                                          .orderProducts
+                                                          .value!
+                                                          .quantity,
+                                                    );
+                                              }
+                                            : null,
+                                        child: Text(
+                                          "Pay Invoice",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12.sp,
+                                            color: Colors.white,
+                                            fontWeight: AppFontWeight.regular,
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              detailProductOrderVM
+                                                      .orderProducts!
+                                                      .value!
+                                                      .financeApproved! !=
+                                                  true
+                                              ? AppColors.electricBlue
+                                              : AppColors.coolGray,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadiusGeometry.circular(
+                                                  5.w,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: detailProductOrderVM
-                                          .orderProducts!.value!
-                                          .financeApproved! != true ? AppColors
-                                          .vibrantOrange : AppColors.coolGray,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadiusGeometry
-                                              .circular(5.w)
-                                      )
-                                  ),
-                                ),
-                              ) : Container(
-                                width: 116.w,
-                                height: 30.h,
-                                child: ElevatedButton(
-                                  onPressed: detailProductOrderVM.orderProducts
-                                      .value!.financeApproved! != true
-                                      ? () {
-                                    detailProductOrderVM.requestPayProductOrder(detailProductOrderVM.orderProducts.value!.id, detailProductOrderVM.orderProducts.value!.productId, detailProductOrderVM.orderProducts.value!.quantity);
-                                  }
-                                      : null,
-                                  child: Text(
-                                    "Pay Invoice",
-                                    style: GoogleFonts.inter(
-                                        fontSize: 12.sp,
-                                        color: Colors.white,
-                                        fontWeight: AppFontWeight.regular
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: detailProductOrderVM
-                                          .orderProducts!.value!
-                                          .financeApproved! != true ? AppColors
-                                          .electricBlue : AppColors.coolGray,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadiusGeometry
-                                              .circular(5.w)
-                                      )
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
-                          SizedBox(height: 25.h,),
+                          SizedBox(height: 25.h),
                           Container(
                             width: 135.w,
                             height: 5.h,
                             decoration: BoxDecoration(
-                                color: AppColors.grayThin,
-                                borderRadius: BorderRadius.circular(10.w)
+                              color: AppColors.grayThin,
+                              borderRadius: BorderRadius.circular(10.w),
                             ),
                           ),
                         ],
                       );
                     }),
-                  )
+                  ),
                 ],
               ),
             );
@@ -461,15 +693,13 @@ class DetailProductOrderView extends StatelessWidget {
                             blurRadius: 14.2.w,
                             spreadRadius: 0,
                             color: AppColors.appBarShadow,
-                          )
+                          ),
                         ],
                         color: Colors.white,
                       ),
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 63.h,
-                          ),
+                          SizedBox(height: 63.h),
                           Container(
                             padding: EdgeInsets.only(left: 30.w),
                             child: Row(
@@ -477,22 +707,18 @@ class DetailProductOrderView extends StatelessWidget {
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    detailProductOrderVM.itemStore.clearDetailProduct();
+                                    detailProductOrderVM.itemStore
+                                        .clearDetailProduct();
                                     Get.back();
                                   },
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 24.w,
-                                  ),
+                                  child: Icon(Icons.close, size: 24.w),
                                 ),
-                                SizedBox(
-                                  width: 19.w,
-                                ),
+                                SizedBox(width: 19.w),
                                 Text(
                                   "Back To Summary",
                                   style: GoogleFonts.poppins(
-                                      fontSize: 16.sp,
-                                      fontWeight: AppFontWeight.medium
+                                    fontSize: 16.sp,
+                                    fontWeight: AppFontWeight.medium,
                                   ),
                                 ),
                               ],
@@ -506,10 +732,19 @@ class DetailProductOrderView extends StatelessWidget {
               ),
             ],
           ),
-          Obx(() =>
-          detailProductOrderVM.isLoading.value == true ? Container(color: Colors.black26,
-              child: Center(child: LoadingAnimationWidget.stretchedDots(
-                color: AppColors.softWhite, size: 70.w,))) : SizedBox(),),
+          Obx(
+            () => detailProductOrderVM.isLoading.value == true
+                ? Container(
+                    color: Colors.black26,
+                    child: Center(
+                      child: LoadingAnimationWidget.stretchedDots(
+                        color: AppColors.softWhite,
+                        size: 70.w,
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+          ),
         ],
       ),
     );

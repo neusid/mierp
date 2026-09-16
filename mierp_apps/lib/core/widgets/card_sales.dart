@@ -2,15 +2,36 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
+import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
 class CardSales extends StatelessWidget {
-  CardSales({super.key, required this.idBarang, required this.namaBarang, required this.financeApproved, required this.createdOn, required this.nameUser, required this.quantity, required this.unitPrice, required this.lineTotal, required this.nameCustomer});
+  CardSales({
+    super.key,
+    required this.idBarang,
+    required this.namaBarang,
+    required this.financeApproved,
+    required this.createdOn,
+    required this.nameUser,
+    required this.quantity,
+    required this.unitPrice,
+    required this.lineTotal,
+    required this.nameCustomer,
+    required this.imageProduct,
+  });
 
-  final idBarang, namaBarang, financeApproved, createdOn, nameUser, quantity, unitPrice, lineTotal, nameCustomer;
-  
+  final idBarang,
+      namaBarang,
+      financeApproved,
+      createdOn,
+      nameUser,
+      quantity,
+      unitPrice,
+      lineTotal,
+      nameCustomer,
+      imageProduct;
+
   final converDollar = ConvertDollar();
 
   @override
@@ -19,16 +40,16 @@ class CardSales extends StatelessWidget {
       width: 342.w,
       height: 140.h,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.w),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowBox,
-              spreadRadius: -3.w,
-              offset: Offset(0, 4),
-              blurRadius: 21.w,
-            )
-          ]
+        borderRadius: BorderRadius.circular(10.w),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowBox,
+            spreadRadius: -3.w,
+            offset: Offset(0, 4),
+            blurRadius: 21.w,
+          ),
+        ],
       ),
       child: Center(
         child: Container(
@@ -44,13 +65,17 @@ class CardSales extends StatelessWidget {
                     width: 50.18.w,
                     height: 50.18.h,
                     decoration: BoxDecoration(
-                        color: Color(0xFFF1F4FF),
-                        borderRadius: BorderRadius.circular(10.w)
+                      // color: Color(0xFFF1F4FF),
+                      image: DecorationImage(
+                        image: imageProduct == null
+                            ? AssetImage("assets/images/dummy_item.jpg")
+                            : NetworkImage(imageProduct),
+                        fit: BoxFit.fill,
+                      ),
+                      borderRadius: BorderRadius.circular(10.w),
                     ),
                   ),
-                  SizedBox(
-                    width: 16.w,
-                  ),
+                  SizedBox(width: 16.w),
                   Container(
                     width: 250.w,
                     height: 50.18.w,
@@ -75,20 +100,22 @@ class CardSales extends StatelessWidget {
                               width: 86.w,
                               height: 15.h,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(5.w)),
-                                  color: AppColors.purpleShadow
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5.w),
+                                ),
+                                color: AppColors.purpleShadow,
                               ),
                               child: Center(
                                 child: Text(
                                   "Account Receivables",
                                   style: GoogleFonts.inter(
-                                      fontSize: 7.sp,
-                                      fontWeight: AppFontWeight.regular,
-                                      color: AppColors.electricBlue
+                                    fontSize: 7.sp,
+                                    fontWeight: AppFontWeight.regular,
+                                    color: AppColors.electricBlue,
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                         Row(
@@ -110,20 +137,26 @@ class CardSales extends StatelessWidget {
                               width: 47.w,
                               height: 14.h,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(5.w)),
-                                  color: financeApproved? AppColors.mintGreen: AppColors.softCream
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5.w),
+                                ),
+                                color: financeApproved
+                                    ? AppColors.mintGreen
+                                    : AppColors.softCream,
                               ),
                               child: Center(
                                 child: Text(
-                                  financeApproved?"Paid":"Unpaid",
+                                  financeApproved ? "Paid" : "Unpaid",
                                   style: GoogleFonts.inter(
-                                      fontSize: 7.sp,
-                                      fontWeight: AppFontWeight.regular,
-                                      color: financeApproved? AppColors.neonGreen: AppColors.vibrantOrange
+                                    fontSize: 7.sp,
+                                    fontWeight: AppFontWeight.regular,
+                                    color: financeApproved
+                                        ? AppColors.neonGreen
+                                        : AppColors.vibrantOrange,
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                         Row(
@@ -156,7 +189,7 @@ class CardSales extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 13.w,),
+              SizedBox(height: 13.w),
               DottedLine(
                 direction: Axis.horizontal,
                 dashColor: AppColors.grayDashline,
@@ -165,7 +198,7 @@ class CardSales extends StatelessWidget {
                 dashLength: 5.w,
                 dashGapLength: 5.w,
               ),
-              SizedBox(height: 13.w,),
+              SizedBox(height: 13.w),
               Row(
                 children: [
                   Row(
@@ -177,7 +210,7 @@ class CardSales extends StatelessWidget {
                           Container(
                             constraints: BoxConstraints(
                               maxWidth: 68.w,
-                              minWidth: 50.w
+                              minWidth: 50.w,
                             ),
                             child: Text(
                               "To",
@@ -191,8 +224,8 @@ class CardSales extends StatelessWidget {
                           ),
                           Container(
                             constraints: BoxConstraints(
-                                maxWidth: 68.w,
-                                minWidth: 50.w
+                              maxWidth: 68.w,
+                              minWidth: 50.w,
                             ),
                             child: Text(
                               nameCustomer,
@@ -230,7 +263,7 @@ class CardSales extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 23.w,),
+                  SizedBox(width: 23.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -242,7 +275,7 @@ class CardSales extends StatelessWidget {
                           color: AppColors.gray,
                         ),
                       ),
-                      SizedBox(width: 9.w,),
+                      SizedBox(width: 9.w),
                       Container(
                         width: 32.w,
                         child: Text(
@@ -257,7 +290,7 @@ class CardSales extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 9.w,),
+                  SizedBox(width: 9.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -283,7 +316,7 @@ class CardSales extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 9.w,),
+                  SizedBox(width: 9.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
