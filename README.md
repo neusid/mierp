@@ -94,7 +94,7 @@ flowchart TD
         View["Views & Widgets<br/>(DashboardWarehouseView, DashboardFinanceView, DetailOrderView, dll.)"]
         ViewModel["GetxControllers / ViewModels<br/>(WarehouseViewModel, FinanceViewModel, DetailOrderViewModel, dll.)"]
         View -->|User Action & Binding| ViewModel
-        ViewModel -->|Reactive State / Obx / update()| View
+        ViewModel -->|Reactive State & Obx Update| View
     end
 
     subgraph BindingRouting ["Layer Bindings & Navigation"]
@@ -305,3 +305,4 @@ Pastikan komputer Anda telah terpasang perangkat lunak berikut:
 ## 📄 Lisensi & Hak Cipta
 
 Dikelola dan dikembangkan untuk operasional **MiERP**. Seluruh hak cipta dilindungi undang-undang.
+
