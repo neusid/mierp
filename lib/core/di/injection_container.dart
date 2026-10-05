@@ -10,6 +10,16 @@ import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_view_model.dart';
 import 'package:mierp_apps/features/splash/presentation/bloc/splash_bloc.dart';
 
+import 'package:mierp_apps/features/register/data/repositories/register_repository_impl.dart';
+import 'package:mierp_apps/features/register/domain/repositories/register_repository.dart';
+import 'package:mierp_apps/features/register/domain/usecases/do_register.dart';
+import 'package:mierp_apps/features/register/presentation/bloc/register_bloc.dart';
+
+import 'package:mierp_apps/features/forgot_password/data/repositories/forgot_password_repository_impl.dart';
+import 'package:mierp_apps/features/forgot_password/domain/repositories/forgot_password_repository.dart';
+import 'package:mierp_apps/features/forgot_password/domain/usecases/do_reset_password.dart';
+import 'package:mierp_apps/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -37,12 +47,19 @@ Future<void> init() async {
         userDataController: sl(),
       ));
   
+  sl.registerFactory(() => RegisterBloc(doRegister: sl()));
+  sl.registerFactory(() => ForgotPasswordBloc(doResetPassword: sl()));
+  
   // UseCases
   sl.registerLazySingleton(() => DoLogin(sl()));
   sl.registerLazySingleton(() => DoLoginWithGoogle(sl()));
+  sl.registerLazySingleton(() => DoRegister(sl()));
+  sl.registerLazySingleton(() => DoResetPassword(sl()));
 
   // Repository (Contracts & Implementations)
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl());
+  sl.registerLazySingleton<RegisterRepository>(() => RegisterRepositoryImpl());
+  sl.registerLazySingleton<ForgotPasswordRepository>(() => ForgotPasswordRepositoryImpl());
   
   /// --------------------------------------------------------------------------
   /// MAIN FEATURE FLOW (Dashboard & Transaksi)

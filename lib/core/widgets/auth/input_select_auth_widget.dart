@@ -5,14 +5,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/controller_widget/input_widget_controller.dart';
-import 'package:mierp_apps/features/register/presentation/register_view_model.dart';
 
 class InputSelectAuthWidget extends StatelessWidget {
-  InputSelectAuthWidget({super.key, required this.head, required this.placeholder, required this.necessary, required this.isPassword, required this.formKey});
+  final String head, placeholder;
+  final bool necessary, isPassword;
+  final GlobalKey<FormState> formKey;
+  final String value;
+  final Function(String?) onChanged;
 
-  final head, placeholder, necessary, isPassword, formKey;
+  InputSelectAuthWidget({
+    super.key,
+    required this.head,
+    required this.placeholder,
+    required this.necessary,
+    required this.isPassword,
+    required this.formKey,
+    required this.value,
+    required this.onChanged,
+  });
+
   final inputWidgetC = Get.put(InputWidgetController(), tag: UniqueKey().toString());
-  final registerViewModel = Get.find<RegisterViewModel>();
   RxBool hasError = false.obs;
   RxString dataError = "".obs;
 
@@ -71,10 +83,8 @@ class InputSelectAuthWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6.w),
                   padding: EdgeInsets.symmetric(horizontal: 14.5.w),
                   icon: Icon(Icons.arrow_drop_down),
-                  value: registerViewModel.roleC.value,
-                  onChanged: (value) {
-                    registerViewModel.roleC.value = value!;
-                  },
+                  value: value,
+                  onChanged: onChanged,
                   items: <String>['warehouse','finance'].map<DropdownMenuItem<String>>(
                       (String value) {
                         return DropdownMenuItem(

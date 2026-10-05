@@ -13,7 +13,7 @@ import 'package:mierp_apps/features/detail/presentation/detail_product_order/det
 import 'package:mierp_apps/features/detail/presentation/detail_sales_order/detail_sales_order_binding.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/dashboard_finance_view.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/dashboard_finance_view_model.dart';
-import 'package:mierp_apps/features/forgot_password/presentation/forgot_password_binding.dart';
+import 'package:mierp_apps/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
 import 'package:mierp_apps/features/forgot_password/presentation/forgot_password_view.dart';
 import 'package:mierp_apps/features/loading/loading_binding.dart';
 import 'package:mierp_apps/features/loading/loading_view.dart';
@@ -26,7 +26,7 @@ import 'package:mierp_apps/features/notification/presentation/notification_bindi
 import 'package:mierp_apps/features/notification/presentation/notification_view.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_binding.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
-import 'package:mierp_apps/features/register/presentation/register_binding.dart';
+import 'package:mierp_apps/features/register/presentation/bloc/register_bloc.dart';
 import 'package:mierp_apps/features/summary/presentation/summary_view_model.dart';
 import 'package:mierp_apps/features/add/presentation/add_product_order/add_product_order_view.dart';
 import 'package:mierp_apps/features/add/presentation/add_sales_order/add_sales_order_view.dart';
@@ -63,8 +63,20 @@ class AppRoutes {
       ),
     ),
     GetPage(name: "/loading", page: () => LoadingView(), binding: LoadingBinding(),),
-    GetPage(name: "/register", page: () => RegisterView(), binding: RegisterBinding()),
-    GetPage(name: "/forgot", page: () => ForgotPasswordView(), binding: ForgotPasswordBinding()),
+    GetPage(
+      name: "/register", 
+      page: () => BlocProvider(
+        create: (_) => sl<RegisterBloc>(),
+        child: const RegisterView(),
+      )
+    ),
+    GetPage(
+      name: "/forgot", 
+      page: () => BlocProvider(
+        create: (_) => sl<ForgotPasswordBloc>(),
+        child: const ForgotPasswordView(),
+      )
+    ),
 
     GetPage(
       name: "/finance_main_page",
