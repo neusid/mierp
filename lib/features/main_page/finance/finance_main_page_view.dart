@@ -8,26 +8,29 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/bottom_navbar_helper.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/dashboard_finance_view.dart';
-import 'package:mierp_apps/features/main_page/finance/finance_main_page_view_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
 import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
 
-class FinanceMainPageView extends GetView<FinanceMainPageViewModel> {
-  FinanceMainPageView({super.key});
+class FinanceMainPageView extends StatelessWidget {
+  const FinanceMainPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      body: Obx(() {
-        return IndexedStack(
-          index: controller.currentIndex.value,
-          children: [
-            DashboardFinanceView(),
-            ProfileView(onBack: controller.goToDashboard,),
-          ],
-        );
-      }),
+      body: BlocBuilder<MainPageCubit, int>(
+        builder: (context, currentIndex) {
+          return IndexedStack(
+            index: currentIndex,
+            children: [
+              DashboardFinanceView(),
+              ProfileView(onBack: () => context.read<MainPageCubit>().goToDashboard()),
+            ],
+          );
+        }
+      ),
       bottomNavigationBar: BottomAppBar(
         height: 70.w,
         padding: EdgeInsetsGeometry.only(
@@ -42,7 +45,7 @@ class FinanceMainPageView extends GetView<FinanceMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 90.w,
@@ -113,7 +116,7 @@ class FinanceMainPageView extends GetView<FinanceMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,
@@ -142,7 +145,7 @@ class FinanceMainPageView extends GetView<FinanceMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,
@@ -171,7 +174,7 @@ class FinanceMainPageView extends GetView<FinanceMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 1;
+                  context.read<MainPageCubit>().changeIndex(1);
                 },
                 child: Container(
                   width: 55.w,

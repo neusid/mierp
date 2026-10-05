@@ -18,9 +18,8 @@ import 'package:mierp_apps/features/forgot_password/presentation/forgot_password
 import 'package:mierp_apps/features/loading/loading_binding.dart';
 import 'package:mierp_apps/features/loading/loading_view.dart';
 import 'package:mierp_apps/features/loading/loading_view_model.dart';
-import 'package:mierp_apps/features/main_page/finance/finance_main_page_binding.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/main_page/finance/finance_main_page_view.dart';
-import 'package:mierp_apps/features/main_page/warehouse/warehouse_main_page_binding.dart';
 import 'package:mierp_apps/features/main_page/warehouse/warehouse_main_page_view.dart';
 import 'package:mierp_apps/features/notification/presentation/notification_binding.dart';
 import 'package:mierp_apps/features/notification/presentation/notification_view.dart';
@@ -80,16 +79,20 @@ class AppRoutes {
 
     GetPage(
       name: "/finance_main_page",
-      page: () => FinanceMainPageView(),
+      page: () => BlocProvider(
+        create: (_) => MainPageCubit(),
+        child: const FinanceMainPageView(),
+      ),
       middlewares: [LoginMiddleware()],
-      binding: FinanceMainPageBinding(),
     ),
 
     GetPage(
       name: "/warehouse_main_page",
-      page: () => WarehouseMainPageView(),
+      page: () => BlocProvider(
+        create: (_) => MainPageCubit(),
+        child: const WarehouseMainPageView(),
+      ),
       middlewares: [LoginMiddleware()],
-      binding: WarehouseMainPageBinding(),
     ),
 
     GetPage(

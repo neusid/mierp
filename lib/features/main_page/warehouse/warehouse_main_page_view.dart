@@ -6,25 +6,28 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/features/dashboard/presentation/warehouse/dashboard_warehouse_view.dart';
-import 'package:mierp_apps/features/main_page/warehouse/warehouse_main_page_view_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
 
-class WarehouseMainPageView extends GetView<WarehouseMainPageViewModel> {
+class WarehouseMainPageView extends StatelessWidget {
   const WarehouseMainPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      body: Obx(() {
-        return IndexedStack(
-          index: controller.currentIndex.value,
-          children: [
-            DashboardWarehouseView(),
-            ProfileView(onBack: controller.goToDashboard),
-          ],
-        );
-      }),
+      body: BlocBuilder<MainPageCubit, int>(
+        builder: (context, currentIndex) {
+          return IndexedStack(
+            index: currentIndex,
+            children: [
+              DashboardWarehouseView(),
+              ProfileView(onBack: () => context.read<MainPageCubit>().goToDashboard()),
+            ],
+          );
+        }
+      ),
       bottomNavigationBar: BottomAppBar(
         height: 70.w,
         padding: EdgeInsetsGeometry.only(
@@ -39,7 +42,7 @@ class WarehouseMainPageView extends GetView<WarehouseMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 90.w,
@@ -110,7 +113,7 @@ class WarehouseMainPageView extends GetView<WarehouseMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,
@@ -139,7 +142,7 @@ class WarehouseMainPageView extends GetView<WarehouseMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,
@@ -168,7 +171,7 @@ class WarehouseMainPageView extends GetView<WarehouseMainPageViewModel> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 1;
+                  context.read<MainPageCubit>().changeIndex(1);
                 },
                 child: Container(
                   width: 55.w,
