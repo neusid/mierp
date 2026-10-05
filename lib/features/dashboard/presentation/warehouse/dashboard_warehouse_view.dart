@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mierp_apps/features/dashboard/presentation/warehouse/bloc/dashboard_warehouse_bloc.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
+import 'package:get/get.dart' as getx;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
@@ -10,16 +13,25 @@ import 'package:mierp_apps/core/widgets/card_dashboard.dart';
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
-import 'package:mierp_apps/features/dashboard/presentation/warehouse/warehouse_view_model.dart';
+
 
 class DashboardWarehouseView extends StatelessWidget {
   DashboardWarehouseView({super.key});
 
-  final warehouseVM = Get.find<WarehouseViewModel>();
+  final tabs = [
+    {"title": "All Summary", "collection": "all_summary"},
+    {"title": "Order", "collection": "warehouse_order"},
+    {"title": "Sales Order", "collection": "sales_order"},
+    {"title": "Stock", "collection": "products"},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return BlocProvider(
+      create: (context) => sl<DashboardWarehouseBloc>()..add(DashboardWarehouseStarted()),
+      child: BlocBuilder<DashboardWarehouseBloc, DashboardWarehouseState>(
+        builder: (context, state) {
+          return Stack(
       children: [
         SingleChildScrollView(
           child: Column(
@@ -146,9 +158,8 @@ class DashboardWarehouseView extends StatelessWidget {
                                           ),
                                           Container(
                                             width: 130.w,
-                                            child: Obx(() {
-                                              return Text(
-                                                "${warehouseVM.userName.value}!",
+                                            child: Text(
+                                                "${state.userName}!",
                                                 style: GoogleFonts.lexendDeca(
                                                   fontWeight:
                                                       AppFontWeight.semiBold,
@@ -156,14 +167,13 @@ class DashboardWarehouseView extends StatelessWidget {
                                                   color: AppColors.grayTitle,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
-                                              );
-                                            }),
+                                              ),
                                           ),
                                         ],
                                       ),
                                       IconButton(
                                         onPressed: () {
-                                          Get.toNamed('/notification');
+                                          getx.Get.toNamed('/notification');
                                         },
                                         icon: Icon(
                                           Icons.notifications_active,
@@ -195,13 +205,13 @@ class DashboardWarehouseView extends StatelessWidget {
                           nameBox: "Product",
                           description:
                               "All product types available in inventory",
-                          totalItems: warehouseVM.lenghtProduct,
+                          totalItems: state.totalProducts,
                           urgent: false,
                         ),
                         CardDashboard(
                           nameBox: "Total Qty",
                           description: "Total quantity across all products",
-                          totalItems: warehouseVM.totalQtyProduct,
+                          totalItems: state.totalQty,
                           urgent: false,
                         ),
                       ],
@@ -213,13 +223,13 @@ class DashboardWarehouseView extends StatelessWidget {
                           nameBox: "Low Stock",
                           description:
                               "Stock items with low remaining quantity",
-                          totalItems: warehouseVM.totalLowProduct,
+                          totalItems: state.totalLowStock,
                           urgent: true,
                         ),
                         CardDashboard(
                           nameBox: "Upcoming Stock",
                           description: "Stock items arriving soon to inventory",
-                          totalItems: warehouseVM.totalUpcomingProduct,
+                          totalItems: state.totalUpcomingStock,
                           urgent: true,
                         ),
                       ],
@@ -259,7 +269,7 @@ class DashboardWarehouseView extends StatelessWidget {
                           Text("Add New Unit"),
                           GestureDetector(
                             onTap: () {
-                              warehouseVM.movePage("/add_unit");
+                              getx.getx.Get.toNamed("/add_unit");
                             },
                             child: Container(
                               width: 36.w,
@@ -315,7 +325,7 @@ class DashboardWarehouseView extends StatelessWidget {
                           Text("Add Sales Order"),
                           GestureDetector(
                             onTap: () {
-                              warehouseVM.movePage("/add_sales_order");
+                              getx.getx.Get.toNamed("/add_sales_order");
                             },
                             child: Container(
                               width: 36.w,
@@ -371,7 +381,7 @@ class DashboardWarehouseView extends StatelessWidget {
                           Text("Add Product Order"),
                           GestureDetector(
                             onTap: () {
-                              warehouseVM.movePage("/add_product_order");
+                              getx.getx.Get.toNamed("/add_product_order");
                             },
                             child: Container(
                               width: 36.w,
@@ -423,13 +433,13 @@ class DashboardWarehouseView extends StatelessWidget {
                       height: 33.h,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: warehouseVM.tabs
+                        children: tabs
                             .map(
-                              (e) => Obx(() {
-                                final isActive = e.isActive.value;
+                              (e) {
+                                final isActive = state.selectedTab == e['collection'];
                                 return GestureDetector(
                                   onTap: () async {
-                                    warehouseVM.changeTab(e);
+                                    context.read<DashboardWarehouseBloc>().add(DashboardWarehouseTabChanged(e['collection']!));
                                   },
                                   child: Container(
                                     height: 33.h,
@@ -454,7 +464,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                         : BoxDecoration(),
                                     child: Center(
                                       child: Text(
-                                        e.title,
+                                        e['title']!,
                                         style: GoogleFonts.inter(
                                           fontSize: 11.sp,
                                           fontWeight: AppFontWeight.medium,
@@ -466,7 +476,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                     ),
                                   ),
                                 );
-                              }),
+                              },
                             )
                             .toList(),
                       ),
@@ -486,11 +496,10 @@ class DashboardWarehouseView extends StatelessWidget {
                           Text("Summary"),
                           GestureDetector(
                             onTap: () {
-                              warehouseVM.isLoading.value = true;
-                              Future.delayed(Duration(seconds: 1), () {
-                                warehouseVM.isLoading.value = false;
-                                Get.toNamed("/summary");
-                              });
+                              
+                              
+                                
+                                getx.getx.Get.toNamed("/summary");
                             },
                             child: Row(
                               children: [
@@ -508,21 +517,21 @@ class DashboardWarehouseView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 22.h),
-                    Obx(() {
-                      if (warehouseVM.collection.value == "all_summary") {
-                        if (warehouseVM.collection.value.isNotEmpty) {
+                    Builder(builder: (context) {
+                      if (state.selectedTab == "all_summary") {
+                        if (state.selectedTab.isNotEmpty) {
                           return Container(
                             child: Column(
                               spacing: 10.w,
                               children: [
-                                ...warehouseVM.itemStore.listAllSummary.take(2).map((
+                                ...state.listAllSummary.take(2).map((
                                   e,
                                 ) {
                                   switch (e!.summaryType) {
                                     case SummaryType.product:
                                       return GestureDetector(
                                         onTap: () {
-                                          Get.toNamed(
+                                          getx.Get.toNamed(
                                             "/detail_product/${e.data.id}",
                                           );
                                         },
@@ -541,7 +550,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                     case SummaryType.order:
                                       return GestureDetector(
                                         onTap: () {
-                                          Get.toNamed(
+                                          getx.Get.toNamed(
                                             "/detail_product_order/${e.data.id}",
                                           );
                                         },
@@ -563,7 +572,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                     case SummaryType.salesOrder:
                                       return GestureDetector(
                                         onTap: () async {
-                                          Get.toNamed(
+                                          getx.Get.toNamed(
                                             "/detail_sales_order/${e.data.id}",
                                           );
                                         },
@@ -590,18 +599,18 @@ class DashboardWarehouseView extends StatelessWidget {
                         } else {
                           return CircularProgressIndicator();
                         }
-                      } else if (warehouseVM.collection.value == "products") {
-                        if (warehouseVM.collection.value.isNotEmpty) {
+                      } else if (state.selectedTab == "products") {
+                        if (state.selectedTab.isNotEmpty) {
                           return Container(
                             child: Column(
                               spacing: 10.w,
                               children: [
-                                ...warehouseVM.listProduct
+                                ...state.listProduct
                                     .take(2)
                                     .map(
                                       (product) => GestureDetector(
                                         onTap: () {
-                                          Get.toNamed(
+                                          getx.Get.toNamed(
                                             "/detail_product/${product.id}",
                                           );
                                         },
@@ -626,16 +635,16 @@ class DashboardWarehouseView extends StatelessWidget {
                         } else {
                           return CircularProgressIndicator();
                         }
-                      } else if (warehouseVM.collection.value ==
+                      } else if (state.selectedTab ==
                           "warehouse_order") {
-                        if (warehouseVM.listOrder.isNotEmpty) {
+                        if (state.listOrder.isNotEmpty) {
                           return Column(
                             spacing: 10.w,
                             children: [
-                              ...warehouseVM.listOrder.take(2).map((data) {
+                              ...state.listOrder.take(2).map((data) {
                                 return GestureDetector(
                                   onTap: () {
-                                    Get.toNamed(
+                                    getx.Get.toNamed(
                                       "/detail_product_order/${data.id}",
                                     );
                                   },
@@ -664,12 +673,12 @@ class DashboardWarehouseView extends StatelessWidget {
                         return Column(
                           spacing: 10.w,
                           children: [
-                            ...warehouseVM.listSalesOrder
+                            ...state.listSalesOrder
                                 .take(2)
                                 .map(
                                   (e) => GestureDetector(
                                     onTap: () async {
-                                      Get.toNamed(
+                                      getx.Get.toNamed(
                                         "/detail_sales_order/${e.id}",
                                       );
                                     },
@@ -712,8 +721,8 @@ class DashboardWarehouseView extends StatelessWidget {
                   ),
                 )
               : SizedBox(),
-        ),
-      ],
-    );
+        ],
+      );
+    }));
   }
 }

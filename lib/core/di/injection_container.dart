@@ -19,6 +19,10 @@ import 'package:mierp_apps/features/forgot_password/data/repositories/forgot_pas
 import 'package:mierp_apps/features/forgot_password/domain/repositories/forgot_password_repository.dart';
 import 'package:mierp_apps/features/forgot_password/domain/usecases/do_reset_password.dart';
 import 'package:mierp_apps/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
+import 'package:mierp_apps/data/warehouse/warehouse_repository.dart';
+import 'package:mierp_apps/features/dashboard/presentation/warehouse/bloc/dashboard_warehouse_bloc.dart';
+import 'package:mierp_apps/data/finance/dashboard_finance_repository.dart';
+import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -49,6 +53,8 @@ Future<void> init() async {
   
   sl.registerFactory(() => RegisterBloc(doRegister: sl()));
   sl.registerFactory(() => ForgotPasswordBloc(doResetPassword: sl()));
+  sl.registerFactory(() => DashboardWarehouseBloc(warehouseRepository: sl(), userDataController: sl()));
+  sl.registerFactory(() => DashboardFinanceBloc(financeRepository: sl(), userDataController: sl()));
   
   // UseCases
   sl.registerLazySingleton(() => DoLogin(sl()));
@@ -60,6 +66,9 @@ Future<void> init() async {
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl());
   sl.registerLazySingleton<RegisterRepository>(() => RegisterRepositoryImpl());
   sl.registerLazySingleton<ForgotPasswordRepository>(() => ForgotPasswordRepositoryImpl());
+  sl.registerLazySingleton(() => WarehouseRepository());
+  sl.registerLazySingleton(() => DashboardFinanceRepository());
+  sl.registerLazySingleton(() => UserDataController());
   
   /// --------------------------------------------------------------------------
   /// MAIN FEATURE FLOW (Dashboard & Transaksi)
