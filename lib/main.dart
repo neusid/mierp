@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mierp_apps/bindings/global_binding.dart';
 import 'package:mierp_apps/core/routing/app_routes.dart';
+import 'package:mierp_apps/core/di/injection_container.dart' as di;
 
 import 'firebase_options.dart';
 
@@ -11,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await di.init();
   runApp(MierpApps());
 }
 

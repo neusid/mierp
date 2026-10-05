@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/controller_widget/input_widget_controller.dart';
-import 'package:mierp_apps/features/login/presentation/login_view_model.dart';
 
 class InputAuthWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -15,7 +14,6 @@ class InputAuthWidget extends StatelessWidget {
   final inputWidgetC = Get.put(InputWidgetController(), tag: UniqueKey().toString());
   RxBool hasError = false.obs;
   RxString dataError = "".obs;
-  final loginVieModel = Get.find<LoginViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -76,21 +74,17 @@ class InputAuthWidget extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     hasError.value = true;
                     dataError.value = "Password wajib diisi";
-                    loginVieModel.isValid.value = false;
                     return "";
                   } else {
                     hasError.value = false;
-                    loginVieModel.isValid.value = true;
                   }
 
                   if (value.length <= 8) {
                     hasError.value = true;
                     dataError.value = "Password harus lebih dari 8";
-                    loginVieModel.isValid.value = false;
                     return "";
                   } else {
                     hasError.value = false;
-                    loginVieModel.isValid.value = true;
                   }
                 },
                 style: GoogleFonts.inter(
@@ -168,23 +162,19 @@ class InputAuthWidget extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     hasError.value = true;
                     dataError.value = "Email wajib diisi";
-                    loginVieModel.isValid.value = false;
                     return null;
                   } else {
                     hasError.value = false;
                     dataError.value = "";
-                    loginVieModel.isValid.value = true;
                   }
 
                   if (!value.contains('@') || !value.contains('.')) {
                     hasError.value = true;
                     dataError.value = "Format email salah";
-                    loginVieModel.isValid.value = false;
                     return null;
                   } else {
                     hasError.value = false;
                     dataError.value = "";
-                    loginVieModel.isValid.value = true;
                   }
                 },
                 style: GoogleFonts.inter(

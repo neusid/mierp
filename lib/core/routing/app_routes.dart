@@ -1,9 +1,12 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
+import 'package:mierp_apps/features/splash/presentation/bloc/splash_bloc.dart';
 import 'package:mierp_apps/core/routing/middleware/login_middleware.dart';
 import 'package:mierp_apps/data/finance/dashboard_finance_repository.dart';
 import 'package:mierp_apps/data/login/login_repository.dart';
 import 'package:mierp_apps/data/transaction/services/transaction_services.dart';
-import 'package:mierp_apps/domain/credential/repository/credential_repository.dart';
+import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/domain/item/repositories/item_repository.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product/detail_product_binding.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product_order/detail_product_order_binding.dart';
@@ -36,7 +39,6 @@ import 'package:mierp_apps/features/detail/presentation/detail_sales_order/detai
 import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
 import 'package:mierp_apps/features/dashboard/presentation/warehouse/warehouse_view_model.dart';
 import 'package:mierp_apps/features/login/presentation/login_view.dart';
-import 'package:mierp_apps/features/login/presentation/login_view_model.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_view.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_view_model.dart';
 import 'package:mierp_apps/features/register/presentation/register_view.dart';
@@ -48,21 +50,17 @@ class AppRoutes {
     GetPage(name: "/onboarding", page: () => OnboardingView()),
     GetPage(
         name: "/splash",
-        page: () => SplashView(),
-        binding: BindingsBuilder(
-            () {
-                Get.put(OnboardingViewModel());
-            },
+        page: () => BlocProvider(
+          create: (_) => sl<SplashBloc>(),
+          child: const SplashView(),
         ),
     ),
     GetPage(
       name: "/login",
-      page: () => LoginView(),
-      binding: BindingsBuilder(
-        () {
-          Get.put(LoginViewModel(repo: Get.find<LoginRepository>(), credentialRepository: Get.find<CredentialRepository>()));
-        },
-      )
+      page: () => BlocProvider(
+        create: (_) => sl<LoginBloc>(),
+        child: const LoginView(),
+      ),
     ),
     GetPage(name: "/loading", page: () => LoadingView(), binding: LoadingBinding(),),
     GetPage(name: "/register", page: () => RegisterView(), binding: RegisterBinding()),

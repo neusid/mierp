@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/controller_widget/input_widget_controller.dart';
-import 'package:mierp_apps/features/login/presentation/login_view_model.dart';
 
 
 class InputShortAuthWidget extends StatelessWidget {
@@ -16,7 +15,6 @@ class InputShortAuthWidget extends StatelessWidget {
   final inputWidgetC = Get.put(InputWidgetController(), tag: UniqueKey().toString());
   RxBool hasError = false.obs;
   RxString dataError = "".obs;
-  final loginVieModel = Get.find<LoginViewModel>();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +74,6 @@ class InputShortAuthWidget extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     hasError.value = true;
                     dataError.value = "$head wajib diisi";
-                    loginVieModel.isValid.value = false;
                     return null;
                   }
                 },

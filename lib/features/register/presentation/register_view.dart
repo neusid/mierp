@@ -9,7 +9,7 @@ import 'package:mierp_apps/core/widgets/auth/input_select_auth_widget.dart';
 import 'package:mierp_apps/core/widgets/auth/input_auth_widget.dart';
 import 'package:mierp_apps/core/widgets/auth/input_short_auth_widget.dart';
 import 'package:mierp_apps/data/login/login_repository.dart';
-import 'package:mierp_apps/features/login/presentation/login_view_model.dart';
+
 import 'package:mierp_apps/features/register/presentation/register_view_model.dart';
 import '../../../core/theme/app_colors.dart';
 
