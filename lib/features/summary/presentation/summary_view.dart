@@ -51,7 +51,7 @@ class SummaryView extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.bgColor,
             body: Stack(
               children: [
                 Column(
@@ -59,7 +59,17 @@ class SummaryView extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       height: 255.h,
-                      decoration: BoxDecoration(color: Colors.white),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            blurRadius: 14.2.w,
+                            spreadRadius: 0,
+                            color: AppColors.appBarShadow,
+                          ),
+                        ],
+                        color: Colors.white,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
