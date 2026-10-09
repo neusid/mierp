@@ -28,7 +28,7 @@ class CredentialRepositoryImpl implements CredentialRepository {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     final email = await flutterSecureStorage.read(key: 'email');
-    final save = await sharedPreferences.getBool('isSave') ?? false;
+    final save = sharedPreferences.getBool('isSave') ?? false;
     final json = {
       'email':email,
       'isSave':save

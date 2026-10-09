@@ -38,7 +38,7 @@ class _InputSelectAuthWidgetState extends State<InputSelectAuthWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 322.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class _InputSelectAuthWidgetState extends State<InputSelectAuthWidget> {
               });
             },
             child: DropdownButtonFormField<String>(
-              value: widget.value,
+              initialValue: widget.value,
               onChanged: widget.onChanged,
               focusNode: focusNode,
               icon: Icon(Icons.arrow_drop_down, color: const Color(0xFF64748B)),

@@ -59,6 +59,8 @@ dependencies:
   go_router: ^18.0.2
   get: ^4.7.3
 
+  http: any
+  path: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -8,7 +8,6 @@ import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/data/finance/dashboard_finance_repository.dart';
-import 'package:mierp_apps/domain/transaction/services/pay_product_order_services.dart';
 
 // --- EVENTS ---
 abstract class DashboardFinanceEvent extends Equatable {
@@ -186,9 +185,7 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
     String name = "";
     try {
       final userModel = await userDataController.getDataUser();
-      if (userModel != null) {
-        name = "${userModel.firstName} ${userModel.lastName}";
-      }
+      name = "${userModel.firstName} ${userModel.lastName}";
     } catch (_) {}
 
     // Fetch Bulk Data

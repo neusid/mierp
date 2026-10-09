@@ -90,7 +90,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                               borderRadius: BorderRadius.circular(24.w),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 24.w,
                                   offset: Offset(0, 8.w),
                                 ),
@@ -180,7 +180,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                           child: Container(
                             padding: EdgeInsets.all(8.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12.w),
                             ),
                             child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24.w),
@@ -212,7 +212,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                       border: Border(top: BorderSide(color: const Color(0xFFE2E8F0), width: 1.w)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 10.w,
                           offset: const Offset(0, -4),
                         ),
@@ -239,7 +239,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                           borderRadius: BorderRadius.circular(10.w),
                           boxShadow: _isEditing ? [
                             BoxShadow(
-                              color: const Color(0xFF0F172A).withOpacity(0.2),
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.2),
                               blurRadius: 8.w,
                               offset: Offset(0, 4.w),
                             ),
@@ -288,7 +288,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                 decoration: BoxDecoration(
                   color: AppColors.softWhite,
                   borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: AppColors.vividPurple.withOpacity(0.5), width: 1.w),
+                  border: Border.all(color: AppColors.vividPurple.withValues(alpha: 0.5), width: 1.w),
                 ),
                 child: TextField(
                   controller: controller,

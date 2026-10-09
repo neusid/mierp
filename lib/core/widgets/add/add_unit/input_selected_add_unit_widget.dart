@@ -84,12 +84,12 @@ class _InputSelectAddUnitWidgetState extends State<InputSelectAddUnitWidget> {
                     borderRadius: BorderRadius.circular(12.w),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 16.w,
                         offset: Offset(0, 4.w),
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 4.w,
                         offset: Offset(0, 2.w),
                       ),
@@ -161,7 +161,7 @@ class _InputSelectAddUnitWidgetState extends State<InputSelectAddUnitWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

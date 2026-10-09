@@ -7,7 +7,7 @@ class CustomMingdaDatePicker extends StatefulWidget {
   final DateTime initialDate;
   final String title;
 
-  const CustomMingdaDatePicker({Key? key, required this.initialDate, this.title = "PILIH TANGGAL"}) : super(key: key);
+  const CustomMingdaDatePicker({super.key, required this.initialDate, this.title = "PILIH TANGGAL"});
 
   @override
   _CustomMingdaDatePickerState createState() => _CustomMingdaDatePickerState();
@@ -263,8 +263,8 @@ class _CustomMingdaDatePickerState extends State<CustomMingdaDatePicker> {
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: _primaryColor.withOpacity(0.05),
-          border: Border.all(color: _primaryColor.withOpacity(0.1)),
+          color: _primaryColor.withValues(alpha: 0.05),
+          border: Border.all(color: _primaryColor.withValues(alpha: 0.1)),
         ),
         child: Icon(icon, size: 20.w, color: _primaryColor),
       ),

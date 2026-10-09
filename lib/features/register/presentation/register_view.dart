@@ -62,7 +62,7 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   Stack(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 1.sw,
                         height: 768.h,
                         child: Column(
@@ -82,7 +82,7 @@ class _RegisterViewState extends State<RegisterView> {
                           ],
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: 1.sw,
                         height: 768.h,
                         child: Column(
@@ -156,7 +156,7 @@ class _RegisterViewState extends State<RegisterView> {
                                       formKey: formKey,
                                     ),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -237,7 +237,7 @@ class _RegisterViewState extends State<RegisterView> {
                                     ),
                                     SizedBox(height: 32.h),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         height: 20.h,
                                         child: Row(

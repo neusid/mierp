@@ -1,4 +1,3 @@
-import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/summary/presentation/bloc/summary_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:lottie/lottie.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
@@ -16,7 +14,6 @@ import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class SummaryView extends StatelessWidget {
   SummaryView({super.key});
@@ -117,7 +114,7 @@ class SummaryView extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 29.h),
-                          Container(
+                          SizedBox(
                             width: 344.w,
                             height: 45.29.h,
                             child: Row(
@@ -267,7 +264,7 @@ class SummaryView extends StatelessWidget {
                               if (selectedIndex == 2) alignmentX = 0.333;
                               if (selectedIndex == 3) alignmentX = 1.0;
 
-                              return Container(
+                              return SizedBox(
                                 width: 344.w,
                                 height: 32.h,
                                 child: Stack(
@@ -363,7 +360,7 @@ class SummaryView extends StatelessWidget {
                                       children: [
                                         SizedBox(height: 3.w),
                                         ...state.filteredSummaries.map((e) {
-                                          switch (e!.summaryType) {
+                                          switch (e.summaryType) {
                                             case SummaryType.product:
                                               return GestureDetector(
                                                 onTap: () {
@@ -372,40 +369,39 @@ class SummaryView extends StatelessWidget {
                                                   );
                                                 },
                                                 child: CardStock(
-                                                  idBarang: e!.data.productCode,
+                                                  idBarang: e.data.productCode,
                                                   namaBarang:
-                                                      e!.data.productName,
-                                                  quantity: e!.data.quantity,
-                                                  unitPrice: e!.data.unitPrice,
+                                                      e.data.productName,
+                                                  quantity: e.data.quantity,
+                                                  unitPrice: e.data.unitPrice,
                                                   lineTotal:
-                                                      e!.data.unitPrice *
-                                                      e!.data.quantity,
-                                                  type: e!.data.category,
-                                                  image: e!.data.imageProduct,
+                                                      e.data.unitPrice *
+                                                      e.data.quantity,
+                                                  type: e.data.category,
+                                                  image: e.data.imageProduct,
                                                 ),
                                               );
                                             case SummaryType.order:
                                               return GestureDetector(
                                                 onTap: () {
                                                   context.push(
-                                                    "/detail_product_order/" +
-                                                        (e.data.id).toString(),
+                                                    "/detail_product_order/${e.data.id}",
                                                   );
                                                 },
                                                 child: CardOrder(
-                                                  idOrder: e!.data.id,
-                                                  idBarang: e!.data.productId,
+                                                  idOrder: e.data.id,
+                                                  idBarang: e.data.productId,
                                                   namaBarang:
-                                                      e!.data.productName,
+                                                      e.data.productName,
                                                   financeApproved:
-                                                      e!.data.financeApproved,
-                                                  createdOn: e!.data.orderDate,
-                                                  nameUser: e!.data.firstName,
-                                                  quantity: e!.data.quantity,
-                                                  unitPrice: e!.data.unitPrice,
-                                                  lineTotal: e!.data.totalCost,
+                                                      e.data.financeApproved,
+                                                  createdOn: e.data.orderDate,
+                                                  nameUser: e.data.firstName,
+                                                  quantity: e.data.quantity,
+                                                  unitPrice: e.data.unitPrice,
+                                                  lineTotal: e.data.totalCost,
                                                   imageProduct:
-                                                      e!.data.imageProduct,
+                                                      e.data.imageProduct,
                                                   finance:
                                                       state.role == "finance"
                                                       ? true
@@ -414,9 +410,9 @@ class SummaryView extends StatelessWidget {
                                                       .read<SummaryBloc>()
                                                       .add(
                                                         SummaryPayRequested(
-                                                          e!.data.id,
-                                                          e!.data.productId,
-                                                          e!.data.quantity,
+                                                          e.data.id,
+                                                          e.data.productId,
+                                                          e.data.quantity,
                                                         ),
                                                       ),
                                                 ),
@@ -429,25 +425,25 @@ class SummaryView extends StatelessWidget {
                                                   );
                                                 },
                                                 child: CardSales(
-                                                  idBarang: e!.data.productCode,
+                                                  idBarang: e.data.productCode,
                                                   namaBarang:
-                                                      e!.data.productName,
+                                                      e.data.productName,
                                                   financeApproved:
-                                                      e!.data.financeApproved,
+                                                      e.data.financeApproved,
                                                   createdOn:
-                                                      e!.data.purchasedDate,
-                                                  nameUser: e!.data.firstName,
-                                                  quantity: e!.data.quantity,
-                                                  unitPrice: e!.data.unitPrice,
-                                                  lineTotal: e!.data.totalPrice,
+                                                      e.data.purchasedDate,
+                                                  nameUser: e.data.firstName,
+                                                  quantity: e.data.quantity,
+                                                  unitPrice: e.data.unitPrice,
+                                                  lineTotal: e.data.totalPrice,
                                                   nameCustomer:
-                                                      e!.data.companyName,
+                                                      e.data.companyName,
                                                   imageProduct:
-                                                      e!.data.imageProduct,
+                                                      e.data.imageProduct,
                                                 ),
                                               );
                                           }
-                                        }).toList(),
+                                        }),
                                         SizedBox(height: 10.w),
                                       ],
                                     )
@@ -470,15 +466,15 @@ class SummaryView extends StatelessWidget {
                                             );
                                           },
                                           child: CardStock(
-                                            idBarang: data!.productCode,
-                                            namaBarang: data!.productName,
-                                            quantity: data!.quantity,
-                                            unitPrice: data!.unitPrice,
+                                            idBarang: data.productCode,
+                                            namaBarang: data.productName,
+                                            quantity: data.quantity,
+                                            unitPrice: data.unitPrice,
                                             lineTotal:
-                                                data!.unitPrice *
-                                                data!.quantity,
-                                            type: data!.category,
-                                            image: data!.imageProduct,
+                                                data.unitPrice *
+                                                data.quantity,
+                                            type: data.category,
+                                            image: data.imageProduct,
                                           ),
                                         );
                                       }).toList(),
@@ -503,16 +499,16 @@ class SummaryView extends StatelessWidget {
                                           },
                                           child: CardOrder(
                                             idOrder: data.id ?? '',
-                                            idBarang: data!.productId,
-                                            namaBarang: data!.productName,
+                                            idBarang: data.productId,
+                                            namaBarang: data.productName,
                                             financeApproved:
-                                                data!.financeApproved,
-                                            createdOn: data!.orderDate,
-                                            nameUser: data!.firstName,
-                                            quantity: data!.quantity,
-                                            unitPrice: data!.unitPrice,
-                                            lineTotal: data!.totalCost,
-                                            imageProduct: data!.imageProduct,
+                                                data.financeApproved,
+                                            createdOn: data.orderDate,
+                                            nameUser: data.firstName,
+                                            quantity: data.quantity,
+                                            unitPrice: data.unitPrice,
+                                            lineTotal: data.totalCost,
+                                            imageProduct: data.imageProduct,
                                             finance: state.role == "finance"
                                                 ? true
                                                 : null,
@@ -520,8 +516,8 @@ class SummaryView extends StatelessWidget {
                                                 context.read<SummaryBloc>().add(
                                                   SummaryPayRequested(
                                                     data.id ?? '',
-                                                    data!.productId,
-                                                    data!.quantity,
+                                                    data.productId,
+                                                    data.quantity,
                                                   ),
                                                 ),
                                           ),
@@ -546,18 +542,18 @@ class SummaryView extends StatelessWidget {
                                                 );
                                               },
                                               child: CardSales(
-                                                idBarang: data!.productCode,
-                                                namaBarang: data!.productName,
+                                                idBarang: data.productCode,
+                                                namaBarang: data.productName,
                                                 financeApproved:
-                                                    data!.financeApproved,
-                                                createdOn: data!.purchasedDate,
-                                                nameUser: data!.firstName,
-                                                quantity: data!.quantity,
-                                                unitPrice: data!.unitPrice,
-                                                lineTotal: data!.totalPrice,
-                                                nameCustomer: data!.companyName,
+                                                    data.financeApproved,
+                                                createdOn: data.purchasedDate,
+                                                nameUser: data.firstName,
+                                                quantity: data.quantity,
+                                                unitPrice: data.unitPrice,
+                                                lineTotal: data.totalPrice,
+                                                nameCustomer: data.companyName,
                                                 imageProduct:
-                                                    data!.imageProduct,
+                                                    data.imageProduct,
                                               ),
                                             ),
                                           )
@@ -637,7 +633,7 @@ extension WidgetPaddingX on Widget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
             child: Text(
-              "The data you\'re looking for isn\'t available yet.",
+              "The data you're looking for isn't available yet.",
               style: GoogleFonts.inter(
                 fontSize: 14.sp,
                 fontWeight: AppFontWeight.medium,

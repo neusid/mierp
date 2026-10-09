@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
@@ -33,7 +32,7 @@ class CardStock extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10.w,
             offset: Offset(0, 4.h),
           ),

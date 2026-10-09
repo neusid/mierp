@@ -90,12 +90,12 @@ class _InputSelectProductOrderWidgetState
                     border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
+                        color: Colors.black.withValues(alpha: 0.10),
                         blurRadius: 8.w,
                         offset: Offset(0, 4.w),
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 2.w,
                         offset: Offset(0, 1.w),
                       ),
@@ -162,7 +162,7 @@ class _InputSelectProductOrderWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width ?? 322.w,
       height: !hasError ? 75.w : 90.w,
       child: Column(

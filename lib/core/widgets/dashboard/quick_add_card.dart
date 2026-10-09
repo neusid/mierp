@@ -7,10 +7,10 @@ class QuickAddCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const QuickAddCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

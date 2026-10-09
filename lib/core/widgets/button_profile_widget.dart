@@ -32,7 +32,16 @@ class ButtonProfileWidget extends StatelessWidget {
         ],
       ),
       child: ElevatedButton(
-        onPressed: onPress != null ? onPress : null,
+        onPressed: onPress,
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 23.1.w, vertical: 18.95.h),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.w),
+          ),
+          elevation: 0,
+          foregroundColor: Colors.black,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -69,15 +78,6 @@ class ButtonProfileWidget extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 23.1.w, vertical: 18.95.h),
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.w),
-          ),
-          elevation: 0,
-          foregroundColor: Colors.black,
         ),
       ),
     );
@@ -207,6 +207,15 @@ class ButtonProfileConfirmWidget extends StatelessWidget {
             ),
           ),
         ),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 23.1.w, vertical: 18.95.h),
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.w),
+          ),
+          elevation: 0,
+          foregroundColor: Colors.black,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -243,15 +252,6 @@ class ButtonProfileConfirmWidget extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 23.1.w, vertical: 18.95.h),
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.w),
-          ),
-          elevation: 0,
-          foregroundColor: Colors.black,
         ),
       ),
     );

@@ -34,7 +34,6 @@ import 'package:mierp_apps/features/detail/presentation/detail_product/bloc/deta
 import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/detail_sales_order_bloc.dart';
 import 'package:mierp_apps/data/warehouse/detail/detail_sales_order_repository.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product_order/bloc/detail_product_order_bloc.dart';
-import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/detail_sales_order_bloc.dart';
 import 'package:mierp_apps/features/add/presentation/add_unit/bloc/add_unit_bloc.dart';
 
 import 'package:mierp_apps/data/warehouse/services/add_unit_services.dart';

@@ -55,10 +55,6 @@ class LoginRepositoryImpl implements LoginRepository {
     try {
       await googleSignIn.initialize();
       final googleUser = await googleSignIn.authenticate(scopeHint: ['email']);
-      
-      if (googleUser == null) {
-          return const Left(ValidationFailure('Login Google dibatalkan.'));
-      }
 
       final email = googleUser.email;
 
@@ -74,7 +70,7 @@ class LoginRepositoryImpl implements LoginRepository {
         return const Left(ValidationFailure('Akun ini tidak mengizinkan login Google.'));
       }
 
-      final googleAutorization = await googleUser.authentication;
+      final googleAutorization = googleUser.authentication;
       final idToken = googleAutorization.idToken;
 
       if(idToken == null) {

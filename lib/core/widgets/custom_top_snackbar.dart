@@ -31,7 +31,7 @@ class CustomTopSnackbar {
                   borderRadius: BorderRadius.circular(16.w),
                   boxShadow: [
                     BoxShadow(
-                      color: (isError ? const Color(0xFFE11D48) : const Color(0xFF10B981)).withOpacity(0.3),
+                      color: (isError ? const Color(0xFFE11D48) : const Color(0xFF10B981)).withValues(alpha: 0.3),
                       blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
@@ -42,7 +42,7 @@ class CustomTopSnackbar {
                     Container(
                       padding: EdgeInsets.all(6.w),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

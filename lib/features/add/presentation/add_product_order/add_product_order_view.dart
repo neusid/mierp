@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -149,7 +148,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
                           border: Border.all(color: Colors.white, width: 1.5.w),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: Colors.black.withValues(alpha: 0.04),
                               blurRadius: 10.w,
                               offset: Offset(0, 4.h),
                             ),
@@ -255,7 +254,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10.w,
                     offset: Offset(0, -4.h),
                   ),
@@ -286,7 +285,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
                           borderRadius: BorderRadius.circular(10.w),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF0F172A).withOpacity(0.2),
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.2),
                               blurRadius: 8.w,
                               offset: Offset(0, 4.w),
                             ),

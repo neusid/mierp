@@ -14,7 +14,7 @@ class TransactionServices {
   Future<void> payProductOrderServices(docId, prodId, totalQty) async {
     try {
       await itemRepository.getDetailDataStock(prodId);
-      final stock = await itemStore.products.value!.quantity;
+      final stock = itemStore.products.value!.quantity;
 
       if (totalQty >= stock) {
         throw Exception("Out of stock");
@@ -30,7 +30,7 @@ class TransactionServices {
   Future<void> paySalesOrderServices(docId, prodId, totalQty) async {
     try {
       await itemRepository.getDetailDataStock(prodId);
-      final stock = await itemStore.products.value!.quantity;
+      final stock = itemStore.products.value!.quantity;
 
       if (totalQty >= stock) {
         throw Exception("Out of stock");

@@ -39,7 +39,7 @@ class _InputShortWidgetState extends State<InputShortWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width ?? 146.w,
       height: !hasError ? 75.w : 90.w,
       child: Column(

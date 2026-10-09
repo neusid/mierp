@@ -13,7 +13,6 @@ import 'package:mierp_apps/core/widgets/date_picker_widget.dart';
 import 'package:mierp_apps/core/widgets/detail/input_select_update_widget.dart';
 import 'package:mierp_apps/core/widgets/input_short_widget.dart';
 import 'package:mierp_apps/core/widgets/input_widget.dart';
-import 'package:mierp_apps/core/models/product.dart';
 
 class DetailProductView extends StatefulWidget {
   final String id;
@@ -68,7 +67,7 @@ class _DetailProductViewState extends State<DetailProductView> {
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8.w,
             offset: Offset(0, 2.w),
           ),
@@ -199,7 +198,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                                           end: Alignment.bottomCenter,
                                           colors: [
                                             Colors.transparent,
-                                            Colors.black.withOpacity(0.3),
+                                            Colors.black.withValues(alpha: 0.3),
                                           ],
                                         ),
                                       ),
@@ -354,7 +353,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                         border: Border(top: BorderSide(color: const Color(0xFFE2E8F0), width: 1.w)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 10.w,
                             offset: const Offset(0, -4),
                           ),
@@ -413,7 +412,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                                   borderRadius: BorderRadius.circular(10.w),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF0F172A).withOpacity(0.2),
+                                      color: const Color(0xFF0F172A).withValues(alpha: 0.2),
                                       blurRadius: 8.w,
                                       offset: Offset(0, 4.w),
                                     ),
@@ -440,7 +439,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                   // LOADING OVERLAY
                   if (state.isLoading)
                     Container(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       child: Center(
                         child: LoadingAnimationWidget.stretchedDots(
                           color: Colors.white,

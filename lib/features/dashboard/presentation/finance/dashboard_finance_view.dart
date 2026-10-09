@@ -5,16 +5,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
-import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
-import 'package:mierp_apps/core/widgets/card_dashboard.dart';
 import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
 
 import 'package:mierp_apps/core/widgets/card_order.dart';
@@ -190,7 +186,7 @@ class DashboardFinanceView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12.3.h),
-                    Container(
+                    SizedBox(
                       width: 343.w,
                       height: 20.w,
                       child: Row(
@@ -271,7 +267,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 2.w,
                                       height: 12.w,
                                     ),
-                                    Container(
+                                    SizedBox(
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
@@ -349,7 +345,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 2.w,
                                       height: 12.w,
                                     ),
-                                    Container(
+                                    SizedBox(
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
@@ -427,7 +423,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 2.w,
                                       height: 12.w,
                                     ),
-                                    Container(
+                                    SizedBox(
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
@@ -523,7 +519,7 @@ class DashboardFinanceView extends StatelessWidget {
                             if (selectedIndex == 2) alignmentX = 0.333;
                             if (selectedIndex == 3) alignmentX = 1.0;
 
-                            return Container(
+                            return SizedBox(
                               width: 310.w,
                               height: 33.h,
                               child: Stack(
@@ -641,7 +637,7 @@ class DashboardFinanceView extends StatelessWidget {
                               ...state.listAllSummary.take(2).map((
                                 e,
                               ) {
-                                switch (e!.summaryType) {
+                                switch (e.summaryType) {
                                   case SummaryType.product:
                                     return GestureDetector(
                                       onTap: () {
@@ -650,15 +646,15 @@ class DashboardFinanceView extends StatelessWidget {
                                         );
                                       },
                                       child: CardStock(
-                                        idBarang: e!.data.productCode,
-                                        namaBarang: e!.data.productName,
-                                        quantity: e!.data.quantity,
-                                        unitPrice: e!.data.unitPrice,
+                                        idBarang: e.data.productCode,
+                                        namaBarang: e.data.productName,
+                                        quantity: e.data.quantity,
+                                        unitPrice: e.data.unitPrice,
                                         lineTotal:
-                                            e!.data.unitPrice *
-                                            e!.data.quantity,
-                                        type: e!.data.category,
-                                        image: e!.data.imageProduct,
+                                            e.data.unitPrice *
+                                            e.data.quantity,
+                                        type: e.data.category,
+                                        image: e.data.imageProduct,
                                       ),
                                     );
                                   case SummaryType.order:
@@ -691,21 +687,21 @@ class DashboardFinanceView extends StatelessWidget {
                                         );
                                       },
                                       child: CardSales(
-                                        idBarang: e!.data.productCode,
-                                        namaBarang: e!.data.productName,
+                                        idBarang: e.data.productCode,
+                                        namaBarang: e.data.productName,
                                         financeApproved:
-                                            e!.data.financeApproved,
-                                        createdOn: e!.data.purchasedDate,
-                                        nameUser: e!.data.firstName,
-                                        quantity: e!.data.quantity,
-                                        unitPrice: e!.data.unitPrice,
-                                        lineTotal: e!.data.totalPrice,
-                                        nameCustomer: e!.data.companyName,
-                                        imageProduct: e!.data.imageProduct,
+                                            e.data.financeApproved,
+                                        createdOn: e.data.purchasedDate,
+                                        nameUser: e.data.firstName,
+                                        quantity: e.data.quantity,
+                                        unitPrice: e.data.unitPrice,
+                                        lineTotal: e.data.totalPrice,
+                                        nameCustomer: e.data.companyName,
+                                        imageProduct: e.data.imageProduct,
                                       ),
                                     );
                                 }
-                              }).toList(),
+                              }),
                               SizedBox(height: 5.w),
                             ],
                           ),
@@ -726,19 +722,19 @@ class DashboardFinanceView extends StatelessWidget {
                                           );
                                         },
                                         child: CardStock(
-                                          idBarang: product!.productCode,
-                                          namaBarang: product!.productName,
-                                          quantity: product!.quantity,
-                                          unitPrice: product!.unitPrice,
+                                          idBarang: product.productCode,
+                                          namaBarang: product.productName,
+                                          quantity: product.quantity,
+                                          unitPrice: product.unitPrice,
                                           lineTotal:
-                                              product!.unitPrice *
-                                              product!.quantity,
-                                          type: product!.category,
-                                          image: product!.imageProduct,
+                                              product.unitPrice *
+                                              product.quantity,
+                                          type: product.category,
+                                          image: product.imageProduct,
                                         ),
                                       ),
                                     )
-                                    .toList(),
+                                    ,
                                 SizedBox(height: 5.w),
                               ],
                             ),
@@ -760,26 +756,26 @@ class DashboardFinanceView extends StatelessWidget {
                                     );
                                   },
                                   child: CardOrder(
-                                    idOrder: data!.id,
-                                    idBarang: data!.productCode,
-                                    namaBarang: data!.productName,
-                                    financeApproved: data!.financeApproved,
-                                    createdOn: data!.orderDate,
-                                    nameUser: data!.firstName,
-                                    quantity: data!.quantity,
-                                    unitPrice: data!.unitPrice,
-                                    lineTotal: data!.totalCost,
+                                    idOrder: data.id,
+                                    idBarang: data.productCode,
+                                    namaBarang: data.productName,
+                                    financeApproved: data.financeApproved,
+                                    createdOn: data.orderDate,
+                                    nameUser: data.firstName,
+                                    quantity: data.quantity,
+                                    unitPrice: data.unitPrice,
+                                    lineTotal: data.totalCost,
                                     finance: true,
-                                    imageProduct: data!.imageProduct,
+                                    imageProduct: data.imageProduct,
                                     onPayPressed: () =>
                                         context.read<DashboardFinanceBloc>().add(DashboardFinancePayProductRequested(
-                                          data!.id ?? "",
-                                          data!.productId ?? "",
-                                          data!.quantity ?? 0,
+                                          data.id ?? "",
+                                          data.productId ?? "",
+                                          data.quantity ?? 0,
                                         )),
                                   ),
                                 );
-                              }).toList(),
+                              }),
                               SizedBox(height: 5.w),
                             ],
                           );
@@ -797,28 +793,28 @@ class DashboardFinanceView extends StatelessWidget {
                                       GestureDetector(
                                         onTap: () async {
                                           context.push(
-                                            "/detail_sales_order/${data!.id}",
+                                            "/detail_sales_order/${data.id}",
                                           );
                                         },
                                         child: CardSales(
-                                          idBarang: data!.productCode,
-                                          namaBarang: data!.productName,
+                                          idBarang: data.productCode,
+                                          namaBarang: data.productName,
                                           financeApproved:
-                                              data!.financeApproved,
-                                          createdOn: data!.purchasedDate,
-                                          nameUser: data!.firstName,
-                                          quantity: data!.quantity,
-                                          unitPrice: data!.unitPrice,
-                                          lineTotal: data!.totalPrice,
-                                          nameCustomer: data!.companyName,
-                                          imageProduct: data!.imageProduct,
+                                              data.financeApproved,
+                                          createdOn: data.purchasedDate,
+                                          nameUser: data.firstName,
+                                          quantity: data.quantity,
+                                          unitPrice: data.unitPrice,
+                                          lineTotal: data.totalPrice,
+                                          nameCustomer: data.companyName,
+                                          imageProduct: data.imageProduct,
                                         ),
                                       ),
                                       SizedBox(height: 10.w),
                                     ],
                                   ),
                                 )
-                                .toList(),
+                                ,
                             SizedBox(height: 5.w),
                           ],
                         );

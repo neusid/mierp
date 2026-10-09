@@ -8,7 +8,7 @@ class Credential {
   });
 
   factory Credential.fromJson(Map<String, dynamic> json) => Credential(
-    email: json["email"]??null,
+    email: json["email"],
     isSave: json["isSave"],
   );
 

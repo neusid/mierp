@@ -75,7 +75,7 @@ class ProfileView extends StatelessWidget {
                           child: Container(
                             padding: EdgeInsets.all(8.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12.w),
                             ),
                             child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24.w),
@@ -113,7 +113,7 @@ class ProfileView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(24.w),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 24.w,
                                   offset: Offset(0, 8.w),
                                 ),
@@ -183,7 +183,7 @@ class ProfileView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(24.w),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 24.w,
                                   offset: Offset(0, 8.w),
                                 ),
@@ -256,7 +256,7 @@ class ProfileView extends StatelessWidget {
   }) {
     final textColor = isDestructive ? Colors.red : AppColors.grayTitle;
     final iconColor = isDestructive ? Colors.red : AppColors.vividPurple;
-    final iconBgColor = isDestructive ? Colors.red.withOpacity(0.1) : AppColors.purpleTransparent;
+    final iconBgColor = isDestructive ? Colors.red.withValues(alpha: 0.1) : AppColors.purpleTransparent;
 
     return Material(
       color: Colors.transparent,
@@ -347,7 +347,7 @@ class ProfileView extends StatelessWidget {
               context.read<ProfileBloc>().add(ProfileDeleteAccountRequested());
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.withOpacity(0.1),
+              backgroundColor: Colors.red.withValues(alpha: 0.1),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.w),

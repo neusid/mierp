@@ -46,7 +46,7 @@ class _LoadingViewState extends State<LoadingView> {
                   "assets/lottie/businessman_flies_up_with_rocket.json",
                   width: 292.w,
                 ),
-                Container(
+                SizedBox(
                   width: 200.w,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,

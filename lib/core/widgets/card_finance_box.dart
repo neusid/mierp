@@ -7,7 +7,7 @@ import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
 class CardFinanceBox extends StatelessWidget {
-  CardFinanceBox({
+  const CardFinanceBox({
     super.key,
     required this.categoryItems,
     required this.settled,
@@ -54,7 +54,7 @@ class CardFinanceBox extends StatelessWidget {
             width: 18.w,
             height: 18.w,
           ),
-          Container(
+          SizedBox(
             height: 112.h,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -77,7 +77,7 @@ class CardFinanceBox extends StatelessWidget {
                     Row(
                       spacing: 19.w,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 118.w,
                           child: Row(
                             spacing: 12.w,
@@ -114,7 +114,7 @@ class CardFinanceBox extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 118.w,
                           child: Row(
                             spacing: 12.w,
@@ -156,7 +156,7 @@ class CardFinanceBox extends StatelessWidget {
                     Row(
                       spacing: 19.w,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 118.w,
                           child: Row(
                             spacing: 12.w,
@@ -193,7 +193,7 @@ class CardFinanceBox extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 130.w,
                           child: Row(
                             spacing: 12.w,

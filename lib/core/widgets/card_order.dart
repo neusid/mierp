@@ -63,7 +63,7 @@ class CardOrder extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10.w,
             offset: Offset(0, 4.h),
           ),
@@ -203,7 +203,7 @@ class CardOrder extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(9.w),
                                 ),
                                 child: Text(
-                                  "Diskon ${finalDiscountPercent}%, maks. ${(finalDiscountMax / 1000).toInt()}rb",
+                                  "Diskon $finalDiscountPercent%, maks. ${(finalDiscountMax / 1000).toInt()}rb",
                                   style: GoogleFonts.inter(
                                     fontSize: 10.sp,
                                     fontWeight: AppFontWeight.bold,

@@ -64,7 +64,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         try {
           Map<String, dynamic> dataUserJson = jsonDecode(dataUserRaw);
           final dataUser = UserModel.fromJson(dataUserJson);
-          if (dataUser?.role == "warehouse") {
+          if (dataUser.role == "warehouse") {
             emit(SplashNavigateToWarehouse());
             return;
           }

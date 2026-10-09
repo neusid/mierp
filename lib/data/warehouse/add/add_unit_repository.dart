@@ -35,7 +35,7 @@ class AddUnitRepository {
     );
 
     String basicAuth =
-        'Basic ' + base64Encode(utf8.encode('$apiKey:$apiSecret'));
+        'Basic ${base64Encode(utf8.encode('$apiKey:$apiSecret'))}';
 
     try {
       var request = http.MultipartRequest("POST", uri);

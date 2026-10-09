@@ -39,7 +39,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width ?? (widget.isShort ? 145.w : 335.w),
       height: !hasError ? 75.w : 90.w,
       child: Column(

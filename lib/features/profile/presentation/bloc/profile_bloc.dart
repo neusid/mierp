@@ -92,18 +92,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     try {
       UserModel? userModel = await userDataController.getDataUser();
-      if (userModel != null) {
-        emit(state.copyWith(
-          status: ProfileStatus.success,
-          role: userModel.role ?? "warehouse",
-          name: "${userModel.firstName} ${userModel.lastName}",
-          email: userModel.email ?? "",
-          isVerif: userModel.allowGoogleLogin,
-          uid: userModel.uid ?? "",
-        ));
-      } else {
-        emit(state.copyWith(status: ProfileStatus.failure, errorMessage: "User data not found"));
-      }
+      emit(state.copyWith(
+        status: ProfileStatus.success,
+        role: userModel.role ?? "warehouse",
+        name: "${userModel.firstName} ${userModel.lastName}",
+        email: userModel.email ?? "",
+        isVerif: userModel.allowGoogleLogin,
+        uid: userModel.uid ?? "",
+      ));
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.failure, errorMessage: e.toString()));
     }
@@ -133,17 +129,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       
       // Update UserDataController so local cache knows it's unlinked
       UserModel? user = await userDataController.getDataUser();
-      if (user != null) {
-        UserModel updatedUser = UserModel(
-          uid: user.uid,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-          allowGoogleLogin: false,
-        );
-        await userDataController.setDataUser(updatedUser);
-      }
+      UserModel updatedUser = UserModel(
+        uid: user.uid,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        allowGoogleLogin: false,
+      );
+      await userDataController.setDataUser(updatedUser);
 
       emit(state.copyWith(
         status: ProfileStatus.success,

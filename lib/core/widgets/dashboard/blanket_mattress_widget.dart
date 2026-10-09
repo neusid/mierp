@@ -17,7 +17,7 @@ class BlanketMattressWidget extends StatelessWidget {
   final String buttonText;
 
   const BlanketMattressWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     required this.count,
@@ -29,11 +29,11 @@ class BlanketMattressWidget extends StatelessWidget {
     required this.headerIcon,
     required this.items,
     required this.buttonText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 1.sw,
       child: Stack(
         clipBehavior: Clip.none,
@@ -161,7 +161,7 @@ class BlanketMattressWidget extends StatelessWidget {
                       ],
                     ),
                   );
-                }).toList(),
+                }),
 
                 // View All Button
                 Container(

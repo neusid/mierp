@@ -12,7 +12,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/card_dashboard.dart';
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
@@ -474,7 +473,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                 if (selectedIndex == 2) alignmentX = 0.333;
                                 if (selectedIndex == 3) alignmentX = 1.0;
 
-                                return Container(
+                                return SizedBox(
                                   width: 310.w,
                                   height: 33.h,
                                   child: Stack(
@@ -576,7 +575,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                         ...state.listAllSummary.take(2).map((
                                           e,
                                         ) {
-                                          switch (e!.summaryType) {
+                                          switch (e.summaryType) {
                                             case SummaryType.product:
                                               return GestureDetector(
                                                 onTap: () {
@@ -585,17 +584,17 @@ class DashboardWarehouseView extends StatelessWidget {
                                                   );
                                                 },
                                                 child: CardStock(
-                                                  idBarang: e!.data.productCode,
+                                                  idBarang: e.data.productCode,
                                                   namaBarang:
-                                                      e!.data.productName,
-                                                  quantity: e!.data.quantity,
-                                                  unitPrice: e!.data.unitPrice,
+                                                      e.data.productName,
+                                                  quantity: e.data.quantity,
+                                                  unitPrice: e.data.unitPrice,
                                                   lineTotal:
-                                                      e!.data.unitPrice *
-                                                      e!.data.quantity,
-                                                  type: e!.data.category,
-                                                  image: e!.data.imageProduct,
-                                                    createdOn: e!.data.createdOn,
+                                                      e.data.unitPrice *
+                                                      e.data.quantity,
+                                                  type: e.data.category,
+                                                  image: e.data.imageProduct,
+                                                    createdOn: e.data.createdOn,
                                                 ),
                                               );
                                             case SummaryType.order:
@@ -632,25 +631,25 @@ class DashboardWarehouseView extends StatelessWidget {
                                                   );
                                                 },
                                                 child: CardSales(
-                                                  idBarang: e!.data.productCode,
+                                                  idBarang: e.data.productCode,
                                                   namaBarang:
-                                                      e!.data.productName,
+                                                      e.data.productName,
                                                   financeApproved:
-                                                      e!.data.financeApproved,
+                                                      e.data.financeApproved,
                                                   createdOn:
-                                                      e!.data.purchasedDate,
-                                                  nameUser: e!.data.firstName,
-                                                  quantity: e!.data.quantity,
-                                                  unitPrice: e!.data.unitPrice,
-                                                  lineTotal: e!.data.totalPrice,
+                                                      e.data.purchasedDate,
+                                                  nameUser: e.data.firstName,
+                                                  quantity: e.data.quantity,
+                                                  unitPrice: e.data.unitPrice,
+                                                  lineTotal: e.data.totalPrice,
                                                   nameCustomer:
-                                                      e!.data.companyName,
+                                                      e.data.companyName,
                                                   imageProduct:
-                                                      e!.data.imageProduct,
+                                                      e.data.imageProduct,
                                                 ),
                                               );
                                           }
-                                        }).toList(),
+                                        }),
                                         SizedBox(height: 5.w),
                                       ],
                                     ),
@@ -675,21 +674,21 @@ class DashboardWarehouseView extends StatelessWidget {
                                                 },
                                                 child: CardStock(
                                                   idBarang:
-                                                      product!.productCode,
+                                                      product.productCode,
                                                   namaBarang:
-                                                      product!.productName,
-                                                  quantity: product!.quantity,
-                                                  unitPrice: product!.unitPrice,
+                                                      product.productName,
+                                                  quantity: product.quantity,
+                                                  unitPrice: product.unitPrice,
                                                   lineTotal:
-                                                      product!.unitPrice *
-                                                      product!.quantity,
-                                                  type: product!.category,
-                                                  image: product!.imageProduct,
-                                                    createdOn: product!.createdOn,
+                                                      product.unitPrice *
+                                                      product.quantity,
+                                                  type: product.category,
+                                                  image: product.imageProduct,
+                                                    createdOn: product.createdOn,
                                                 ),
                                               ),
                                             )
-                                            .toList(),
+                                            ,
                                         SizedBox(height: 5.w),
                                       ],
                                     ),
@@ -711,21 +710,21 @@ class DashboardWarehouseView extends StatelessWidget {
                                             );
                                           },
                                           child: CardOrder(
-                                            idOrder: data!.id,
-                                            idBarang: data!.productCode,
-                                            namaBarang: data!.productName,
+                                            idOrder: data.id,
+                                            idBarang: data.productCode,
+                                            namaBarang: data.productName,
                                             financeApproved:
-                                                data!.financeApproved,
-                                            createdOn: data!.orderDate,
-                                            nameUser: data!.firstName,
-                                            quantity: data!.quantity,
-                                            unitPrice: data!.unitPrice,
-                                            lineTotal: data!.totalCost,
-                                            imageProduct: data!.imageProduct,
+                                                data.financeApproved,
+                                            createdOn: data.orderDate,
+                                            nameUser: data.firstName,
+                                            quantity: data.quantity,
+                                            unitPrice: data.unitPrice,
+                                            lineTotal: data.totalCost,
+                                            imageProduct: data.imageProduct,
                                             onPayPressed: () {},
                                           ),
                                         );
-                                      }).toList(),
+                                      }),
                                       SizedBox(height: 5.w),
                                     ],
                                   );
@@ -746,21 +745,21 @@ class DashboardWarehouseView extends StatelessWidget {
                                               );
                                             },
                                             child: CardSales(
-                                              idBarang: e!.productCode,
-                                              namaBarang: e!.productName,
+                                              idBarang: e.productCode,
+                                              namaBarang: e.productName,
                                               financeApproved:
-                                                  e!.financeApproved,
-                                              createdOn: e!.purchasedDate,
-                                              nameUser: e!.firstName,
-                                              quantity: e!.quantity,
-                                              unitPrice: e!.unitPrice,
-                                              lineTotal: e!.totalPrice,
-                                              nameCustomer: e!.companyName,
-                                              imageProduct: e!.imageProduct,
+                                                  e.financeApproved,
+                                              createdOn: e.purchasedDate,
+                                              nameUser: e.firstName,
+                                              quantity: e.quantity,
+                                              unitPrice: e.unitPrice,
+                                              lineTotal: e.totalPrice,
+                                              nameCustomer: e.companyName,
+                                              imageProduct: e.imageProduct,
                                             ),
                                           ),
                                         )
-                                        .toList(),
+                                        ,
                                     SizedBox(height: 5.w),
                                   ],
                                 );

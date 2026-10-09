@@ -15,7 +15,7 @@ void main() async {
 }
 
 class MierpApps extends StatelessWidget {
-  MierpApps({super.key});
+  const MierpApps({super.key});
 
   @override
   Widget build(BuildContext context) {

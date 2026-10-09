@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/detail_sales_order_bloc.dart';
@@ -9,7 +8,6 @@ import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/
 import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/detail_sales_order_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
@@ -60,7 +58,7 @@ class DetailSalesOrderView extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8.w,
             offset: const Offset(0, 2),
           ),
@@ -266,7 +264,7 @@ class DetailSalesOrderView extends StatelessWidget {
                                         color: const Color(0xFFF8FAFC),
                                         border: Border.all(color: const Color(0xFFE2E8F0), width: 0.5.w),
                                         image: DecorationImage(
-                                          image: (state.salesOrder!.imageProduct == null || state.salesOrder!.imageProduct.isEmpty)
+                                          image: (state.salesOrder!.imageProduct.isEmpty)
                                               ? const AssetImage("assets/images/dummy_item.jpg")
                                               : NetworkImage(state.salesOrder!.imageProduct) as ImageProvider,
                                           fit: BoxFit.cover,
@@ -334,7 +332,7 @@ class DetailSalesOrderView extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     _buildDataRow("Order ID", state.salesOrder!.id!),
-                                    _buildDataRow("Created On", state.salesOrder!.purchasedDate!),
+                                    _buildDataRow("Created On", state.salesOrder!.purchasedDate),
                                     _buildDataRow("To", state.salesOrder!.companyName),
                                     _buildDataRow("From", "Warehouse"),
                                     SizedBox(height: 8.h),
@@ -367,7 +365,7 @@ class DetailSalesOrderView extends StatelessWidget {
                         border: Border(top: BorderSide(color: const Color(0xFFE2E8F0), width: 1.w)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 10.w,
                             offset: const Offset(0, -4),
                           ),
@@ -435,7 +433,7 @@ class DetailSalesOrderView extends StatelessWidget {
                 // LOADING OVERLAY
                 if (state.status == DetailSalesOrderStatus.loading || state.salesOrder == null)
                   Container(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     child: Center(
                       child: LoadingAnimationWidget.stretchedDots(
                         color: Colors.white,

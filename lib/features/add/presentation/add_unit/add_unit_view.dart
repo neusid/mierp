@@ -158,13 +158,13 @@ class _AddUnitViewState extends State<AddUnitView> {
               child: Stack(
                 children: [
                   SingleChildScrollView(
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(height: 145.h),
-                          Container(
+                          SizedBox(
                             width: 322.w,
                             child: Column(
                               spacing: 16.h,
@@ -252,7 +252,7 @@ class _AddUnitViewState extends State<AddUnitView> {
                                   ],
                                 ),
 
-                                Container(
+                                SizedBox(
                                   width: double.infinity,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,25 +369,25 @@ class _AddUnitViewState extends State<AddUnitView> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Container(
+                            SizedBox(
                               width: 55.w,
                               height: 55.h,
                               child: ElevatedButton(
                                 onPressed: () {
                                   _resetForm();
                                 },
-                                child: SvgPicture.asset(
-                                  "assets/icons/delete.svg",
-                                  width: 32.w,
-                                  height: 32.h,
-                                  fit: BoxFit.contain,
-                                ),
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.w),
                                   ),
                                   backgroundColor: Colors.white,
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/icons/delete.svg",
+                                  width: 32.w,
+                                  height: 32.h,
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
@@ -402,6 +402,13 @@ class _AddUnitViewState extends State<AddUnitView> {
                                 onPressed: () {
                                   _submitData(context);
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.w),
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                ),
                                 child: Text(
                                   "Kirim",
                                   style: GoogleFonts.roboto(
@@ -409,13 +416,6 @@ class _AddUnitViewState extends State<AddUnitView> {
                                     fontSize: 20.sp,
                                     color: Colors.white,
                                   ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.w),
-                                  ),
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
                                 ),
                               ),
                             ),
@@ -426,7 +426,7 @@ class _AddUnitViewState extends State<AddUnitView> {
                   ),
                   Column(
                     children: [
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +14,7 @@ class CardDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 162.w,
       height: 124.h,
       child: Stack(
@@ -37,7 +36,7 @@ class CardDashboard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    SizedBox(
                       width: 113.w,
                       child: Text(
                         nameBox,
@@ -115,7 +114,7 @@ class CardDashboard extends StatelessWidget {
                 border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
               ),
               child: Center(
-                child: Container(
+                child: SizedBox(
                   width: 17.88.w,
                   height: 17.88.h,
                   child: Image.asset("assets/icons/order.png", color: AppColors.electricBlue),

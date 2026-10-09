@@ -154,7 +154,7 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
                           border: Border.all(color: Colors.white, width: 1.5.w),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
+                              color: Colors.black.withValues(alpha: 0.04),
                               blurRadius: 10.w,
                               offset: Offset(0, 4.h),
                             ),
@@ -267,7 +267,7 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 10.w,
                     offset: Offset(0, -4.h),
                   ),
@@ -298,7 +298,7 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
                           borderRadius: BorderRadius.circular(10.w),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF0F172A).withOpacity(0.2),
+                              color: const Color(0xFF0F172A).withValues(alpha: 0.2),
                               blurRadius: 8.w,
                               offset: Offset(0, 4.w),
                             ),

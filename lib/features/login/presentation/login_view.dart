@@ -74,7 +74,7 @@ class _LoginViewState extends State<LoginView> {
                 children: [
                   Stack(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 1.sw,
                         height: 671.h,
                         child: Column(
@@ -94,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                           ],
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: 1.sw,
                         height: 671.h,
                         child: Column(
@@ -169,14 +169,14 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                     SizedBox(height: 20.h),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Row(
                                               children: [
-                                                Container(
+                                                SizedBox(
                                                   width: 15.w,
                                                   height: 15.h,
                                                   child: Checkbox(
@@ -256,7 +256,7 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                     SizedBox(height: 20.h),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         height: 45.h,
                                         child: ElevatedButton(
@@ -290,7 +290,7 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                     SizedBox(height: 32.h),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         height: 20.h,
                                         child: Row(

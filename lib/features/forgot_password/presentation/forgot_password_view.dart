@@ -69,7 +69,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: 1.sw,
                         height: 671.h,
                         child: Column(
@@ -171,7 +171,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                     ),
                                     SizedBox(height: 32.h),
                                     Center(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 322.w,
                                         height: 20.h,
                                         child: Row(

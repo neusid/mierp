@@ -140,9 +140,7 @@ class DashboardWarehouseBloc extends Bloc<DashboardWarehouseEvent, DashboardWare
     String name = "";
     try {
       final userModel = await userDataController.getDataUser();
-      if (userModel != null) {
-        name = "${userModel.firstName} ${userModel.lastName}";
-      }
+      name = "${userModel.firstName} ${userModel.lastName}";
     } catch (_) {}
 
     // Fetch Bulk Data

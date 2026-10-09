@@ -40,7 +40,7 @@ class _InputAuthWidgetState extends State<InputAuthWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 322.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

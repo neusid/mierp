@@ -72,12 +72,12 @@ class LoginRepository {
         throw AuthFailures.userNotRegistrated;
       }
 
-      final googleAutorization = await googleUser.authentication;
+      final googleAutorization = googleUser.authentication;
       final idToken = googleAutorization.idToken;
 
       if(idToken==null) {
         throw AuthFailures.idTokenMissing;
-      };
+      }
 
       final googleCredential = GoogleAuthProvider.credential(
         idToken: idToken
@@ -88,7 +88,7 @@ class LoginRepository {
 
       if(!snapDoc.exists) {
         throw AuthFailures.userNotFoundInFirestore;
-      };
+      }
 
       final docJson = snapDoc.data() as Map<String, dynamic>;
       return UserModel.fromJson(docJson);
@@ -115,7 +115,7 @@ class LoginRepository {
       if(idToken==null){
         print("idtoken-missing");
         return;
-      };
+      }
 
       final googleCredential = GoogleAuthProvider.credential(
         idToken: idToken
@@ -161,12 +161,12 @@ class LoginRepository {
 
   Future<void> deleteAccount() async {
     try {
-      final user = await authFirebase.currentUser;
+      final user = authFirebase.currentUser;
 
       if (user == null) return;
 
       final snapshot = await authStore.collection('users').doc(user.uid).get();
-      final dataUser = await UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
+      final dataUser = UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
       final batch = FirebaseFirestore.instance.batch();
 
       if (dataUser.role == "warehouse") {

@@ -10,10 +10,10 @@ class ComingSoonView extends StatelessWidget {
   final VoidCallback onHomePressed;
 
   const ComingSoonView({
-    Key? key,
+    super.key,
     required this.title,
     required this.onHomePressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class ComingSoonView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(100.w),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF2E1052).withOpacity(0.3),
+                    color: const Color(0xFF2E1052).withValues(alpha: 0.3),
                     blurRadius: 12.w,
                     offset: Offset(0, 6.h),
                   ),

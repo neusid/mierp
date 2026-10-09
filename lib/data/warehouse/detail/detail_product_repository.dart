@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:mierp_apps/core/models/product.dart';
 
 class DetailProductRepository {
@@ -20,11 +19,11 @@ class DetailProductRepository {
     try {
       await firestore.collection("products").doc(product.id!).update(
         ({
-          "category": product.category!,
-          "created_on": product.createdOn!,
+          "category": product.category,
+          "created_on": product.createdOn,
           "image_product": '',
-          "product_code": product.productCode!,
-          "product_name": product.productName!,
+          "product_code": product.productCode,
+          "product_name": product.productName,
           "quantity": product.quantity,
           "unit_price": product.unitPrice
         }),

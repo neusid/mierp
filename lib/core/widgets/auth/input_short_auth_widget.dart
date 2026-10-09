@@ -40,7 +40,7 @@ class _InputShortAuthWidgetState extends State<InputShortAuthWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 146.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -8,7 +8,7 @@ class UserDataController {
     try {
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
-      final userDataRaw = await sharedPreferences.getString("user");
+      final userDataRaw = sharedPreferences.getString("user");
       final userData = jsonDecode(userDataRaw!);
 
       return UserModel.fromJson(userData);

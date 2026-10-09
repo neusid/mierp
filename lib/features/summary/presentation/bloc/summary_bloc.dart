@@ -151,7 +151,7 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
     emit(state.copyWith(isLoading: true));
     try {
       UserModel? userModel = await userDataController.getDataUser();
-      String role = userModel?.role ?? "warehouse";
+      String role = userModel.role ?? "warehouse";
 
       final products = (await financeRepository.getAllDataStock()).whereType<Product>().toList();
       final orders = await financeRepository.getAllDataOrder();
