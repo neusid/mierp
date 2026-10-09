@@ -439,34 +439,32 @@ class DashboardWarehouseView extends StatelessWidget {
                             ),
                           ],
                           borderRadius: BorderRadius.circular(10.w),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 310.w,
-                            height: 33.h,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: tabs.map((e) {
-                                final isActive =
-                                    state.selectedTab == e['collection'];
-                                return GestureDetector(
-                                  onTap: () async {
-                                    context.read<DashboardWarehouseBloc>().add(
-                                      DashboardWarehouseTabChanged(
-                                        e['collection']!,
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 33.h,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w,
-                                    ),
-                                    decoration: isActive
-                                        ? BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              55.w,
-                                            ),
+                        ),                          child: Center(
+                            child: Builder(
+                              builder: (context) {
+                                int selectedIndex = tabs.indexWhere((t) => t["collection"] == state.selectedTab);
+                                if (selectedIndex == -1) selectedIndex = 0;
+                                
+                                double alignmentX = -1.0;
+                                if (selectedIndex == 1) alignmentX = -0.333;
+                                if (selectedIndex == 2) alignmentX = 0.333;
+                                if (selectedIndex == 3) alignmentX = 1.0;
+
+                                return Container(
+                                  width: 310.w,
+                                  height: 33.h,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      AnimatedAlign(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeOutQuart,
+                                        alignment: Alignment(alignmentX, 0),
+                                        child: Container(
+                                          width: 310.w / 4,
+                                          height: 33.h,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(55.w),
                                             gradient: const LinearGradient(
                                               begin: Alignment.topLeft,
                                               end: Alignment.bottomRight,
@@ -475,26 +473,49 @@ class DashboardWarehouseView extends StatelessWidget {
                                                 Color(0xFF6D28D9),
                                               ],
                                             ),
-                                          )
-                                        : BoxDecoration(),
-                                    child: Center(
-                                      child: Text(
-                                        e['title']!,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 11.sp,
-                                          fontWeight: AppFontWeight.medium,
-                                          color: isActive
-                                              ? Colors.white
-                                              : AppColors.charcoal,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Row(
+                                        children: tabs.map((e) {
+                                          final isActive = state.selectedTab == e['collection'];
+                                          return Expanded(
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                context.read<DashboardWarehouseBloc>().add(
+                                                  DashboardWarehouseTabChanged(e['collection']!),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 33.h,
+                                                color: Colors.transparent,
+                                                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                                child: Center(
+                                                  child: FittedBox(
+                                                    fit: BoxFit.scaleDown,
+                                                    child: AnimatedDefaultTextStyle(
+                                                      duration: const Duration(milliseconds: 300),
+                                                      curve: Curves.easeOutQuart,
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 11.sp,
+                                                        fontWeight: isActive ? AppFontWeight.bold : AppFontWeight.medium,
+                                                        color: isActive ? Colors.white : AppColors.charcoal,
+                                                      ),
+                                                      child: Text(e['title']!),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ],
                                   ),
                                 );
-                              }).toList(),
+                              }
                             ),
                           ),
-                        ),
                       ),
                     ),
                     SizedBox(height: 22.h),
