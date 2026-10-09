@@ -23,12 +23,12 @@ class SummaryView extends StatelessWidget {
 
   final convertDollar = ConvertDollar();
 
-    final tabs = [
-      {"title": "All Summary", "collection": "all_summary"},
-      {"title": "Product", "collection": "products"},
-      {"title": "Order", "collection": "orders"},
-      {"title": "Sales Order", "collection": "sales_orders"},
-    ];
+  final tabs = [
+    {"title": "All Summary", "collection": "all_summary"},
+    {"title": "Product", "collection": "products"},
+    {"title": "Order", "collection": "orders"},
+    {"title": "Sales Order", "collection": "sales_orders"},
+  ];
   final options = ['All', 'Paid', 'Unpaid'];
 
   @override
@@ -38,16 +38,20 @@ class SummaryView extends StatelessWidget {
       child: BlocConsumer<SummaryBloc, SummaryState>(
         listener: (context, state) {
           if (state.errorMessage.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
           }
           if (state.successMessage.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.successMessage)));
           }
         },
         builder: (context, state) {
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: AppColors.bgColor,
+            backgroundColor: Colors.white,
             body: Stack(
               children: [
                 Column(
@@ -280,9 +284,11 @@ class SummaryView extends StatelessWidget {
                           SizedBox(height: 22.71.h),
                           Builder(
                             builder: (context) {
-                              int selectedIndex = tabs.indexWhere((t) => t["collection"] == state.selectedTab);
+                              int selectedIndex = tabs.indexWhere(
+                                (t) => t["collection"] == state.selectedTab,
+                              );
                               if (selectedIndex == -1) selectedIndex = 0;
-                              
+
                               double alignmentX = -1.0;
                               if (selectedIndex == 1) alignmentX = -0.333;
                               if (selectedIndex == 2) alignmentX = 0.333;
@@ -295,7 +301,9 @@ class SummaryView extends StatelessWidget {
                                   alignment: Alignment.bottomCenter,
                                   children: [
                                     AnimatedAlign(
-                                      duration: const Duration(milliseconds: 300),
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
                                       curve: Curves.easeOutQuart,
                                       alignment: Alignment(alignmentX, 1.0),
                                       child: Container(
@@ -303,19 +311,27 @@ class SummaryView extends StatelessWidget {
                                         height: 3.h,
                                         decoration: BoxDecoration(
                                           color: AppColors.electricBlue,
-                                          borderRadius: BorderRadius.circular(1.5.h),
+                                          borderRadius: BorderRadius.circular(
+                                            1.5.h,
+                                          ),
                                         ),
                                       ),
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: tabs.map((data) {
-                                        bool isSelected = state.selectedTab == data["collection"];
+                                        bool isSelected =
+                                            state.selectedTab ==
+                                            data["collection"];
                                         return GestureDetector(
                                           onTap: () {
                                             context.read<SummaryBloc>().add(
-                                              SummaryTabChanged(data["collection"]!),
+                                              SummaryTabChanged(
+                                                data["collection"]!,
+                                              ),
                                             );
                                           },
                                           child: Container(
@@ -323,19 +339,30 @@ class SummaryView extends StatelessWidget {
                                             height: 30.h,
                                             color: Colors.transparent,
                                             child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 FittedBox(
                                                   fit: BoxFit.scaleDown,
                                                   child: AnimatedDefaultTextStyle(
-                                                    duration: const Duration(milliseconds: 300),
+                                                    duration: const Duration(
+                                                      milliseconds: 300,
+                                                    ),
                                                     curve: Curves.easeInOut,
                                                     style: GoogleFonts.manrope(
                                                       fontSize: 13.sp,
-                                                      fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
-                                                      color: isSelected ? AppColors.electricBlue : Colors.black,
+                                                      fontWeight: isSelected
+                                                          ? AppFontWeight.bold
+                                                          : AppFontWeight
+                                                                .medium,
+                                                      color: isSelected
+                                                          ? AppColors
+                                                                .electricBlue
+                                                          : Colors.black,
                                                     ),
-                                                    child: Text(data["title"] ?? ""),
+                                                    child: Text(
+                                                      data["title"] ?? "",
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -592,7 +619,6 @@ class SummaryView extends StatelessWidget {
   }
 }
 
-
 extension WidgetPaddingX on Widget {
   Widget paddingOnly({
     double left = 0.0,
@@ -601,11 +627,15 @@ extension WidgetPaddingX on Widget {
     double bottom = 0.0,
   }) {
     return Padding(
-      padding: EdgeInsets.only(left: left, top: top, right: right, bottom: bottom),
+      padding: EdgeInsets.only(
+        left: left,
+        top: top,
+        right: right,
+        bottom: bottom,
+      ),
       child: this,
     );
   }
-
 
   Widget _buildEmptyState() {
     return Center(
@@ -618,10 +648,7 @@ extension WidgetPaddingX on Widget {
           //   width: 220.w,
           //   fit: BoxFit.contain,
           // ),
-          SvgPicture.asset(
-            'assets/images/folder_empty.svg',
-            width: 220.w,
-          ),
+          SvgPicture.asset('assets/images/folder_empty.svg', width: 220.w),
           SizedBox(height: 24.h),
           Text(
             "Oops! No Data Available",
