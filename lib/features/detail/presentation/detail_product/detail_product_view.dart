@@ -153,7 +153,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                                   color: const Color(0xFFF1F5F9),
                                   borderRadius: BorderRadius.circular(12.w),
                                 ),
-                                child: Icon(Icons.arrow_back_rounded, color: const Color(0xFF0F172A), size: 24.w),
+                                child: Icon(Icons.arrow_back_ios_new_rounded, color: const Color(0xFF0F172A), size: 24.w),
                               ),
                             ),
                             SizedBox(width: 16.w),

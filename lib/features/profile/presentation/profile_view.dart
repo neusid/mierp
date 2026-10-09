@@ -78,7 +78,7 @@ class ProfileView extends StatelessWidget {
                               color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12.w),
                             ),
-                            child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 24.w),
+                            child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24.w),
                           ),
                         ),
                         Text(

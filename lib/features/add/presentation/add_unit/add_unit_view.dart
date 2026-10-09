@@ -464,7 +464,7 @@ class _AddUnitViewState extends State<AddUnitView> {
                                               color: const Color(0xFFF1F5F9), // Light gray background
                                               borderRadius: BorderRadius.circular(12.w),
                                             ),
-                                            child: Icon(Icons.arrow_back_rounded, color: AppColors.charcoal, size: 24.w),
+                                            child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.charcoal, size: 24.w),
                                           ),
                                         ),
                                         SizedBox(width: 12.w),
