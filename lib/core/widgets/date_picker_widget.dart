@@ -4,10 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-
+import 'package:mierp_apps/core/widgets/custom_mingda_date_picker.dart';
 
 class DatePickerWidget extends StatefulWidget {
   final dynamic head, controller, placeholder, necessary, formKey, isShort, feature;
+  final double? width;
 
   const DatePickerWidget({
     super.key,
@@ -16,8 +17,9 @@ class DatePickerWidget extends StatefulWidget {
     required this.placeholder,
     required this.necessary,
     required this.formKey,
-    required this.isShort,
-    required this.feature,
+    this.isShort = false,
+    this.feature = '',
+    this.width,
   });
 
   @override
@@ -38,7 +40,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.isShort ? 145.w : 335.w,
+      width: widget.width ?? (widget.isShort ? 145.w : 335.w),
       height: !hasError ? 75.w : 90.w,
       child: Column(
         children: [
@@ -69,18 +71,17 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
           Container(
             height: 45.w,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6.w),
-              boxShadow: [
-                BoxShadow(color: Colors.white, spreadRadius: 2),
-                BoxShadow(
-                  color: AppColors.shadowBox,
-                  spreadRadius: 0.w,
-                  blurRadius: 9.w,
-                )
-              ],
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10.w),
+              border: Border.all(
+                color: Colors.transparent,
+                width: 1.5.w,
+              ),
             ),
             child: TextFormField(
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               controller: widget.controller,
               readOnly: true,
               focusNode: focusNode,
@@ -98,11 +99,12 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                 return null;
               },
               onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
+                DateTime? pickedDate = await showDialog<DateTime>(
                   context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
+                  builder: (context) => CustomMingdaDatePicker(
+                    initialDate: DateTime.now(),
+                    title: "PILIH ${widget.head.toString().toUpperCase()}",
+                  ),
                 );
                 if (pickedDate != null) {
                   final dateFormated =
@@ -128,6 +130,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         fontSize: 13.sp,
                         fontWeight: AppFontWeight.regular,
                       ),
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none,
                       suffixIcon: Padding(
                         padding: EdgeInsets.only(right: 10.w),
                         child: SvgPicture.asset(
@@ -140,8 +145,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         maxWidth: 50.w,
                         maxHeight: 50.w,
                       ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
                     )
                   : InputDecoration(
                       hintText: "${widget.head}",
@@ -150,16 +154,9 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         fontSize: 13.sp,
                         fontWeight: AppFontWeight.regular,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                          borderSide:
-                              BorderSide(color: AppColors.blueLine, width: 1.w)),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                          borderSide: BorderSide.none),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.w),
-                      ),
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none,
                       suffixIcon: Padding(
                         padding: EdgeInsets.only(right: 10.w),
                         child: SvgPicture.asset(
@@ -172,8 +169,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         maxWidth: 50.w,
                         maxHeight: 50.w,
                       ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
                     ),
             ),
           ),
@@ -201,4 +197,3 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     );
   }
 }
-

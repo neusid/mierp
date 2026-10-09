@@ -7,6 +7,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/auth/input_auth_widget.dart';
 import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import '../../../core/theme/app_colors.dart';
 
 class LoginView extends StatefulWidget {
@@ -39,8 +40,12 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.electricBlue,
-      body: BlocConsumer<LoginBloc, LoginState>(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(gradient: AppColors.premiumDarkGradient),
+        child: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginInitial) {
             if (state.saveCredential) {
@@ -50,7 +55,7 @@ class _LoginViewState extends State<LoginView> {
               });
             }
           } else if (state is LoginFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            CustomTopSnackbar.show(context, state.message, isError: true);
           } else if (state is LoginSuccess) {
             if (state.role == "warehouse") {
               context.go("/warehouse_main_page");
@@ -216,7 +221,7 @@ class _LoginViewState extends State<LoginView> {
                                         width: 322.w,
                                         height: 45.h,
                                         decoration: BoxDecoration(
-                                          color: AppColors.electricBlue,
+                                          gradient: AppColors.premiumDarkGradient,
                                           borderRadius: BorderRadius.circular(10.w),
                                         ),
                                         child: ElevatedButton(
@@ -338,6 +343,7 @@ class _LoginViewState extends State<LoginView> {
             ],
           );
         },
+      ),
       ),
     );
   }

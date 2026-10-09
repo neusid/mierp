@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" stroke="#1F2937" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Background subtle blob -->
+  <path d="M 210 120 C 210 180, 160 220, 100 210 C 40 200, 20 140, 40 80 C 60 20, 140 20, 180 60 C 220 100, 210 120, 210 120 Z" fill="#F3F4F6" stroke="none" />
+
+  <!-- Chat Bubble (Left) -->
+  <path d="M 40 60 h 50 a 10 10 0 0 1 10 10 v 30 a 10 10 0 0 1 -10 10 h -10 l -15 15 v -15 h -25 a 10 10 0 0 1 -10 -10 v -30 a 10 10 0 0 1 10 -10 z" fill="#FFFFFF" />
+  <line x1="55" y1="80" x2="85" y2="80" />
+  <line x1="55" y1="95" x2="75" y2="95" />
+
+  <!-- Bell Icon Box (Right) -->
+  <rect x="140" y="50" width="60" height="60" rx="12" fill="#FFFFFF" />
+  <path d="M 170 65 a 10 10 0 0 1 10 10 v 15 l 4 4 v 3 h -28 v -3 l 4 -4 v -15 a 10 10 0 0 1 10 -10 z" />
+  <path d="M 166 97 a 4 4 0 0 0 8 0" />
+
+  <!-- Mobile Phone (Center) -->
+  <rect x="85" y="100" width="70" height="110" rx="12" fill="#FFFFFF" />
+  <!-- Phone Screen Layout -->
+  <line x1="100" y1="120" x2="140" y2="120" />
+  <line x1="100" y1="135" x2="125" y2="135" />
+  <rect x="100" y="150" width="40" height="40" rx="8" />
+
+  <!-- Star/Sparkle -->
+  <path d="M 120 10 l 4 12 l 12 4 l -12 4 l -4 12 l -4 -12 l -12 -4 l 12 -4 z" fill="#1F2937" />
+  <path d="M 30 180 l 3 9 l 9 3 l -9 3 l -3 9 l -3 -9 l -9 -3 l 9 -3 z" fill="#1F2937" />
+</svg>

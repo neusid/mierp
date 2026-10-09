@@ -69,11 +69,16 @@ class _InputAuthWidgetState extends State<InputAuthWidget> {
           SizedBox(height: 8.w),
           Focus(
             onFocusChange: (value) {
-              setState(() {
-                isFocus = value;
-              });
+              if (mounted) {
+                setState(() {
+                  isFocus = value;
+                });
+              }
             },
             child: TextFormField(
+              onTapOutside: (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
               controller: widget.controller,
               obscureText: widget.isPassword ? isNotVisible : false,
               keyboardType: widget.isPassword ? TextInputType.text : TextInputType.emailAddress,

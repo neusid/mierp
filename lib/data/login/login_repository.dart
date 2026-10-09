@@ -135,6 +135,30 @@ class LoginRepository {
     }
   }
 
+  Future<void> unlinkFromGoogle(uid) async {
+    try {
+      final user = authFirebase.currentUser;
+      if (user != null) {
+        // Unlink the google provider
+        await user.unlink('google.com');
+      }
+
+      // Update firestore to false
+      await authStore.collection('users')
+          .doc(uid)
+          .update({
+        'allow_google_login': false
+      });
+      
+      // Sign out from google sign in to force picking account next time
+      await googleSignIn.signOut();
+
+    } catch(e) {
+      print("error-unlink-google");
+      rethrow;
+    }
+  }
+
   Future<void> deleteAccount() async {
     try {
       final user = await authFirebase.currentUser;

@@ -46,5 +46,11 @@ class AppColors {
   static const purpleGradient2_2 = Color(0xFF7A00E6);
   static const blueGradient2 = Color(0xFF079BF1);
 
+  static const premiumDarkSolid = Color(0xFF2E1052);
+  static const premiumDarkGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [premiumDarkSolid, gray],
+  );
 
 }

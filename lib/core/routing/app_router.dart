@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mierp_apps/features/profile/presentation/account_info/account_info_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
@@ -147,6 +148,11 @@ final GoRouter appRouter = GoRouter(
       path: '/detail_sales_order/:id',
       name: 'detail_sales_order',
       builder: (context, state) => DetailSalesOrderView(id: state.pathParameters['id'] ?? ''),
+    ),
+    GoRoute(
+      path: '/account_info',
+      name: 'account_info',
+      builder: (context, state) => const AccountInfoView(),
     ),
     GoRoute(
       path: '/notification',

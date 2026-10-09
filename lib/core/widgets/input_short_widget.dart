@@ -6,10 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 
-
-
 class InputShortWidget extends StatefulWidget {
   final dynamic head, controller, placeholder, necessary, iconAsset, formKey;
+  final double? width;
 
   const InputShortWidget({
     super.key,
@@ -19,6 +18,7 @@ class InputShortWidget extends StatefulWidget {
     required this.necessary,
     this.iconAsset = '',
     required this.formKey,
+    this.width,
   });
 
   @override
@@ -40,7 +40,7 @@ class _InputShortWidgetState extends State<InputShortWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 146.w,
+      width: widget.width ?? 146.w,
       height: !hasError ? 75.w : 90.w,
       child: Column(
         children: [
@@ -70,33 +70,25 @@ class _InputShortWidgetState extends State<InputShortWidget> {
           Container(
             height: 45.w,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6.w),
-              boxShadow: isFocus
-                  ? [
-                      BoxShadow(color: AppColors.blueLineShadow, spreadRadius: 4),
-                      BoxShadow(
-                        color: AppColors.shadowBox,
-                        spreadRadius: 0.w,
-                        blurRadius: 9.w,
-                      )
-                    ]
-                  : [
-                      BoxShadow(color: Colors.white, spreadRadius: 2),
-                      BoxShadow(
-                        color: AppColors.shadowBox,
-                        spreadRadius: 0.w,
-                        blurRadius: 9.w,
-                      )
-                    ],
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10.w),
+              border: Border.all(
+                color: isFocus ? const Color(0xFF0F172A) : Colors.transparent,
+                width: 1.5.w,
+              ),
             ),
             child: Focus(
               onFocusChange: (value) {
-                setState(() {
-                  isFocus = value;
-                });
+                if (mounted) {
+                  setState(() {
+                    isFocus = value;
+                  });
+                }
               },
               child: TextFormField(
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
                 maxLength: 30,
                 buildCounter: (context,
                         {required currentLength,
@@ -151,19 +143,10 @@ class _InputShortWidgetState extends State<InputShortWidget> {
                           maxWidth: 50.w,
                           maxHeight: 50.w,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.blueLine, width: 1.w)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.softWhite, width: 1.w)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
                       )
                     : InputDecoration(
                         hintText: "${widget.head}",
@@ -186,19 +169,10 @@ class _InputShortWidgetState extends State<InputShortWidget> {
                           maxWidth: 50.w,
                           maxHeight: 50.w,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.blueLine, width: 1.w)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.softWhite, width: 1.w)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.5.w),
                       ),
               ),
             ),

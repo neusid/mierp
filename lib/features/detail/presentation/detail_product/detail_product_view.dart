@@ -172,13 +172,67 @@ class _DetailProductViewState extends State<DetailProductView> {
                       // SCROLLABLE CONTENT
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w, bottom: 120.h),
+                          padding: EdgeInsets.only(bottom: 120.h),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              _buildCardWrapper(
-                                title: "Product Identification",
+                              // HERO IMAGE
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: 250.h,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: imageProduct.isEmpty
+                                            ? const AssetImage("assets/images/dummy_item.jpg")
+                                            : NetworkImage(imageProduct) as ImageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned.fill(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black.withOpacity(0.3),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 16.h,
+                                    right: 16.w,
+                                    child: InkWell(
+                                      onTap: () {
+                                        // TODO: Image Picker logic
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.w),
+                                        decoration: const BoxDecoration(
+                                          color: AppColors.vividPurple,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20.w),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 16.h),
+                              
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 child: Column(
+                                  children: [
+                                    _buildCardWrapper(
+                                      title: "Product Identification",
+                                      child: Column(
                                   spacing: 16.h,
                                   children: [
                                     InputWidget(
@@ -222,8 +276,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                                       placeholder: "Select Date",
                                       necessary: true,
                                       formKey: formKey,
-                                      isShort: false,
-                                      feature: "add_unit",
+                                      width: double.infinity,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,23 +333,7 @@ class _DetailProductViewState extends State<DetailProductView> {
                                   ],
                                 ),
                               ),
-
-                              _buildCardWrapper(
-                                title: "Product Image",
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 180.h,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF8FAFC),
-                                    borderRadius: BorderRadius.circular(10.w),
-                                    border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
-                                    image: DecorationImage(
-                                      image: imageProduct.isEmpty
-                                          ? const AssetImage("assets/images/dummy_item.jpg")
-                                          : NetworkImage(imageProduct) as ImageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -372,12 +409,15 @@ class _DetailProductViewState extends State<DetailProductView> {
                               child: Container(
                                 height: 52.h,
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Color(0xFF3B82F6), Color(0xFF6D28D9)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                                  gradient: AppColors.premiumDarkGradient,
                                   borderRadius: BorderRadius.circular(10.w),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF0F172A).withOpacity(0.2),
+                                      blurRadius: 8.w,
+                                      offset: Offset(0, 4.w),
+                                    ),
+                                  ],
                                 ),
                                 child: Center(
                                   child: Text(

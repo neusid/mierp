@@ -68,33 +68,25 @@ class _InputWidgetState extends State<InputWidget> {
             width: 335.w,
             height: 45.w,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6.w),
-              boxShadow: isFocus
-                  ? [
-                      BoxShadow(color: AppColors.blueLineShadow, spreadRadius: 4),
-                      BoxShadow(
-                        color: AppColors.shadowBox,
-                        spreadRadius: 0.w,
-                        blurRadius: 9.w,
-                      )
-                    ]
-                  : [
-                      BoxShadow(color: Colors.white, spreadRadius: 2),
-                      BoxShadow(
-                        color: AppColors.shadowBox,
-                        spreadRadius: 0.w,
-                        blurRadius: 9.w,
-                      )
-                    ],
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10.w),
+              border: Border.all(
+                color: isFocus ? AppColors.vividPurple : Colors.transparent,
+                width: 1.5.w,
+              ),
             ),
             child: Focus(
               onFocusChange: (value) {
-                setState(() {
-                  isFocus = value;
-                });
+                if (mounted) {
+                  setState(() {
+                    isFocus = value;
+                  });
+                }
               },
               child: TextFormField(
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
                 controller: widget.controller,
                 focusNode: focusNode,
                 validator: (value) {
@@ -129,16 +121,9 @@ class _InputWidgetState extends State<InputWidget> {
                           fontSize: 13.sp,
                           fontWeight: AppFontWeight.regular,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.blueLine, width: 1.w)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide: BorderSide.none),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                        ),
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 12.5.w),
                       )
@@ -149,16 +134,9 @@ class _InputWidgetState extends State<InputWidget> {
                           fontSize: 13.sp,
                           fontWeight: AppFontWeight.regular,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide:
-                                BorderSide(color: AppColors.blueLine, width: 1.w)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6.w),
-                            borderSide: BorderSide.none),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6.w),
-                        ),
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(
                             horizontal: 8.w, vertical: 12.5.w),
                       ),

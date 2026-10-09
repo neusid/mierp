@@ -1,108 +1,17 @@
-import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import sys
+import re
 
-import 'package:mierp_apps/core/di/injection_container.dart';
-import 'package:mierp_apps/core/models/order.dart';
-import 'package:mierp_apps/core/models/product.dart';
-import 'package:mierp_apps/core/theme/app_colors.dart';
-import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/add/add_warehouse_order/input_select_product_order_widget.dart';
-import 'package:mierp_apps/core/widgets/date_picker_widget.dart';
-import 'package:mierp_apps/core/widgets/input_short_widget.dart';
-import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
-import 'package:mierp_apps/features/add/presentation/add_product_order/bloc/add_product_order_bloc.dart';
-import 'package:mierp_apps/features/add/presentation/add_product_order/bloc/add_product_order_event.dart';
-import 'package:mierp_apps/features/add/presentation/add_product_order/bloc/add_product_order_state.dart';
-
-class AddProductOrderView extends StatefulWidget {
-  const AddProductOrderView({super.key});
-
-  @override
-  State<AddProductOrderView> createState() => _AddProductOrderViewState();
-}
-
-class _AddProductOrderViewState extends State<AddProductOrderView> {
-  final formKey = GlobalKey<FormState>();
-
-  final orderDateC = TextEditingController();
-  final quantityC = TextEditingController();
-  
-  Product? selectedProduct;
-
-  void _submitData(BuildContext context) {
-    if (formKey.currentState!.validate()) {
-      if (selectedProduct == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please select a product")));
-        return;
-      }
-      
-      int quantity = int.tryParse(quantityC.text) ?? 0;
-      int subtotal = selectedProduct!.unitPrice * quantity;
-      int totalCost = subtotal;
-
-      if ((selectedProduct!.discountPercent ?? 0) > 0) {
-        double discountAmount = subtotal * (selectedProduct!.discountPercent! / 100);
-        if (selectedProduct!.discountMax != null && discountAmount > selectedProduct!.discountMax!) {
-          discountAmount = selectedProduct!.discountMax!.toDouble();
-        }
-        totalCost = subtotal - discountAmount.toInt();
-      }
-      
-      final productOrder = OrderProduct(
-        id: "",
-        financeApproved: false,
-        financeApprovedDate: null,
-        orderDate: orderDateC.text,
-        productId: selectedProduct!.id ?? "",
-        productCode: selectedProduct!.productCode ?? "",
-        productName: selectedProduct!.productName,
-        quantity: int.tryParse(quantityC.text) ?? 0,
-        totalCost: totalCost,
-        unitPrice: selectedProduct!.unitPrice,
-        userId: "", // Set via repository
-        firstName: "", // Set via repository
-        imageProduct: selectedProduct!.imageProduct ?? "",
-        discountPercent: selectedProduct!.discountPercent,
-        discountMax: selectedProduct!.discountMax,
-      );
-
-      context.read<AddProductOrderBloc>().add(AddProductOrderSubmitted(
-        productOrder: productOrder,
-      ));
-    }
-  }
-
-  void _resetForm() {
-    orderDateC.clear();
-    quantityC.clear();
-    setState(() {
-      selectedProduct = null;
-    });
-  }
-
-  @override
-  void dispose() {
-    orderDateC.dispose();
-    quantityC.dispose();
-    super.dispose();
-  }
-
-  @override
+new_build = """  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<AddProductOrderBloc>()..add(AddProductOrderLoadProducts()),
       child: BlocConsumer<AddProductOrderBloc, AddProductOrderState>(
         listener: (context, state) {
           if (state.status == AddProductOrderStatus.success) {
-            CustomTopSnackbar.show(context, "Berhasil menyimpan data!", isError: false);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Berhasil menyimpan data!")));
             context.pop();
-          } else if (state.status == AddProductOrderStatus.failure) {
-            CustomTopSnackbar.show(context, state.errorMessage, isError: true);
+          } else if (state.status == AddProductOrderStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
           }
         },
         builder: (context, state) {
@@ -286,7 +195,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
                           borderRadius: BorderRadius.circular(10.w),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF0F172A).withOpacity(0.2),
+                              color: AppColors.premiumDark.withOpacity(0.2),
                               blurRadius: 8.w,
                               offset: Offset(0, 4.w),
                             ),
@@ -321,4 +230,14 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
       ),
     );
   }
-}
+}"""
+
+with open(r'D:\Project\Flutter\mierp\lib\features\add\presentation\add_product_order\add_product_order_view.dart', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+old_text = re.sub(r'  @override\n  Widget build\(BuildContext context\) \{.*', new_build, text, flags=re.DOTALL)
+
+with open(r'D:\Project\Flutter\mierp\lib\features\add\presentation\add_product_order\add_product_order_view.dart', 'w', encoding='utf-8') as f:
+    f.write(old_text)
+
+print("Updated view")

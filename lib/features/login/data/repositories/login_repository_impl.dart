@@ -65,7 +65,7 @@ class LoginRepositoryImpl implements LoginRepository {
       final query = await authStore.collection("users").where('email', isEqualTo: email).limit(1).get();
 
       if(query.docs.isEmpty){
-         return const Left(ValidationFailure('Akun ini belum terdaftar.'));
+         return const Left(ValidationFailure('Akun tidak ditemukan. Silakan registrasi terlebih dahulu menggunakan email dan password.'));
       }
 
       final checkProvider = query.docs.first.data();

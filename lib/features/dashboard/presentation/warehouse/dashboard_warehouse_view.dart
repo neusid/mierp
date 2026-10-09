@@ -29,6 +29,11 @@ class DashboardWarehouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    final formattedDate = '${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
+
     return BlocProvider(
       create: (context) =>
           sl<DashboardWarehouseBloc>()..add(DashboardWarehouseStarted()),
@@ -46,7 +51,7 @@ class DashboardWarehouseView extends StatelessWidget {
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFF3B82F6), Color(0xFF6D28D9)],
+                          colors: [Color(0xFF2E1052), AppColors.gray],
                         ),
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(60.w),
@@ -107,6 +112,16 @@ class DashboardWarehouseView extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
+                                        "Gudang Pusat",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white70,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
                                         "Good Morning,",
                                         style: GoogleFonts.inter(
                                           fontSize: 13.sp,
@@ -125,6 +140,15 @@ class DashboardWarehouseView extends StatelessWidget {
                                           letterSpacing: -0.5,
                                         ),
                                         overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        formattedDate,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFFE0E7FF),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -465,14 +489,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                           height: 33.h,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(55.w),
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Color(0xFF3B82F6),
-                                                Color(0xFF6D28D9),
-                                              ],
-                                            ),
+                                            gradient: AppColors.premiumDarkGradient,
                                           ),
                                         ),
                                       ),

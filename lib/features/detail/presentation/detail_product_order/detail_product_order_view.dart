@@ -149,23 +149,27 @@ class DetailProductOrderView extends StatelessWidget {
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
+                    child: InkWell(
+                      onTap: () {
                         Navigator.pop(bottomSheetContext);
                         context.read<DetailProductOrderBloc>().add(DetailProductOrderDeleteRequested(orderId));
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444), // Solid Red
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+                      child: Container(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
-                      ),
-                      child: Text(
-                        "Delete",
-                        style: GoogleFonts.inter(
-                          fontSize: 12.sp,
-                          color: Colors.white,
-                          fontWeight: AppFontWeight.bold,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEF2F2),
+                          borderRadius: BorderRadius.circular(8.w),
+                          border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Delete",
+                            style: GoogleFonts.inter(
+                              fontSize: 13.sp,
+                              color: const Color(0xFFEF4444),
+                              fontWeight: AppFontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ),

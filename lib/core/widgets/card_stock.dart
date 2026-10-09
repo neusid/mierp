@@ -29,7 +29,7 @@ class CardStock extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.w),
+        borderRadius: BorderRadius.circular(9.w),
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
@@ -48,8 +48,8 @@ class CardStock extends StatelessWidget {
               width: 110.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15.w),
-                  bottomLeft: Radius.circular(15.w),
+                  topLeft: Radius.circular(9.w),
+                  bottomLeft: Radius.circular(9.w),
                 ),
                 color: const Color(0xFFF8FAFC),
                 image: DecorationImage(
@@ -139,7 +139,7 @@ class CardStock extends StatelessWidget {
                           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF3E8FF), // MiERP Purple Light
-                            borderRadius: BorderRadius.circular(20.w),
+                            borderRadius: BorderRadius.circular(9.w),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -171,7 +171,7 @@ class CardStock extends StatelessWidget {
                           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(16.w),
+                            borderRadius: BorderRadius.circular(9.w),
                             border: Border.all(color: const Color(0xFFE2E8F0)),
                           ),
                           child: Text(

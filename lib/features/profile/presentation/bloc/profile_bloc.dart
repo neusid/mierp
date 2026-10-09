@@ -16,6 +16,8 @@ class ProfileStarted extends ProfileEvent {}
 
 class ProfileLinkGoogleRequested extends ProfileEvent {}
 
+class ProfileUnlinkGoogleRequested extends ProfileEvent {}
+
 class ProfileDeleteAccountRequested extends ProfileEvent {}
 
 class ProfileLogoutRequested extends ProfileEvent {}
@@ -28,6 +30,7 @@ class ProfileState extends Equatable {
   final String role;
   final String name;
   final String uid;
+  final String email;
   final bool isVerif;
   final String errorMessage;
   final String successMessage;
@@ -37,6 +40,7 @@ class ProfileState extends Equatable {
     this.role = "warehouse",
     this.name = "",
     this.uid = "",
+    this.email = "",
     this.isVerif = true,
     this.errorMessage = "",
     this.successMessage = "",
@@ -47,6 +51,7 @@ class ProfileState extends Equatable {
     String? role,
     String? name,
     String? uid,
+    String? email,
     bool? isVerif,
     String? errorMessage,
     String? successMessage,
@@ -56,6 +61,7 @@ class ProfileState extends Equatable {
       role: role ?? this.role,
       name: name ?? this.name,
       uid: uid ?? this.uid,
+      email: email ?? this.email,
       isVerif: isVerif ?? this.isVerif,
       errorMessage: errorMessage ?? this.errorMessage,
       successMessage: successMessage ?? this.successMessage,
@@ -63,7 +69,7 @@ class ProfileState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, role, name, uid, isVerif, errorMessage, successMessage];
+  List<Object> get props => [status, role, name, uid, email, isVerif, errorMessage, successMessage];
 }
 
 // --- BLOC ---
@@ -77,6 +83,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }) : super(const ProfileState()) {
     on<ProfileStarted>(_onStarted);
     on<ProfileLinkGoogleRequested>(_onLinkGoogleRequested);
+    on<ProfileUnlinkGoogleRequested>(_onUnlinkGoogleRequested);
     on<ProfileDeleteAccountRequested>(_onDeleteAccountRequested);
     on<ProfileLogoutRequested>(_onLogoutRequested);
   }
@@ -90,6 +97,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           status: ProfileStatus.success,
           role: userModel.role ?? "warehouse",
           name: "${userModel.firstName} ${userModel.lastName}",
+          email: userModel.email ?? "",
           isVerif: userModel.allowGoogleLogin,
           uid: userModel.uid ?? "",
         ));
@@ -114,6 +122,38 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(state.copyWith(
         status: ProfileStatus.failure,
         errorMessage: "Failed to link account to Google",
+      ));
+    }
+  }
+
+  Future<void> _onUnlinkGoogleRequested(ProfileUnlinkGoogleRequested event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(status: ProfileStatus.loading));
+    try {
+      await loginRepository.unlinkFromGoogle(state.uid);
+      
+      // Update UserDataController so local cache knows it's unlinked
+      UserModel? user = await userDataController.getDataUser();
+      if (user != null) {
+        UserModel updatedUser = UserModel(
+          uid: user.uid,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          allowGoogleLogin: false,
+        );
+        await userDataController.setDataUser(updatedUser);
+      }
+
+      emit(state.copyWith(
+        status: ProfileStatus.success,
+        successMessage: "Unlinked Google Account",
+        isVerif: false,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProfileStatus.failure,
+        errorMessage: "Failed to unlink Google Account",
       ));
     }
   }

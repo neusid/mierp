@@ -139,6 +139,9 @@ class SummaryView extends StatelessWidget {
                                     ],
                                   ),
                                   child: TextFormField(
+                                    onTapOutside: (event) {
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                    },
                                     controller: TextEditingController(
                                       text: state.keyword,
                                     ),
@@ -177,113 +180,73 @@ class SummaryView extends StatelessWidget {
                                   builder: (context) {
                                     return Material(
                                       animateColor: true,
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(
-                                          5.w,
+                                      child: PopupMenuButton<int>(
+                                        enabled: state.selectedTab != "products" && state.selectedTab != "all_summary",
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12.w),
                                         ),
+                                        color: Colors.white,
+                                        elevation: 8,
+                                        offset: Offset(0, 40.h),
+                                        constraints: BoxConstraints(
+                                          minWidth: 150.w,
+                                          maxWidth: 150.w,
+                                        ),
+                                        onSelected: (value) {
+                                          context.read<SummaryBloc>().add(SummaryFilterChanged(value));
+                                        },
+                                        itemBuilder: (context) {
+                                          return List.generate(options.length, (index) {
+                                            bool isSelected = state.tag == index;
+                                            return PopupMenuItem<int>(
+                                              value: index,
+                                              padding: EdgeInsets.zero,
+                                              height: 45.h,
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 14.w),
+                                                decoration: BoxDecoration(
+                                                  gradient: isSelected ? AppColors.premiumDarkGradient : null,
+                                                  color: isSelected ? null : const Color(0xFFF9FAFB),
+                                                  borderRadius: BorderRadius.circular(10.w),
+                                                  border: isSelected ? null : Border.all(color: const Color(0xFFE5E7EB), width: 1.w),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      options[index],
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 14.sp,
+                                                        fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
+                                                        color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                                                      ),
+                                                    ),
+                                                    if (isSelected)
+                                                      Icon(Icons.check, color: Colors.white, size: 18.w),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          });
+                                        },
                                         child: Container(
                                           width: 30.03.w,
                                           height: 30.03.h,
                                           padding: EdgeInsets.all(6.w),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5.w),
+                                          ),
                                           child: SvgPicture.asset(
                                             "assets/icons/filter.svg",
                                             colorFilter: ColorFilter.mode(
-                                              state.selectedTab != "products" &&
-                                                      state.selectedTab !=
-                                                          "all_summary"
+                                              state.selectedTab != "products" && state.selectedTab != "all_summary"
                                                   ? AppColors.grayTitle
                                                   : Colors.grey,
                                               BlendMode.srcIn,
                                             ),
                                           ),
                                         ),
-                                        onTap:
-                                            state.selectedTab != "products" &&
-                                                state.selectedTab !=
-                                                    "all_summary"
-                                            ? () => showBarModalBottomSheet(
-                                                context: context,
-                                                enableDrag: true,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadiusGeometry.circular(
-                                                        10.w,
-                                                      ),
-                                                ),
-                                                builder: (context) {
-                                                  return Container(
-                                                    width: double.infinity,
-                                                    height: 150.h,
-                                                    child: Column(
-                                                      children: [
-                                                        ListTile(
-                                                          title: Center(
-                                                            child: Text(
-                                                              "Filter Card",
-                                                              style: GoogleFonts.inter(
-                                                                fontSize: 14.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: AppColors
-                                                                    .grayThin,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          contentPadding:
-                                                              EdgeInsets.only(
-                                                                left: 0,
-                                                                right: 0,
-                                                              ),
-                                                        ),
-                                                        Builder(
-                                                          builder: (context) {
-                                                            return ChipsChoice<
-                                                              int
-                                                            >.single(
-                                                              value: state.tag,
-                                                              choiceCheckmark:
-                                                                  true,
-                                                              onChanged:
-                                                                  (
-                                                                    value,
-                                                                  ) => context
-                                                                      .read<
-                                                                        SummaryBloc
-                                                                      >()
-                                                                      .add(
-                                                                        SummaryFilterChanged(
-                                                                          value,
-                                                                        ),
-                                                                      ),
-                                                              choiceItems:
-                                                                  C2Choice.listFrom<
-                                                                    int,
-                                                                    String
-                                                                  >(
-                                                                    source:
-                                                                        options,
-                                                                    value:
-                                                                        (
-                                                                          i,
-                                                                          v,
-                                                                        ) => i,
-                                                                    label:
-                                                                        (
-                                                                          i,
-                                                                          v,
-                                                                        ) => v,
-                                                                  ),
-                                                            );
-                                                          },
-                                                        ),
-                                                        SizedBox(height: 10.h),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : null,
                                       ),
                                     );
                                   },
@@ -320,7 +283,7 @@ class SummaryView extends StatelessWidget {
                                         width: 78.w,
                                         height: 3.h,
                                         decoration: BoxDecoration(
-                                          color: AppColors.electricBlue,
+                                          gradient: AppColors.premiumDarkGradient,
                                           borderRadius: BorderRadius.circular(
                                             1.5.h,
                                           ),
@@ -367,7 +330,7 @@ class SummaryView extends StatelessWidget {
                                                                 .medium,
                                                       color: isSelected
                                                           ? AppColors
-                                                                .electricBlue
+                                                                .premiumDarkSolid
                                                           : Colors.black,
                                                     ),
                                                     child: Text(

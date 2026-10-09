@@ -9,6 +9,7 @@ import 'package:mierp_apps/features/dashboard/presentation/finance/dashboard_fin
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
+import 'package:mierp_apps/core/widgets/coming_soon_view.dart';
 import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
 
 class FinanceMainPageView extends StatelessWidget {
@@ -24,179 +25,85 @@ class FinanceMainPageView extends StatelessWidget {
             index: currentIndex,
             children: [
               DashboardFinanceView(),
+              ComingSoonView(title: "Search Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
+              ComingSoonView(title: "Graph Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
+              ComingSoonView(title: "Clock Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
               ProfileView(onBack: () => context.read<MainPageCubit>().goToDashboard()),
             ],
           );
         }
       ),
-      bottomNavigationBar: BottomAppBar(
-        height: 70.w,
-        padding: EdgeInsetsGeometry.only(
-            left: 16.w, right: 16.w, top: 12.w, bottom: 6.w),
-        color: Colors.white,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20.w),
-                onTap: () {
-                  context.read<MainPageCubit>().changeIndex(0);
-                },
-                child: Container(
-                  width: 90.w,
-                  height: 40.w,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 12.w, vertical: 8.w),
-                  decoration: BoxDecoration(
-                      color: AppColors.purpleShadow,
-                      borderRadius: BorderRadius.circular(100.w)
-                  ),
-                  child: Row(
-                    spacing: 6.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/home-2.svg",
-                        width: 20.02.w,
-                        height: 20.h,
-                        colorFilter: ColorFilter.mode(
-                            AppColors.electricBlue, BlendMode.srcIn),
-                      ),
-                      Text(
-                        "Home",
-                        style: GoogleFonts.poppins(
-                            fontSize: 12.sp,
-                            height: 16 / 12,
-                            fontWeight: AppFontWeight.medium,
-                            color: AppColors.electricBlue
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+      bottomNavigationBar: BlocBuilder<MainPageCubit, int>(
+        builder: (context, currentIndex) {
+          return BottomAppBar(
+            height: 70.w,
+            padding: EdgeInsetsGeometry.only(
+                left: 16.w, right: 16.w, top: 12.w, bottom: 6.w),
+            color: Colors.white,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildNavItem(context, "assets/icons/home-2.svg", "Home", 0, currentIndex),
+                _buildNavItem(context, "assets/icons/search-normal.svg", "Search", 1, currentIndex),
+                _buildNavItem(context, "assets/icons/graph.svg", "Graph", 2, currentIndex),
+                _buildNavItem(context, "assets/icons/clock.svg", "Clock", 3, currentIndex),
+                _buildNavItem(context, "assets/icons/user.svg", "User", 4, currentIndex),
+              ],
             ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20.w),
-                onTap: () {
-                  context.read<MainPageCubit>().changeIndex(0);
-                },
-                child: Container(
-                  width: 55.w,
-                  height: 40.w,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 12.w, vertical: 8.w),
-                  child: Row(
-                    spacing: 6.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/search-normal.svg",
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: ColorFilter.mode(
-                            AppColors.grayTitle, BlendMode.srcIn),
-                      ),
-                    ],
-                  ),
-                ),
+          );
+        }
+      ),
+    );
+  }
+
+  Widget _buildNavItem(BuildContext context, String iconPath, String label, int index, int currentIndex) {
+    bool isActive = index == currentIndex;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20.w),
+        onTap: () {
+          context.read<MainPageCubit>().changeIndex(index);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          width: isActive ? 105.w : 50.w,
+          height: 40.w,
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.w),
+          decoration: isActive
+              ? BoxDecoration(
+                  gradient: AppColors.premiumDarkGradient,
+                  borderRadius: BorderRadius.circular(100.w))
+              : null,
+          child: Row(
+            spacing: 6.w,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                width: isActive ? 20.02.w : 24.w,
+                height: isActive ? 20.h : 24.h,
+                colorFilter: ColorFilter.mode(
+                    isActive ? Colors.white : AppColors.grayTitle, BlendMode.srcIn),
               ),
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20.w),
-                onTap: () {
-                  context.read<MainPageCubit>().changeIndex(0);
-                },
-                child: Container(
-                  width: 55.w,
-                  height: 40.w,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 12.w, vertical: 8.w),
-                  child: Row(
-                    spacing: 6.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/graph.svg",
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: ColorFilter.mode(
-                            AppColors.grayTitle, BlendMode.srcIn),
-                      ),
-                    ],
+              if (isActive)
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: GoogleFonts.poppins(
+                        fontSize: 12.sp,
+                        height: 16 / 12,
+                        fontWeight: AppFontWeight.medium,
+                        color: Colors.white),
                   ),
-                ),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20.w),
-                onTap: () {
-                  context.read<MainPageCubit>().changeIndex(0);
-                },
-                child: Container(
-                  width: 55.w,
-                  height: 40.w,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 12.w, vertical: 8.w),
-                  child: Row(
-                    spacing: 6.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/clock.svg",
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: ColorFilter.mode(
-                            AppColors.grayTitle, BlendMode.srcIn),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20.w),
-                onTap: () {
-                  context.read<MainPageCubit>().changeIndex(1);
-                },
-                child: Container(
-                  width: 55.w,
-                  height: 40.w,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 12.w, vertical: 8.w),
-                  child: Row(
-                    spacing: 6.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/user.svg",
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: ColorFilter.mode(
-                            AppColors.grayTitle, BlendMode.srcIn),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+                )
+            ],
+          ),
         ),
       ),
     );

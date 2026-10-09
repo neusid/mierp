@@ -59,7 +59,7 @@ class CardOrder extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.w),
+        borderRadius: BorderRadius.circular(9.w),
         border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
@@ -78,8 +78,8 @@ class CardOrder extends StatelessWidget {
               width: 110.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15.w),
-                  bottomLeft: Radius.circular(15.w),
+                  topLeft: Radius.circular(9.w),
+                  bottomLeft: Radius.circular(9.w),
                 ),
                 color: const Color(0xFFF8FAFC),
                 image: DecorationImage(
@@ -142,7 +142,7 @@ class CardOrder extends StatelessWidget {
                           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                           decoration: BoxDecoration(
                             color: financeApproved ? const Color(0xFF00AA13) : const Color(0xFFED2736),
-                            borderRadius: BorderRadius.circular(4.w),
+                            borderRadius: BorderRadius.circular(9.w),
                           ),
                           child: Text(
                             financeApproved ? "PAID" : "UNPAID",
@@ -200,7 +200,7 @@ class CardOrder extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFEF3C7), // Light Orange
-                                  borderRadius: BorderRadius.circular(16.w),
+                                  borderRadius: BorderRadius.circular(9.w),
                                 ),
                                 child: Text(
                                   "Diskon ${finalDiscountPercent}%, maks. ${(finalDiscountMax / 1000).toInt()}rb",
@@ -226,8 +226,8 @@ class CardOrder extends StatelessWidget {
                               margin: EdgeInsets.only(left: 8.w),
                               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF00AA13), // Gojek Green for action
-                                borderRadius: BorderRadius.circular(16.w),
+                                gradient: AppColors.premiumDarkGradient,
+                                borderRadius: BorderRadius.circular(9.w),
                               ),
                               child: Text(
                                 "Pay Now",

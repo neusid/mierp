@@ -15,10 +15,12 @@ import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/add/add_unit/input_selected_add_unit_widget.dart';
+import 'package:mierp_apps/core/widgets/custom_mingda_date_picker.dart';
 import 'package:mierp_apps/core/widgets/date_picker_widget.dart';
 import 'package:mierp_apps/core/widgets/input_short_widget.dart';
 import 'package:mierp_apps/core/widgets/input_widget.dart';
 import 'package:mierp_apps/features/add/presentation/add_unit/bloc/add_unit_bloc.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/features/add/presentation/add_unit/bloc/add_unit_event.dart';
 import 'package:mierp_apps/features/add/presentation/add_unit/bloc/add_unit_state.dart';
 
@@ -43,16 +45,10 @@ class _AddUnitViewState extends State<AddUnitView> {
   String categoryProductC = "electronics";
 
   Future<void> showDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
+    DateTime? pickedDate = await showDialog<DateTime>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          datePickerTheme: DatePickerThemeData(backgroundColor: Colors.white),
-        ),
-        child: child!,
+      builder: (context) => CustomMingdaDatePicker(
+        initialDate: DateTime.now(),
       ),
     );
     if (pickedDate != null) {
@@ -61,7 +57,17 @@ class _AddUnitViewState extends State<AddUnitView> {
         initialTime: TimeOfDay.now(),
         builder: (context, child) => Theme(
           data: Theme.of(context).copyWith(
-            timePickerTheme: TimePickerThemeData(backgroundColor: Colors.white),
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.blueLine,
+              onPrimary: Colors.white,
+              onSurface: AppColors.charcoal,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.blueLine,
+              ),
+            ),
+            timePickerTheme: const TimePickerThemeData(backgroundColor: Colors.white),
           ),
           child: child!,
         ),
@@ -137,10 +143,10 @@ class _AddUnitViewState extends State<AddUnitView> {
       child: BlocConsumer<AddUnitBloc, AddUnitState>(
         listener: (context, state) {
           if (state.status == AddUnitStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+            CustomTopSnackbar.show(context, state.successMessage, isError: false);
             _resetForm();
           } else if (state.status == AddUnitStatus.failure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            CustomTopSnackbar.show(context, state.errorMessage, isError: true);
           }
         },
         builder: (context, state) {
@@ -388,6 +394,10 @@ class _AddUnitViewState extends State<AddUnitView> {
                             Container(
                               width: 261.w,
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                gradient: AppColors.premiumDarkGradient,
+                                borderRadius: BorderRadius.circular(10.w),
+                              ),
                               child: ElevatedButton(
                                 onPressed: () {
                                   _submitData(context);
@@ -404,7 +414,8 @@ class _AddUnitViewState extends State<AddUnitView> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.w),
                                   ),
-                                  backgroundColor: AppColors.neonGreen,
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
                                 ),
                               ),
                             ),

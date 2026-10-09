@@ -30,8 +30,12 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.electricBlue,
-      body: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(gradient: AppColors.premiumDarkGradient),
+        child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordFailure) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
@@ -136,7 +140,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                         width: 322.w,
                                         height: 45.h,
                                         decoration: BoxDecoration(
-                                          color: AppColors.electricBlue,
+                                          gradient: AppColors.premiumDarkGradient,
                                           borderRadius: BorderRadius.circular(10.w),
                                         ),
                                         child: ElevatedButton(
@@ -219,6 +223,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             ],
           );
         },
+      ),
       ),
     );
   }

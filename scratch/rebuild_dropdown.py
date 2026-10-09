@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import re
+
+new_widget = """import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
@@ -40,8 +42,7 @@ class _InputSelectProductOrderWidgetState
 
   @override
   void dispose() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    _closeDropdown();
     super.dispose();
   }
 
@@ -62,7 +63,7 @@ class _InputSelectProductOrderWidgetState
 
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
-    
+    final actualWidth = widget.width ?? 322.w;
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
@@ -75,7 +76,7 @@ class _InputSelectProductOrderWidgetState
             ),
           ),
           Positioned(
-            width: size.width,
+            width: actualWidth,
             child: CompositedTransformFollower(
               link: _layerLink,
               showWhenUnlinked: false,
@@ -116,7 +117,7 @@ class _InputSelectProductOrderWidgetState
                             _closeDropdown();
                           },
                           child: Container(
-                            color: isSelected ? AppColors.purpleTransparent : Colors.white,
+                            color: isSelected ? const Color(0xFFF0FDFA) : Colors.white,
                             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                             child: Row(
                               children: [
@@ -126,12 +127,12 @@ class _InputSelectProductOrderWidgetState
                                     style: GoogleFonts.inter(
                                       fontSize: 13.sp,
                                       fontWeight: isSelected ? AppFontWeight.semiBold : AppFontWeight.regular,
-                                      color: isSelected ? AppColors.vividPurple : const Color(0xFF0F172A),
+                                      color: isSelected ? const Color(0xFF0D9488) : const Color(0xFF0F172A),
                                     ),
                                   ),
                                 ),
                                 if (isSelected)
-                                  Icon(Icons.check_rounded, color: AppColors.vividPurple, size: 16.w),
+                                  Icon(Icons.check_rounded, color: const Color(0xFF0D9488), size: 16.w),
                               ],
                             ),
                           ),
@@ -199,10 +200,10 @@ class _InputSelectProductOrderWidgetState
                 height: 45.w,
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 decoration: BoxDecoration(
-                  color: isFocus ? AppColors.purpleTransparent : const Color(0xFFF8FAFC),
+                  color: isFocus ? const Color(0xFFF0FDFA) : const Color(0xFFF8FAFC),
                   borderRadius: BorderRadius.circular(10.w),
                   border: Border.all(
-                    color: isFocus ? AppColors.vividPurple : Colors.transparent,
+                    color: isFocus ? const Color(0xFF0D9488) : Colors.transparent,
                     width: 1.5.w,
                   ),
                 ),
@@ -216,7 +217,7 @@ class _InputSelectProductOrderWidgetState
                           fontSize: 13.sp,
                           fontWeight: AppFontWeight.regular,
                           color: widget.value != null
-                              ? (isFocus ? AppColors.vividPurple : const Color(0xFF0F172A))
+                              ? (isFocus ? const Color(0xFF0D9488) : const Color(0xFF0F172A))
                               : AppColors.greyPlacholder,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -227,7 +228,7 @@ class _InputSelectProductOrderWidgetState
                       duration: const Duration(milliseconds: 200),
                       child: Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: isFocus ? AppColors.vividPurple : const Color(0xFF64748B),
+                        color: isFocus ? const Color(0xFF0D9488) : const Color(0xFF64748B),
                         size: 20.w,
                       ),
                     ),
@@ -259,3 +260,9 @@ class _InputSelectProductOrderWidgetState
     );
   }
 }
+"""
+
+with open(r'D:\Project\Flutter\mierp\lib\core\widgets\add\add_warehouse_order\input_select_product_order_widget.dart', 'w', encoding='utf-8') as f:
+    f.write(new_widget)
+
+print("Dropdown successfully remade!")

@@ -7,5 +7,5 @@ class MainPageCubit extends Cubit<int> {
   
   void goToDashboard() => emit(0);
   
-  void goToProfile() => emit(1);
+  void goToProfile() => emit(4);
 }

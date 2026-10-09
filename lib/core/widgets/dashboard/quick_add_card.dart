@@ -50,11 +50,7 @@ class QuickAddCard extends StatelessWidget {
                     height: 33.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.w),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFF3B82F6), Color(0xFF6D28D9)],
-                      ),
+                      gradient: AppColors.premiumDarkGradient,
                     ),
                     child: const Icon(Icons.add, color: Colors.white),
                   ),
