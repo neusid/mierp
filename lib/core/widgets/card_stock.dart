@@ -100,12 +100,16 @@ class CardStock extends StatelessWidget {
                               children: [
                                 Icon(Icons.calendar_today_outlined, size: 10.w, color: const Color(0xFF64748B)),
                                 SizedBox(width: 4.w),
-                                Text(
-                                  "Added: $createdOn",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 9.sp,
-                                    fontWeight: AppFontWeight.medium,
-                                    color: const Color(0xFF64748B),
+                                Expanded(
+                                  child: Text(
+                                    "Added: $createdOn",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 9.sp,
+                                      fontWeight: AppFontWeight.medium,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],

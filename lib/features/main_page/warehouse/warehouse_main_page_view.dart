@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/features/dashboard/presentation/warehouse/dashboard_warehouse_view.dart';
+import 'package:mierp_apps/features/main_page/warehouse/warehouse_graph_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
@@ -24,7 +25,7 @@ class WarehouseMainPageView extends StatelessWidget {
             children: [
               DashboardWarehouseView(),
               ComingSoonView(title: "Search Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
-              ComingSoonView(title: "Graph Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
+              WarehouseGraphView(),
               ComingSoonView(title: "Clock Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
               ProfileView(onBack: () => context.read<MainPageCubit>().goToDashboard()),
             ],

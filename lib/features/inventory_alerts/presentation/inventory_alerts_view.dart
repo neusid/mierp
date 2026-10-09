@@ -43,9 +43,24 @@ class _InventoryAlertsViewState extends State<InventoryAlertsView> with SingleTi
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
+        leadingWidth: 68.w,
+        leading: Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: EdgeInsets.only(left: 20.w),
+            child: InkWell(
+              onTap: () => context.pop(),
+              borderRadius: BorderRadius.circular(12.w),
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9), // Light gray background
+                  borderRadius: BorderRadius.circular(12.w),
+                ),
+                child: Icon(Icons.arrow_back_rounded, color: AppColors.charcoal, size: 24.w),
+              ),
+            ),
+          ),
         ),
         title: Text(
           "Inventory Alerts",

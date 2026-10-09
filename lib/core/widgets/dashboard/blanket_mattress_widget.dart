@@ -45,14 +45,14 @@ class BlanketMattressWidget extends StatelessWidget {
             width: double.infinity,
             margin: EdgeInsets.only(top: 30.h), // Push down so blanket overlaps
             padding: EdgeInsets.only(
-              top: 60.h,
-              left: 16.w,
-              right: 16.w,
+              top: 64.h,
+              left: 20.w,
+              right: 20.w,
               bottom: 8.h,
             ),
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(24.r),
               border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
             ),
             child: Column(
@@ -205,19 +205,22 @@ class BlanketMattressWidget extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  topRight: Radius.circular(16.r),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF2E1052), Color(0xFF1A0A2E)],
                 ),
-                border: Border.all(color: const Color(0xFFF1F5F9)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24.r),
+                  topRight: Radius.circular(24.r),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -227,10 +230,10 @@ class BlanketMattressWidget extends StatelessWidget {
                     width: 34.w,
                     height: 34.w,
                     decoration: BoxDecoration(
-                      color: themeBgColor,
+                      color: Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10.r),
                     ),
-                    child: Icon(headerIcon, color: themeColor, size: 20.w),
+                    child: Icon(headerIcon, color: Colors.white, size: 20.w),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -243,7 +246,7 @@ class BlanketMattressWidget extends StatelessWidget {
                             fontSize: 24.sp,
                             fontWeight: AppFontWeight.semiBold,
                             letterSpacing: -0.5,
-                            color: const Color(0xFF334155),
+                            color: Colors.white,
                             height: 1.0,
                           ),
                           maxLines: 1,
@@ -255,7 +258,7 @@ class BlanketMattressWidget extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 11.sp,
                             fontWeight: AppFontWeight.medium,
-                            color: const Color(0xFF64748B),
+                            color: Colors.white70,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -272,7 +275,7 @@ class BlanketMattressWidget extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 11.sp,
                           fontWeight: AppFontWeight.semiBold,
-                          color: const Color(0xFF334155),
+                          color: Colors.white,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -284,7 +287,7 @@ class BlanketMattressWidget extends StatelessWidget {
                             width: 64.w,
                             height: 8.h,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F5F9),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4.r),
                             ),
                             child: Stack(
@@ -306,7 +309,7 @@ class BlanketMattressWidget extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10.sp,
                               fontWeight: AppFontWeight.bold,
-                              color: const Color(0xFF64748B),
+                              color: Colors.white70,
                             ),
                           ),
                         ],

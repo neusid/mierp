@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
 import 'package:mierp_apps/features/dashboard/presentation/warehouse/bloc/dashboard_warehouse_bloc.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 
@@ -353,79 +352,7 @@ class DashboardWarehouseView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Column(
-                        spacing: 16.h,
-                        children: [
-                          BlanketMattressWidget(
-                            title: "Low Stock Products",
-                            subtitle: "Needs immediate attention",
-                            count: state.totalLowStock,
-                            rightTitle: "Action Req.",
-                            rightSubtitle:
-                                "${state.totalLowStock} of ${state.totalProducts} Items",
-                            progress: state.totalProducts > 0
-                                ? (state.totalLowStock / state.totalProducts)
-                                : 0.0,
-                            themeColor: const Color(0xFFEF4444),
-                            themeBgColor: const Color(0xFFFFF1F2),
-                            headerIcon: Icons.warning_amber_rounded,
-                            buttonText: "View All Low Stock ➔",
-                            items:
-                                (state.listProduct.toList()..sort(
-                                      (a, b) =>
-                                          a.quantity.compareTo(b.quantity),
-                                    ))
-                                    .take(2)
-                                    .map(
-                                      (e) => {
-                                        "title": e.productName,
-                                        "subtitle":
-                                            "${e.category} • ${e.productCode}",
-                                        "badge": "${e.quantity} Left",
-                                        "image": e.imageProduct ?? "",
-                                      },
-                                    )
-                                    .toList(),
-                            onTapButton: () {
-                              context.push("/inventory_alerts/0");
-                            },
-                          ),
-                          BlanketMattressWidget(
-                            title: "Incoming Stock",
-                            subtitle: "Expected today",
-                            count: state.totalUpcomingStock,
-                            rightTitle: "On Track",
-                            rightSubtitle:
-                                "${state.totalUpcomingStock} incoming",
-                            progress: state.totalProducts > 0
-                                ? (state.totalUpcomingStock /
-                                      state.totalProducts)
-                                : 0.0,
-                            themeColor: const Color(0xFF3B82F6),
-                            themeBgColor: const Color(0xFFEEF2FF),
-                            headerIcon: Icons.local_shipping_outlined,
-                            buttonText: "View All Incoming Stock ➔",
-                            items: state.listOrder
-                                .where((e) => e.financeApproved == true)
-                                .take(2)
-                                .map(
-                                  (e) => {
-                                    "title": e.productName,
-                                    "subtitle": "Order • ${e.productCode}",
-                                    "badge": "${e.quantity} Units",
-                                    "image": e.imageProduct,
-                                      },
-                                )
-                                .toList(),
-                            onTapButton: () {
-                              context.push("/inventory_alerts/1");
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+
                     SizedBox(height: 22.h),
                     QuickAddCard(
                       title: "Add New Unit",
