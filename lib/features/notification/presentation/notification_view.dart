@@ -80,7 +80,9 @@ class _NotificationViewState extends State<NotificationView> {
         children: [
           _buildAppBar(context),
           Expanded(
-            child: ListView.separated(
+            child: dummyNotifications.isEmpty 
+            ? _buildEmptyState()
+            : ListView.separated(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
               itemCount: dummyNotifications.length,
               separatorBuilder: (context, index) => SizedBox(height: 12.h),
@@ -246,6 +248,46 @@ class _NotificationViewState extends State<NotificationView> {
               },
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/mailbox_empty.jpg',
+            width: 220.w,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: 24.h),
+          Text(
+            "No notifications yet",
+            style: GoogleFonts.inter(
+              fontSize: 22.sp,
+              fontWeight: AppFontWeight.bold,
+              color: const Color(0xFF0F172A),
+              letterSpacing: -0.5,
+            ),
+          ),
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40.w),
+            child: Text(
+              "Your notification will appear here once you've received them.",
+              style: GoogleFonts.inter(
+                fontSize: 14.sp,
+                fontWeight: AppFontWeight.medium,
+                color: const Color(0xFF64748B),
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 60.h),
         ],
       ),
     );
