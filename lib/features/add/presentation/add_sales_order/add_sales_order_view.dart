@@ -61,7 +61,7 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
         financeApprovedDate: "",
         firstName: "", // Set via repository
         paymentStatus: false,
-        productCode: selectedProduct!.productCode ?? "",
+        productCode: selectedProduct!.productCode,
         productId: selectedProduct!.id ?? "",
         productName: selectedProduct!.productName,
         purchasedDate: purchasedDateC.text,

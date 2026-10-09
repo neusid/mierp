@@ -108,7 +108,7 @@ class _DetailProductViewState extends State<DetailProductView> {
             discountMaxC.text = (state.product!.discountMax ?? 0).toString();
             setState(() {
                 imageProduct = state.product!.imageProduct ?? "";
-                categoryProductC = state.product!.category ?? "electronics";
+                categoryProductC = state.product!.category;
             });
             if (state.successMessage.isNotEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));

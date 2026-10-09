@@ -58,7 +58,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
         financeApprovedDate: null,
         orderDate: orderDateC.text,
         productId: selectedProduct!.id ?? "",
-        productCode: selectedProduct!.productCode ?? "",
+        productCode: selectedProduct!.productCode,
         productName: selectedProduct!.productName,
         quantity: int.tryParse(quantityC.text) ?? 0,
         totalCost: totalCost,

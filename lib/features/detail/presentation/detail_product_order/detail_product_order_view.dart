@@ -397,8 +397,8 @@ class DetailProductOrderView extends StatelessWidget {
                                 context.read<DetailProductOrderBloc>().add(
                                   DetailProductOrderPayRequested(
                                     state.orderProduct!.id!,
-                                    state.orderProduct!.productId ?? '',
-                                    state.orderProduct!.quantity ?? 0,
+                                    state.orderProduct!.productId,
+                                    state.orderProduct!.quantity,
                                   ),
                                 );
                               },

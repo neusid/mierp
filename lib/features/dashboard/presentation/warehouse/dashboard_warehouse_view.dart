@@ -412,7 +412,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                     "title": e.productName,
                                     "subtitle": "Order • ${e.productCode}",
                                     "badge": "${e.quantity} Units",
-                                  "image": e.imageProduct ?? "",
+                                    "image": e.imageProduct,
                                       },
                                 )
                                 .toList(),

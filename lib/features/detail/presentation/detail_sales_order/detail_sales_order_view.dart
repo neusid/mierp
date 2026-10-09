@@ -400,8 +400,8 @@ class DetailSalesOrderView extends StatelessWidget {
                                 context.read<DetailSalesOrderBloc>().add(
                                   DetailSalesOrderPayRequested(
                                     state.salesOrder!.id!,
-                                    state.salesOrder!.productId ?? '',
-                                    state.salesOrder!.quantity ?? 0,
+                                    state.salesOrder!.productId,
+                                    state.salesOrder!.quantity,
                                   ),
                                 );
                               },

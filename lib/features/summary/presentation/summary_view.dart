@@ -563,7 +563,6 @@ class SummaryView extends StatelessWidget {
                             ),
                           );
                         }
-                        return SizedBox();
                       },
                     ),
                   ],

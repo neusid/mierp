@@ -770,8 +770,8 @@ class DashboardFinanceView extends StatelessWidget {
                                     onPayPressed: () =>
                                         context.read<DashboardFinanceBloc>().add(DashboardFinancePayProductRequested(
                                           data.id ?? "",
-                                          data.productId ?? "",
-                                          data.quantity ?? 0,
+                                          data.productId,
+                                          data.quantity,
                                         )),
                                   ),
                                 );

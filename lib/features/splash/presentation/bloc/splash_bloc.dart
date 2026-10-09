@@ -45,7 +45,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     SplashStarted event,
     Emitter<SplashState> emit,
   ) async {
-    final isFirst = true;
+    final isFirst = onboardingService.isFirst;
     
     if (isFirst) {
       await Future.delayed(const Duration(seconds: 2));
