@@ -156,6 +156,25 @@ class WarehouseRepository {
         }
     );
   }
+  Future<List<Product>> getLowStockProducts() async {
+    try {
+      final snapshot = await firestore.collection("products").where('quantity', isLessThanOrEqualTo: 5).get();
+      return snapshot.docs.map((doc) => Product.fromJson(doc.data(), docId: doc.id)).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
+  Future<List<OrderProduct>> getIncomingStockProducts() async {
+    try {
+      final snapshot = await firestore.collection("warehouse_orders").where('finance_approved', isEqualTo: false).get();
+      return snapshot.docs.map((doc) => OrderProduct.fromJson(doc.data(), docId: doc.id)).toList();
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
 
   DateTime? parseDate(dynamic value) {
     if (value is String) return DateTime.tryParse(value);

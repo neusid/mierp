@@ -35,6 +35,7 @@ import 'package:mierp_apps/features/detail/presentation/detail_sales_order/bloc/
 import 'package:mierp_apps/data/warehouse/detail/detail_sales_order_repository.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product_order/bloc/detail_product_order_bloc.dart';
 import 'package:mierp_apps/features/add/presentation/add_unit/bloc/add_unit_bloc.dart';
+import 'package:mierp_apps/features/inventory_alerts/presentation/bloc/inventory_alerts_bloc.dart';
 
 import 'package:mierp_apps/data/warehouse/services/add_unit_services.dart';
 import 'package:mierp_apps/data/warehouse/add/add_unit_repository.dart';
@@ -98,6 +99,7 @@ Future<void> init() async {
   sl.registerFactory(() => DetailProductBloc(itemRepository: sl(), detailProductServices: sl()));
   sl.registerFactory(() => DetailSalesOrderBloc(itemRepository: sl(), itemStore: sl(), transactionServices: sl(), detailSalesOrderRepository: sl(), userDataController: sl()));
   sl.registerFactory(() => DetailProductOrderBloc(itemRepository: sl(), transactionServices: sl(), detailProductOrderRepository: sl(), userDataController: sl()));
+  sl.registerFactory(() => InventoryAlertsBloc(warehouseRepository: sl()));
   
   // UseCases
   sl.registerLazySingleton(() => DoLogin(sl()));

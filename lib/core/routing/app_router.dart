@@ -16,6 +16,8 @@ import 'package:mierp_apps/features/detail/presentation/detail_product_order/det
 import 'package:mierp_apps/features/detail/presentation/detail_sales_order/detail_sales_order_view.dart';
 import 'package:mierp_apps/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
 import 'package:mierp_apps/features/forgot_password/presentation/forgot_password_view.dart';
+import 'package:mierp_apps/features/inventory_alerts/presentation/inventory_alerts_view.dart';
+import 'package:mierp_apps/features/inventory_alerts/presentation/bloc/inventory_alerts_bloc.dart';
 import 'package:mierp_apps/features/loading/loading_view.dart';
 import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/features/login/presentation/login_view.dart';
@@ -158,6 +160,18 @@ final GoRouter appRouter = GoRouter(
       path: '/notification',
       name: 'notification',
       builder: (context, state) => NotificationView(),
+    ),
+    GoRoute(
+      path: '/inventory_alerts/:tabIndex',
+      name: 'inventory_alerts',
+      builder: (context, state) {
+        final tabIndexStr = state.pathParameters['tabIndex'] ?? '0';
+        final tabIndex = int.tryParse(tabIndexStr) ?? 0;
+        return BlocProvider(
+          create: (_) => sl<InventoryAlertsBloc>(),
+          child: InventoryAlertsView(initialTabIndex: tabIndex),
+        );
+      },
     ),
   ],
 );

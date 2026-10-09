@@ -15,6 +15,7 @@ class BlanketMattressWidget extends StatelessWidget {
   final IconData headerIcon;
   final List<Map<String, String>> items;
   final String buttonText;
+  final VoidCallback? onTapButton;
 
   const BlanketMattressWidget({
     super.key,
@@ -29,6 +30,7 @@ class BlanketMattressWidget extends StatelessWidget {
     required this.headerIcon,
     required this.items,
     required this.buttonText,
+    this.onTapButton,
   });
 
   @override
@@ -164,28 +166,31 @@ class BlanketMattressWidget extends StatelessWidget {
                 }),
 
                 // View All Button
-                Container(
-                  width: double.infinity,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A),
-                    borderRadius: BorderRadius.circular(12.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      buttonText,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.sp,
-                        fontWeight: AppFontWeight.semiBold,
-                        color: Colors.white,
-                        letterSpacing: 0.3,
+                GestureDetector(
+                  onTap: onTapButton,
+                  child: Container(
+                    width: double.infinity,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        buttonText,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.sp,
+                          fontWeight: AppFontWeight.semiBold,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                        ),
                       ),
                     ),
                   ),

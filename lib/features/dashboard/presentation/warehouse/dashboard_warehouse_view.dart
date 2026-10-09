@@ -384,10 +384,13 @@ class DashboardWarehouseView extends StatelessWidget {
                                         "subtitle":
                                             "${e.category} • ${e.productCode}",
                                         "badge": "${e.quantity} Left",
-                                      "image": e.imageProduct ?? "",
+                                        "image": e.imageProduct ?? "",
                                       },
                                     )
                                     .toList(),
+                            onTapButton: () {
+                              context.push("/inventory_alerts/0");
+                            },
                           ),
                           BlanketMattressWidget(
                             title: "Incoming Stock",
@@ -416,6 +419,9 @@ class DashboardWarehouseView extends StatelessWidget {
                                       },
                                 )
                                 .toList(),
+                            onTapButton: () {
+                              context.push("/inventory_alerts/1");
+                            },
                           ),
                         ],
                       ),
