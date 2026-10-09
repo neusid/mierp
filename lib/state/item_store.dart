@@ -1,61 +1,60 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mierp_apps/core/models/all_summary.dart';
 import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
-import 'package:mierp_apps/domain/item/repositories/item_repository.dart';
-import 'package:mierp_apps/data/item/repositories/item_repository_impl.dart';
 
-class ItemStore extends GetxController {
+class ItemStore extends ChangeNotifier {
 
-  RxList<Product?> listProduct = <Product>[].obs;
-  RxList<OrderProduct?> listOrder = <OrderProduct>[].obs;
-  RxList<SalesOrder?> listSalesOrder = <SalesOrder>[].obs;
-  RxList<AllSummary?> listAllSummary = <AllSummary?>[].obs;
+  List<Product?> listProduct = <Product>[];
+  List<OrderProduct?> listOrder = <OrderProduct>[];
+  List<SalesOrder?> listSalesOrder = <SalesOrder>[];
+  List<AllSummary?> listAllSummary = <AllSummary?>[];
 
-  Rxn<Product> products = Rxn();
-  Rxn<OrderProduct> orderProducts = Rxn();
-  Rxn<SalesOrder> salesOrders = Rxn();
+  ValueNotifier<Product?> products = ValueNotifier(null);
+  ValueNotifier<OrderProduct?> orderProducts = ValueNotifier(null);
+  ValueNotifier<SalesOrder?> salesOrders = ValueNotifier(null);
 
   void _combineAllSummary() {
-
-    if(listProduct.isEmpty&&listOrder.isEmpty&&listSalesOrder.isEmpty){
+    if (listProduct.isEmpty && listOrder.isEmpty && listSalesOrder.isEmpty) {
       return;
     }
 
     final combined = <AllSummary>[];
 
     combined.addAll(
-        listProduct.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e!.createdOn),)
+      listProduct.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e!.createdOn))
     );
     combined.addAll(
-        listOrder.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e!.orderDate!),)
+      listOrder.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e!.orderDate!))
     );
     combined.addAll(
-        listSalesOrder.map((e) => AllSummary(summaryType: SummaryType.salesOrder, data: e, createdOn: e!.purchasedDate),)
+      listSalesOrder.map((e) => AllSummary(summaryType: SummaryType.salesOrder, data: e, createdOn: e!.purchasedDate))
     );
-    combined.sort((a, b) => b.createdOn.compareTo(a.createdOn),);
+    
+    combined.sort((a, b) => b.createdOn.compareTo(a.createdOn));
 
-    listAllSummary.assignAll(combined);
+    listAllSummary = combined;
+    notifyListeners();
   }
 
   void setProductsList(List<Product> product) {
-    listProduct.assignAll(product);
-    listProduct.sort((a, b) => b!.createdOn.compareTo(a!.createdOn),);
+    listProduct = List.from(product);
+    listProduct.sort((a, b) => b!.createdOn.compareTo(a!.createdOn));
+    notifyListeners();
   }
 
   void setSalesOrderList(List<SalesOrder> salesOrder) {
-    listSalesOrder.assignAll(salesOrder);
-    listSalesOrder.sort((a, b) => b!.purchasedDate.compareTo(a!.purchasedDate),);
+    listSalesOrder = List.from(salesOrder);
+    listSalesOrder.sort((a, b) => b!.purchasedDate.compareTo(a!.purchasedDate));
     _combineAllSummary();
   }
 
   void setOrderProductList(List<OrderProduct> orderProduct) {
-    listOrder.assignAll(orderProduct);
-    listOrder.sort((a, b) => b!.orderDate!.compareTo(a!.orderDate!),);
+    listOrder = List.from(orderProduct);
+    listOrder.sort((a, b) => b!.orderDate!.compareTo(a!.orderDate!));
+    notifyListeners();
   }
 
   void setProducts(Product product) {

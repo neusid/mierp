@@ -7,6 +7,8 @@ class Product {
   String productCode;
   int quantity;
   int unitPrice;
+  int? discountPercent;
+  int? discountMax;
 
   Product({
     required this.id,
@@ -17,6 +19,8 @@ class Product {
     required this.productCode,
     required this.quantity,
     required this.unitPrice,
+    this.discountPercent,
+    this.discountMax,
   });
 
   factory Product.fromJson(Map<String, dynamic> json, {required String docId}) => Product(
@@ -31,6 +35,8 @@ class Product {
     productCode: json["product_code"],
     quantity: json["quantity"],
     unitPrice: json["unit_price"],
+    discountPercent: json["discount_percent"],
+    discountMax: json["discount_max"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -42,5 +48,33 @@ class Product {
     "product_code": productCode,
     "quantity": quantity,
     "unit_price": unitPrice,
+    "discount_percent": discountPercent,
+    "discount_max": discountMax,
   };
+
+  Product copyWith({
+    String? id,
+    String? category,
+    String? createdOn,
+    String? imageProduct,
+    String? productName,
+    String? productCode,
+    int? quantity,
+    int? unitPrice,
+    int? discountPercent,
+    int? discountMax,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      createdOn: createdOn ?? this.createdOn,
+      imageProduct: imageProduct ?? this.imageProduct,
+      productName: productName ?? this.productName,
+      productCode: productCode ?? this.productCode,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      discountPercent: discountPercent ?? this.discountPercent,
+      discountMax: discountMax ?? this.discountMax,
+    );
+  }
 }

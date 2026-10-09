@@ -1,9 +1,8 @@
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/data/warehouse/add/add_unit_repository.dart';
 
-class AddUnitServices extends GetxService {
+class AddUnitServices {
   final AddUnitRepository addUnitRepository;
   AddUnitServices({required this.addUnitRepository});
 

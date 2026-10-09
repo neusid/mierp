@@ -1,6 +1,6 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:mierp_apps/features/splash/presentation/bloc/splash_bloc.dart';
 
 class SplashView extends StatefulWidget {
@@ -23,13 +23,13 @@ class _SplashViewState extends State<SplashView> {
     return BlocListener<SplashBloc, SplashState>(
       listener: (context, state) {
         if (state is SplashNavigateToOnboarding) {
-          Get.offAllNamed('/onboarding');
+          context.go('/onboarding');
         } else if (state is SplashNavigateToLogin) {
-          Get.offAllNamed('/login');
+          context.go('/login');
         } else if (state is SplashNavigateToWarehouse) {
-          Get.offAllNamed('/warehouse_main_page');
+          context.go('/warehouse_main_page');
         } else if (state is SplashNavigateToFinance) {
-          Get.offAllNamed('/finance_main_page');
+          context.go('/finance_main_page');
         }
       },
       child: Scaffold(

@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/controller_widget/input_widget_controller.dart';
 
-class InputSelectAuthWidget extends StatelessWidget {
+class InputSelectAuthWidget extends StatefulWidget {
   final String head, placeholder;
   final bool necessary, isPassword;
   final GlobalKey<FormState> formKey;
   final String value;
   final Function(String?) onChanged;
 
-  InputSelectAuthWidget({
+  const InputSelectAuthWidget({
     super.key,
     required this.head,
     required this.placeholder,
@@ -24,107 +22,102 @@ class InputSelectAuthWidget extends StatelessWidget {
     required this.onChanged,
   });
 
-  final inputWidgetC = Get.put(InputWidgetController(), tag: UniqueKey().toString());
-  RxBool hasError = false.obs;
-  RxString dataError = "".obs;
+  @override
+  State<InputSelectAuthWidget> createState() => _InputSelectAuthWidgetState();
+}
+
+class _InputSelectAuthWidgetState extends State<InputSelectAuthWidget> {
+  bool isFocus = false;
+  final FocusNode focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Container(
-        width: 322.w,
-        height: 93.w,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                necessary ?
+    return Container(
+      width: 322.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (widget.necessary)
                 Text(
                   "*",
                   style: GoogleFonts.inter(
-                    fontSize: 13.sp,
+                    fontSize: 14.sp,
                     fontWeight: AppFontWeight.medium,
-                    color: Colors.red,
-                  ),
-                ) : SizedBox(),
-                Text(
-                  head,
-                  style: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.medium,
-                    color: AppColors.grayTitle,
+                    color: const Color(0xFFED2736),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 8.w,),
-            Container(
-              width: 322.w,
-              // height: 45.w,
-              height: 45.w,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.coolGray,
-                    width: 1.w),
-                borderRadius: BorderRadius.circular(6.w),
-                boxShadow: inputWidgetC.isFocus.value ?
-                [BoxShadow(
-                    color: AppColors.blueLineShadow,
-                    spreadRadius: 4
-                )
-                ] : [BoxShadow(
-                    color: Colors.white,
-                    spreadRadius: 2
-                )
-                ],
+              Text(
+                widget.head,
+                style: GoogleFonts.inter(
+                  fontSize: 14.sp,
+                  fontWeight: AppFontWeight.medium,
+                  color: const Color(0xFF334155),
+                ),
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  borderRadius: BorderRadius.circular(6.w),
-                  padding: EdgeInsets.symmetric(horizontal: 14.5.w),
-                  icon: Icon(Icons.arrow_drop_down),
+            ],
+          ),
+          SizedBox(height: 8.w),
+          Focus(
+            onFocusChange: (value) {
+              setState(() {
+                isFocus = value;
+              });
+            },
+            child: DropdownButtonFormField<String>(
+              value: widget.value,
+              onChanged: widget.onChanged,
+              focusNode: focusNode,
+              icon: Icon(Icons.arrow_drop_down, color: const Color(0xFF64748B)),
+              style: GoogleFonts.inter(
+                fontSize: 15.sp,
+                fontWeight: AppFontWeight.medium,
+                color: const Color(0xFF0F172A),
+              ),
+              items: <String>['warehouse', 'finance']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(
                   value: value,
-                  onChanged: onChanged,
-                  items: <String>['warehouse','finance'].map<DropdownMenuItem<String>>(
-                      (String value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: GoogleFonts.inter(
-                              fontSize: 13.sp,
-                              fontWeight: AppFontWeight.regular,
-                            ),
-                          ),
-                        );
-                      }
-                  ).toList(),
+                  child: Text(value),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.w),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFE2E8F0), width: 1.5.w),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFE2E8F0), width: 1.5.w),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: AppColors.electricBlue, width: 1.5.w),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFED2736), width: 1.5.w),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFED2736), width: 1.5.w),
                 ),
               ),
             ),
-            hasError.value ?
-            Column(
-              children: [
-                SizedBox(height: 5.h,),
-                Row(
-                  children: [
-                    Text(
-                      dataError.value,
-                      style: GoogleFonts.inter(
-                          fontSize: 10.sp,
-                          fontWeight: AppFontWeight.regular,
-                          height: 1.0,
-                          color: Colors.red
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5.h,),
-              ],
-            ) : SizedBox(height: 20.h,),
-          ],
-        ),
-      );
-    },);
+          ),
+          SizedBox(height: 16.w),
+        ],
+      ),
+    );
   }
 }

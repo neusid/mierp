@@ -39,7 +39,7 @@ class DashboardWarehouseStatsUpdated extends DashboardWarehouseEvent {
   });
 
   @override
-  List<Object?> get props => [totalProducts, totalQty, totalLowStock, totalUpcomingStock];
+  List<Object> get props => [totalProducts ?? 0, totalQty ?? 0, totalLowStock ?? 0, totalUpcomingStock ?? 0];
 }
 
 // --- STATE ---

@@ -1,8 +1,7 @@
-import 'package:get/get.dart';
 import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/domain/item/repositories/item_repository.dart';
 
-class DetailProductServices extends GetxService {
+class DetailProductServices {
   final ItemRepository itemRepository;
   DetailProductServices({required this.itemRepository});
 

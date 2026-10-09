@@ -5,14 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:get/get.dart';
 
 class CardDashboard extends StatelessWidget {
   CardDashboard(
       {super.key, required this.nameBox, required this.description, required this.totalItems, required this.urgent});
 
   final nameBox, description, urgent;
-  RxInt totalItems;
+  int totalItems;
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +32,7 @@ class CardDashboard extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.w),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadowBox,
-                        spreadRadius: -3.w,
-                        offset: Offset(0, 4),
-                        blurRadius: 21.w,
-                      )
-                    ]
+                    border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,19 +42,22 @@ class CardDashboard extends StatelessWidget {
                       child: Text(
                         nameBox,
                         overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                         style: GoogleFonts.inter(
                           fontSize: 14.sp,
                           fontWeight: AppFontWeight.medium,
-                          color: AppColors.charcoal,
+                          color: const Color(0xFF0F172A), // Slate 900
                         ),
                       ),
                     ),
                     Text(
                       description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
                         fontSize: 11.sp,
                         fontWeight: AppFontWeight.medium,
-                        color: AppColors.coolGray,
+                        color: const Color(0xFF64748B), // Slate 500
                       ),
                     ),
                     SizedBox(
@@ -71,42 +66,37 @@ class CardDashboard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Obx(() {
-                          return Text(
-                            nameBox == "Total Qty" ? "${totalItems
-                                .toString()} Items" : "${totalItems
-                                .toString()} units",
-                            style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              fontWeight: AppFontWeight.medium,
-                              color: AppColors.charcoal,
-                            ),
-                          );
-                        }),
-                        Obx(() {
-                          if(totalItems.value <= 10 && urgent){
-                            return Container(
-                              width: 37.44.w,
-                              height: 14.62.h,
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFD6F4FF),
-                                  borderRadius: BorderRadius.circular(10.w)
+                        Expanded(
+                          child: Text(
+                              nameBox == "Total Qty" ? "${totalItems.toString()} Items" : "${totalItems.toString()} units",
+                              style: GoogleFonts.inter(
+                                fontSize: 14.sp,
+                                fontWeight: AppFontWeight.semiBold,
+                                color: const Color(0xFF0F172A),
                               ),
-                              child: Center(
-                                child: Text(
-                                  "Now",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10.sp,
-                                    fontWeight: AppFontWeight.medium,
-                                    color: Color(0xFF01BAFF),
-                                  ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ),
+                        if(totalItems <= 10 && urgent == true)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFED2736), // Mingda Solid Red
+                                borderRadius: BorderRadius.circular(6.w)
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Now",
+                                style: GoogleFonts.inter(
+                                  fontSize: 10.sp,
+                                  fontWeight: AppFontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            );
-                          } else {
-                            return SizedBox();
-                          };
-                        }),
+                            ),
+                          )
+                        else
+                          SizedBox(),
                       ],
                     ),
                   ],
@@ -121,22 +111,14 @@ class CardDashboard extends StatelessWidget {
               height: 34.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50.w),
-                color: Color(0xFFF2F2F2),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowBox2,
-                    spreadRadius: 2.w,
-                    offset: Offset(0, 4),
-                    blurRadius: 8.2.w,
-                  )
-                ],
-                border: Border.all(color: Colors.white, width: 2.w),
+                color: const Color(0xFFF8FAFC), // Slate 50
+                border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
               ),
               child: Center(
                 child: Container(
                   width: 17.88.w,
                   height: 17.88.h,
-                  child: Image.asset("assets/icons/order.png"),
+                  child: Image.asset("assets/icons/order.png", color: AppColors.electricBlue),
                 ),
               ),
             ),

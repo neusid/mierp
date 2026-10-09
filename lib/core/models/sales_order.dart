@@ -12,6 +12,8 @@ class SalesOrder {
   int quantity;
   int totalPrice;
   int unitPrice;
+  int? discountPercent;
+  int? discountMax;
   String userId;
   String imageProduct;
 
@@ -29,6 +31,8 @@ class SalesOrder {
     required this.quantity,
     required this.totalPrice,
     required this.unitPrice,
+    this.discountPercent,
+    this.discountMax,
     required this.userId,
     required this.imageProduct,
   });
@@ -50,6 +54,8 @@ class SalesOrder {
     quantity: json["quantity"],
     totalPrice: json["total_price"],
     unitPrice: json["unit_price"],
+    discountPercent: json["discount_percent"],
+    discountMax: json["discount_max"],
     userId: json["user_id"],
     imageProduct: json["image_product"],
   );
@@ -68,6 +74,8 @@ class SalesOrder {
     "quantity": quantity,
     "total_price": totalPrice,
     "unit_price": unitPrice,
+    "discount_percent": discountPercent,
+    "discount_max": discountMax,
     "user_id": userId,
     "image_product": imageProduct,
   };

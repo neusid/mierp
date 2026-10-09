@@ -1,4 +1,6 @@
+import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/models/product.dart';
+import 'package:mierp_apps/core/models/sales_order.dart';
 
 abstract class ItemRepository {
 
@@ -6,9 +8,9 @@ abstract class ItemRepository {
   Future<void> getBulkDataOrder();
   Future<void> getBulkDataSalesOrder();
 
-  Future<void> getDetailDataStock(prodId);
-  Future<void> getDetailDataOrder(id);
-  Future<void> getDetailDataSalesOrder(prodId);
+  Future<Product> getDetailDataStock(String prodId);
+  Future<OrderProduct> getDetailDataOrder(String id);
+  Future<SalesOrder> getDetailDataSalesOrder(String prodId);
 
   Future<void> updateDetailDataStock(prodId, Product product);
   Future<void> deleteDetailDataStock(prodId);

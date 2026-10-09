@@ -1,10 +1,13 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
-import 'package:get/get.dart' as getx;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
@@ -12,31 +15,38 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/card_dashboard.dart';
+import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
+
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 
 
 class DashboardFinanceView extends StatelessWidget {
-  const DashboardFinanceView({super.key});
+  DashboardFinanceView({super.key});
+
+  final tabs = [
+    {"title": "All Summary", "collection": "all_summary"},
+    {"title": "Order", "collection": "warehouse_order"},
+    {"title": "Sales Order", "collection": "sales_order"},
+    {"title": "Stock", "collection": "products"},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final financeVM = Get.find<DashboardFinanceViewModel>();
-
-    ever(financeVM.success, (status) {
-      if (status == true) {
-        Get.snackbar("Success", "Success pay invoice");
-        financeVM.success.value = false;
-      }
-    });
-
-    ever(financeVM.errorMessage, (msg) {
-      Get.snackbar("Failed", msg);
-      financeVM.errorMessage.value = "";
-    });
-
-    return Stack(
+    return BlocProvider(
+      create: (context) => sl<DashboardFinanceBloc>()..add(DashboardFinanceStarted()),
+      child: BlocConsumer<DashboardFinanceBloc, DashboardFinanceState>(
+        listener: (context, state) {
+          if (state.successMessage.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+          }
+          if (state.errorMessage.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          }
+        },
+        builder: (context, state) {
+          return Stack(
       children: [
         CustomScrollView(
           slivers: [
@@ -90,21 +100,19 @@ class DashboardFinanceView extends StatelessWidget {
                                         color: AppColors.grayTitle,
                                       ),
                                     ),
-                                    Obx(() {
-                                      return Text(
-                                        "${financeVM.userName.value}!",
+                                    Text(
+                                        "${state.userName}!",
                                         style: GoogleFonts.lexendDeca(
                                           fontWeight: AppFontWeight.semiBold,
                                           fontSize: 19.sp,
                                           color: AppColors.grayTitle,
                                         ),
-                                      );
-                                    }),
+                                      ),
                                   ],
                                 ),
                                 IconButton(
                                   onPressed: () {
-                                    getx.Get.toNamed('/notification');
+                                    context.push('/notification');
                                   },
                                   icon: Icon(
                                     Icons.notifications_active,
@@ -152,11 +160,10 @@ class DashboardFinanceView extends StatelessWidget {
                               fontWeight: AppFontWeight.medium,
                             ),
                           ),
-                          Obx(() {
-                            return Container(
+                          Container(
                               child: Text(
                                 ConvertDollar().intToDollar(
-                                  state.productsItem.value,
+                                  state.productsItem,
                                 ),
                                 style: GoogleFonts.manrope(
                                   fontSize: 16.sp,
@@ -164,8 +171,7 @@ class DashboardFinanceView extends StatelessWidget {
                                   fontWeight: AppFontWeight.medium,
                                 ),
                               ),
-                            );
-                          }),
+                            ),
                           Row(
                             spacing: 4.w,
                             children: [
@@ -209,8 +215,7 @@ class DashboardFinanceView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 12.3.h),
-                    Obx(() {
-                      return Row(
+                    Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -270,7 +275,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
-                                          state.accountPayables.value,
+                                          state.accountPayables,
                                         ),
                                         style: GoogleFonts.manrope(
                                           fontSize: 10.sp,
@@ -348,7 +353,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
-                                          state.accountReceivables.value,
+                                          state.accountReceivables,
                                         ),
                                         style: GoogleFonts.manrope(
                                           fontSize: 10.sp,
@@ -426,7 +431,7 @@ class DashboardFinanceView extends StatelessWidget {
                                       width: 40.w,
                                       child: Text(
                                         ConvertDollar().intToDollar(
-                                          state.settled.value,
+                                          state.settled,
                                         ),
                                         style: GoogleFonts.manrope(
                                           fontSize: 10.sp,
@@ -448,47 +453,41 @@ class DashboardFinanceView extends StatelessWidget {
                             ),
                           ),
                         ],
-                      );
-                    }),
+                      ),
                     SizedBox(height: 12.3.h),
                     Column(
-                      spacing: 9.h,
+                      spacing: 0,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CardDashboard(
-                              nameBox: "Product",
-                              description:
-                                  "All product types available in inventory",
-                              totalItems: state.productTotal,
-                              urgent: false,
-                            ),
-                            CardDashboard(
-                              nameBox: "Total Qty",
-                              description: "Total quantity across all products",
-                              totalItems: state.totalQty,
-                              urgent: false,
-                            ),
+                        BlanketMattressWidget(
+                          title: "Low Stock",
+                          subtitle: "Items Low Stock",
+                          count: state.lowStock,
+                          rightTitle: "Action Required",
+                          rightSubtitle: "2/5",
+                          progress: 0.4,
+                          themeColor: const Color(0xFFEF4444),
+                          themeBgColor: const Color(0xFFFEF2F2),
+                          headerIcon: Icons.warning_amber_rounded,
+                          buttonText: "View All Low Stock Items ➔",
+                          items: [
+                            {"title": "MacBook Pro M2", "subtitle": "Electronics • SKU-MBP22", "badge": "2 Left"},
+                            {"title": "Logitech MX Master 3S", "subtitle": "Peripherals • SKU-LOGI3S", "badge": "0 Left"},
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CardDashboard(
-                              nameBox: "Low Stock",
-                              description:
-                                  "Stock items with low remaining quantity",
-                              totalItems: state.lowStock,
-                              urgent: true,
-                            ),
-                            CardDashboard(
-                              nameBox: "Upcoming Stock",
-                              description:
-                                  "Stock items arriving soon to inventory",
-                              totalItems: state.upComingStock,
-                              urgent: true,
-                            ),
+                        BlanketMattressWidget(
+                          title: "Incoming",
+                          subtitle: "Incoming Deliveries",
+                          count: state.upComingStock,
+                          rightTitle: "Arriving Today",
+                          rightSubtitle: "3/8",
+                          progress: 0.375,
+                          themeColor: const Color(0xFF4F46E5),
+                          themeBgColor: const Color(0xFFEEF2FF),
+                          headerIcon: Icons.local_shipping_outlined,
+                          buttonText: "View All Incoming Stock ➔",
+                          items: [
+                            {"title": "Sony WH-1000XM5", "subtitle": "Audio • PO-1024", "badge": "15 Units"},
+                            {"title": "Keychron K2 V2", "subtitle": "Peripherals • PO-1025", "badge": "40 Units"},
                           ],
                         ),
                       ],
@@ -519,14 +518,13 @@ class DashboardFinanceView extends StatelessWidget {
                           height: 33.h,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: financeVM.tabs
+                            children: tabs
                                 .map(
-                                  (e) => Obx(() {
-                                    final isActive = e.isActive.value;
+                                  (e) {
+                                    final isActive = state.selectedTab == e['collection'];
                                     return GestureDetector(
                                       onTap: () async {
-                                        financeVM.changeTab(e);
-                                        print(state.selectedTab);
+                                        context.read<DashboardFinanceBloc>().add(DashboardFinanceTabChanged(e['collection']!));
                                       },
                                       child: Container(
                                         height: 33.h,
@@ -550,7 +548,7 @@ class DashboardFinanceView extends StatelessWidget {
                                             : BoxDecoration(),
                                         child: Center(
                                           child: Text(
-                                            e.title,
+                                            e['title']!,
                                             style: GoogleFonts.inter(
                                               fontSize: 11.sp,
                                               fontWeight: AppFontWeight.medium,
@@ -562,7 +560,7 @@ class DashboardFinanceView extends StatelessWidget {
                                         ),
                                       ),
                                     );
-                                  }),
+                                  }
                                 )
                                 .toList(),
                           ),
@@ -586,7 +584,7 @@ class DashboardFinanceView extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              getx.getx.Get.toNamed("/summary");
+                              context.push("/summary");
                             },
                             child: Row(
                               children: [
@@ -625,7 +623,7 @@ class DashboardFinanceView extends StatelessWidget {
                                   case SummaryType.product:
                                     return GestureDetector(
                                       onTap: () {
-                                        getx.Get.toNamed(
+                                        context.push(
                                           "/detail_product/${e.data.id}",
                                         );
                                       },
@@ -644,7 +642,7 @@ class DashboardFinanceView extends StatelessWidget {
                                   case SummaryType.order:
                                     return GestureDetector(
                                       onTap: () {
-                                        getx.Get.toNamed(
+                                        context.push(
                                           "/detail_product_order/${e.data.id}",
                                         );
                                       },
@@ -666,7 +664,7 @@ class DashboardFinanceView extends StatelessWidget {
                                   case SummaryType.salesOrder:
                                     return GestureDetector(
                                       onTap: () async {
-                                        getx.Get.toNamed(
+                                        context.push(
                                           "/detail_sales_order/${e.data.id}",
                                         );
                                       },
@@ -701,7 +699,7 @@ class DashboardFinanceView extends StatelessWidget {
                                     .map(
                                       (product) => GestureDetector(
                                         onTap: () {
-                                          getx.Get.toNamed(
+                                          context.push(
                                             "/detail_product/${product.id}",
                                           );
                                         },
@@ -735,7 +733,7 @@ class DashboardFinanceView extends StatelessWidget {
                               ...state.listOrder.take(2).map((data) {
                                 return GestureDetector(
                                   onTap: () {
-                                    getx.Get.toNamed(
+                                    context.push(
                                       "/detail_product_order/${data.id}",
                                     );
                                   },
@@ -752,11 +750,11 @@ class DashboardFinanceView extends StatelessWidget {
                                     finance: true,
                                     imageProduct: data!.imageProduct,
                                     onPayPressed: () =>
-                                        financeVM.requestPayProductOrder(
-                                          data!.id,
-                                          data!.productId,
-                                          data!.quantity,
-                                        ),
+                                        context.read<DashboardFinanceBloc>().add(DashboardFinancePayProductRequested(
+                                          data!.id ?? "",
+                                          data!.productId ?? "",
+                                          data!.quantity ?? 0,
+                                        )),
                                   ),
                                 );
                               }).toList(),
@@ -776,7 +774,7 @@ class DashboardFinanceView extends StatelessWidget {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          getx.Get.toNamed(
+                                          context.push(
                                             "/detail_sales_order/${data!.id}",
                                           );
                                         },
@@ -811,8 +809,7 @@ class DashboardFinanceView extends StatelessWidget {
             ),
           ],
         ),
-        Obx(
-          () => state.isLoading
+        state.isLoading
               ? Container(
                   color: Colors.black26,
                   child: Center(
@@ -825,6 +822,8 @@ class DashboardFinanceView extends StatelessWidget {
               : SizedBox(),
         ],
       );
-    }));
+    },
+    ),
+    );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
@@ -84,7 +83,7 @@ class WarehouseMainPageView extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,

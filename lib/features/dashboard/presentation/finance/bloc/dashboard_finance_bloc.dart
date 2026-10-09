@@ -14,7 +14,7 @@ import 'package:mierp_apps/domain/transaction/services/pay_product_order_service
 abstract class DashboardFinanceEvent extends Equatable {
   const DashboardFinanceEvent();
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class DashboardFinanceStarted extends DashboardFinanceEvent {}
@@ -23,7 +23,7 @@ class DashboardFinanceTabChanged extends DashboardFinanceEvent {
   final String tab;
   const DashboardFinanceTabChanged(this.tab);
   @override
-  List<Object> get props => [tab];
+  List<Object?> get props => [tab];
 }
 
 class DashboardFinanceStatsUpdated extends DashboardFinanceEvent {
@@ -60,7 +60,7 @@ class DashboardFinancePayProductRequested extends DashboardFinanceEvent {
   final int totalQty;
   const DashboardFinancePayProductRequested(this.docId, this.prodId, this.totalQty);
   @override
-  List<Object> get props => [docId, prodId, totalQty];
+  List<Object?> get props => [docId, prodId, totalQty];
 }
 
 // --- STATE ---
@@ -146,7 +146,7 @@ class DashboardFinanceState extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         userName, productsItem, settled, accountPayables, accountReceivables,
         productTotal, totalQty, lowStock, upComingStock, isLoading,
         successMessage, errorMessage, selectedTab, listProduct, listOrder,

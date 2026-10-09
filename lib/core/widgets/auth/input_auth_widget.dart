@@ -1,262 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/controller_widget/input_widget_controller.dart';
 
-class InputAuthWidget extends StatelessWidget {
-  final TextEditingController controller;
-  InputAuthWidget({super.key, required this.head, required this.controller, required this.placeholder, required this.necessary, required this.isPassword, required this.formKey});
+class InputAuthWidget extends StatefulWidget {
+  final dynamic head, controller, placeholder, isPassword, necessary, formKey;
 
-  final head, placeholder, necessary, isPassword, formKey;
-  final inputWidgetC = Get.put(InputWidgetController(), tag: UniqueKey().toString());
-  RxBool hasError = false.obs;
-  RxString dataError = "".obs;
+  const InputAuthWidget({
+    super.key,
+    required this.head,
+    required this.controller,
+    required this.placeholder,
+    required this.isPassword,
+    required this.necessary,
+    required this.formKey,
+  });
+
+  @override
+  State<InputAuthWidget> createState() => _InputAuthWidgetState();
+}
+
+class _InputAuthWidgetState extends State<InputAuthWidget> {
+  bool isNotVisible = true;
+  bool isFocus = false;
+  final FocusNode focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  void toggleVisibility() {
+    setState(() {
+      isNotVisible = !isNotVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Container(
-        width: 322.w,
-        height: 93.w,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                necessary ?
+    return Container(
+      width: 322.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (widget.necessary)
                 Text(
                   "*",
                   style: GoogleFonts.inter(
-                    fontSize: 13.sp,
+                    fontSize: 14.sp,
                     fontWeight: AppFontWeight.medium,
-                    color: Colors.red,
-                  ),
-                ) : SizedBox(),
-                Text(
-                  head,
-                  style: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.medium,
-                    color: AppColors.grayTitle,
+                    color: const Color(0xFFED2736),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 8.w,),
-            Container(
-              width: 322.w,
-              // height: 45.w,
-              height: 45.w,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6.w),
-                boxShadow: inputWidgetC.isFocus.value ?
-                [BoxShadow(
-                    color: hasError.value?Colors.red.shade50:AppColors.blueLineShadow,
-                    spreadRadius: 4
-                )
-                ] : [BoxShadow(
-                    color: Colors.white,
-                    spreadRadius: 2
-                )
-                ],
-              ),
-              child: isPassword ?
-              TextFormField(
-                maxLength: 30,
-                buildCounter: (context, {required currentLength, required isFocused, required maxLength}) => null,
-                controller: controller,
-                obscureText: inputWidgetC.isNotVisible.value,
-                focusNode: inputWidgetC.focusAuthNode,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    hasError.value = true;
-                    dataError.value = "Password wajib diisi";
-                    return "";
-                  } else {
-                    hasError.value = false;
-                  }
-
-                  if (value.length <= 8) {
-                    hasError.value = true;
-                    dataError.value = "Password harus lebih dari 8";
-                    return "";
-                  } else {
-                    hasError.value = false;
-                  }
-                },
+              Text(
+                widget.head,
                 style: GoogleFonts.inter(
-                  fontSize: 13.sp,
-                  fontWeight: AppFontWeight.regular,
-                ),
-                decoration: !hasError.value?InputDecoration(
-                  hintText: "Enter your password",
-                  hintStyle: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.regular,
-                    height: 1.0,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.blueLine,
-                          width: 1.w)
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.coolGray,
-                          width: 1.w)
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.w),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 8.w, vertical: 12.5.w),
-                  suffixIcon: IconButton(
-                    icon: inputWidgetC.isNotVisible.value ? Icon(
-                        Icons.visibility_off) : Icon(Icons.visibility),
-                    onPressed: () => inputWidgetC.changeIsNotVisible(),
-                  ),
-                ):InputDecoration(
-                  errorMaxLines: 1,
-                  errorText: '',
-                  errorStyle: TextStyle(
-                    color: Colors.transparent,
-                    fontSize: 0,
-                  ),
-                  hintText: "Enter your password",
-                  hintStyle: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.regular,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.blueLine,
-                          width: 1.w)
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.coolGray,
-                          width: 1.w)
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.w),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 8.w, vertical: 12.5.w),
-                  suffixIcon: IconButton(
-                    icon: inputWidgetC.isNotVisible.value ? Icon(
-                        Icons.visibility_off) : Icon(Icons.visibility),
-                    onPressed: () => inputWidgetC.changeIsNotVisible(),
-                  ),
-                ),
-              ) :
-              TextFormField(
-                maxLength: 30,
-                keyboardType: TextInputType.emailAddress,
-                buildCounter: (context, {required currentLength, required isFocused, required maxLength}) => null,
-                controller: controller,
-                focusNode: inputWidgetC.focusAuthNode,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    hasError.value = true;
-                    dataError.value = "Email wajib diisi";
-                    return null;
-                  } else {
-                    hasError.value = false;
-                    dataError.value = "";
-                  }
-
-                  if (!value.contains('@') || !value.contains('.')) {
-                    hasError.value = true;
-                    dataError.value = "Format email salah";
-                    return null;
-                  } else {
-                    hasError.value = false;
-                    dataError.value = "";
-                  }
-                },
-                style: GoogleFonts.inter(
-                  fontSize: 13.sp,
-                  fontWeight: AppFontWeight.regular,
-                ),
-                decoration: hasError.value?InputDecoration(
-                  errorMaxLines: 1,
-                  errorText: '',
-                  errorStyle: TextStyle(
-                    color: Colors.transparent,
-                    fontSize: 0,
-                  ),
-                  hintText: "Enter your email",
-                  hintStyle: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.regular,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.blueLine,
-                          width: 1.w)
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.coolGray,
-                          width: 1.w)
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.w),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 8.w, vertical: 12.5.w),
-                ):InputDecoration(
-                  hintText: "Enter your email",
-                  hintStyle: GoogleFonts.inter(
-                    fontSize: 13.sp,
-                    fontWeight: AppFontWeight.regular,
-                    height: 1.0,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.blueLine,
-                          width: 1.w)
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6.w),
-                      borderSide: BorderSide(color: AppColors.coolGray,
-                          width: 1.w)
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.w),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 8.w, vertical: 12.5.w),
+                  fontSize: 14.sp,
+                  fontWeight: AppFontWeight.medium,
+                  color: const Color(0xFF334155),
                 ),
               ),
-            ),
-            hasError.value ?
-            Column(
-              children: [
-                SizedBox(height: 5.h,),
-                Row(
-                  children: [
-                    Text(
-                      dataError.value,
-                      style: GoogleFonts.inter(
-                          fontSize: 10.sp,
-                          fontWeight: AppFontWeight.regular,
-                          height: 1.0,
-                          color: Colors.red
-                      ),
-                    ),
-                  ],
+            ],
+          ),
+          SizedBox(height: 8.w),
+          Focus(
+            onFocusChange: (value) {
+              setState(() {
+                isFocus = value;
+              });
+            },
+            child: TextFormField(
+              controller: widget.controller,
+              obscureText: widget.isPassword ? isNotVisible : false,
+              keyboardType: widget.isPassword ? TextInputType.text : TextInputType.emailAddress,
+              focusNode: focusNode,
+              style: GoogleFonts.inter(
+                fontSize: 15.sp,
+                fontWeight: AppFontWeight.medium,
+                color: const Color(0xFF0F172A),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "${widget.head} wajib diisi";
+                }
+                if (widget.isPassword && value.length <= 8) {
+                  return "Password harus lebih dari 8 karakter";
+                }
+                if (!widget.isPassword && (!value.contains('@') || !value.contains('.'))) {
+                  return "Format email salah";
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: widget.placeholder == "" ? "Enter ${widget.head.toString().toLowerCase()}" : widget.placeholder,
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 14.sp,
+                  fontWeight: AppFontWeight.regular,
+                  color: const Color(0xFF94A3B8),
                 ),
-                SizedBox(height: 5.h,),
-              ],
-            ) : SizedBox(height: 20.h,),
-          ],
-        ),
-      );
-    });
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.w),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFE2E8F0), width: 1.5.w),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFE2E8F0), width: 1.5.w),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: AppColors.electricBlue, width: 1.5.w),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFED2736), width: 1.5.w),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: const Color(0xFFED2736), width: 1.5.w),
+                ),
+                suffixIcon: widget.isPassword
+                    ? IconButton(
+                        icon: Icon(
+                          isNotVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                          color: const Color(0xFF64748B),
+                        ),
+                        onPressed: toggleVisibility,
+                      )
+                    : null,
+              ),
+            ),
+          ),
+          SizedBox(height: 16.w),
+        ],
+      ),
+    );
   }
 }
-

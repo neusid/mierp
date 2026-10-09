@@ -1,7 +1,7 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
@@ -18,8 +18,8 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final formKey = GlobalKey<FormState>();
-  final TextEditingController emailC = TextEditingController();
-  final TextEditingController passwordC = TextEditingController();
+  final TextEditingController emailC = TextEditingController(text: "admin@mierp.com");
+  final TextEditingController passwordC = TextEditingController(text: "password123");
   bool saveCredential = false;
 
   @override
@@ -50,12 +50,12 @@ class _LoginViewState extends State<LoginView> {
               });
             }
           } else if (state is LoginFailure) {
-            Get.snackbar("Login Gagal", state.message);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is LoginSuccess) {
             if (state.role == "warehouse") {
-              Get.offAllNamed("/warehouse_main_page");
+              context.go("/warehouse_main_page");
             } else {
-              Get.offAllNamed("/finance_main_page");
+              context.go("/finance_main_page");
             }
           }
         },
@@ -196,7 +196,7 @@ class _LoginViewState extends State<LoginView> {
                                               ],
                                             ),
                                             GestureDetector(
-                                              onTap: () => Get.toNamed("/forgot"),
+                                              onTap: () => context.push("/forgot"),
                                               child: Text(
                                                 "Forgot Password",
                                                 style: GoogleFonts.inter(
@@ -216,11 +216,8 @@ class _LoginViewState extends State<LoginView> {
                                         width: 322.w,
                                         height: 45.h,
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(colors: [
-                                            AppColors.electricBlue,
-                                            AppColors.blueGradient
-                                          ]),
-                                          borderRadius: BorderRadius.circular(6.w),
+                                          color: AppColors.electricBlue,
+                                          borderRadius: BorderRadius.circular(10.w),
                                         ),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -305,7 +302,7 @@ class _LoginViewState extends State<LoginView> {
                                             SizedBox(width: 4.w),
                                             GestureDetector(
                                               onTap: () {
-                                                Get.offAllNamed("/register");
+                                                context.go("/register");
                                               },
                                               child: Text(
                                                 "Register.",

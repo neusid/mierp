@@ -9,6 +9,8 @@ class OrderProduct {
   int quantity;
   int totalCost;
   int unitPrice;
+  int? discountPercent;
+  int? discountMax;
   String userId;
   String firstName;
   String imageProduct;
@@ -24,6 +26,8 @@ class OrderProduct {
     required this.quantity,
     required this.totalCost,
     required this.unitPrice,
+    this.discountPercent,
+    this.discountMax,
     required this.userId,
     required this.firstName,
     required this.imageProduct,
@@ -45,6 +49,8 @@ class OrderProduct {
     quantity: json["quantity"],
     totalCost: json["total_cost"],
     unitPrice: json["unit_price"],
+    discountPercent: json["discount_percent"],
+    discountMax: json["discount_max"],
     userId: json["user_id"],
     firstName: json["first_name"],
     imageProduct: json["image_product"],
@@ -61,6 +67,8 @@ class OrderProduct {
     "quantity": quantity,
     "total_cost": totalCost,
     "unit_price": unitPrice,
+    "discount_percent": discountPercent,
+    "discount_max": discountMax,
     "user_id": userId,
     "first_name": firstName,
     "image_product": imageProduct,

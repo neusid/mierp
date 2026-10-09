@@ -55,24 +55,27 @@ class ItemStoreRepositoryImpl implements ItemRepository {
   }
 
   @override
-  Future<void> getDetailDataStock(docId) async {
+  Future<Product> getDetailDataStock(String docId) async {
     final snapshot = await firestore.collection("products").doc(docId).get();
     final data = Product.fromJson(snapshot.data() as Map<String, dynamic>, docId: docId);
     itemStore.setProducts(data);
+    return data;
   }
 
   @override
-  Future<void> getDetailDataOrder(docId) async {
+  Future<OrderProduct> getDetailDataOrder(String docId) async {
     final snapshot = await firestore.collection("warehouse_orders").doc(docId).get();
     final data = OrderProduct.fromJson(snapshot.data() as Map<String, dynamic>, docId: docId);
     itemStore.setOrderProduct(data);
+    return data;
   }
 
   @override
-  Future<void> getDetailDataSalesOrder(prodId) async {
+  Future<SalesOrder> getDetailDataSalesOrder(String prodId) async {
     final snapshot = await firestore.collection("sales_orders").doc(prodId).get();
     final data = SalesOrder.fromJson(snapshot.data() as Map<String, dynamic>, docId: prodId);
     itemStore.setSalesOrder(data);
+    return data;
   }
 
   @override

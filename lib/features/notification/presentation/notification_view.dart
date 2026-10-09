@@ -1,15 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/features/notification/presentation/notification_view_model.dart';
 
-class NotificationView extends GetView<NotificationViewModel> {
-  NotificationView({super.key});
+class NotificationView extends StatelessWidget {
+  const NotificationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +41,7 @@ class NotificationView extends GetView<NotificationViewModel> {
                     children: [
                       InkWell(
                         onTap: () {
-                          Get.back();
+                          Navigator.pop(context);
                         },
                         child: Icon(
                           Icons.close,

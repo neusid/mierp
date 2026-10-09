@@ -1,9 +1,8 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mierp_apps/core/controller/move_page_controller.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 
@@ -17,10 +16,7 @@ class ButtonProfileWidget extends StatelessWidget {
     required this.label,
     required this.onPress,
   });
-
-  final movePageC = Get.find<MovePageController>();
-
-  @override
+@override
   Widget build(BuildContext context) {
     return Container(
       width: 335.w,
@@ -98,10 +94,7 @@ class ButtonProfileConfirmWidget extends StatelessWidget {
     required this.label,
     required this.onPress,
   });
-
-  final movePageC = Get.find<MovePageController>();
-
-  @override
+@override
   Widget build(BuildContext context) {
     return Container(
       width: 335.w,
@@ -187,7 +180,7 @@ class ButtonProfileConfirmWidget extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: onPress != null
                               ? () {
-                                  Get.back();
+                                  context.pop();
                                   onPress!();
                                 }
                               : null,

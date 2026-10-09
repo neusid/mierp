@@ -28,7 +28,7 @@ class AppColors {
   static const blueLine = Color(0xFF3B82F6);
   static const blueLineShadow = Color(0xFFD8E6FD);
   static const blueGradient = Color(0xFF0D92F1);
-  static const bgColor = Color(0xFFF6F6F6);
+  static const bgColor = Color(0xFFE2E8F0);
 
   static const shadowBox = Color(0xFFECE9E9);
   static const shadowBox2 = Color(0xFFE8E8E8);

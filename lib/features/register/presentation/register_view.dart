@@ -1,7 +1,7 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
@@ -44,11 +44,11 @@ class _RegisterViewState extends State<RegisterView> {
       body: BlocConsumer<RegisterBloc, RegisterState>(
         listener: (context, state) {
           if (state is RegisterFailure) {
-            Get.snackbar("Register Info", state.message);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is RegisterSuccess) {
-            Get.snackbar("Register Success", state.message);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
             Future.delayed(const Duration(seconds: 3), () {
-              Get.offAllNamed("/login");
+              context.go("/login");
             });
           }
         },
@@ -200,11 +200,8 @@ class _RegisterViewState extends State<RegisterView> {
                                         width: 322.w,
                                         height: 45.h,
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(colors: [
-                                            AppColors.electricBlue,
-                                            AppColors.blueGradient
-                                          ]),
-                                          borderRadius: BorderRadius.circular(6.w),
+                                          color: AppColors.electricBlue,
+                                          borderRadius: BorderRadius.circular(10.w),
                                         ),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -257,7 +254,7 @@ class _RegisterViewState extends State<RegisterView> {
                                             SizedBox(width: 4.w),
                                             GestureDetector(
                                               onTap: () {
-                                                Get.offAllNamed("/login");
+                                                context.go("/login");
                                               },
                                               child: Text(
                                                 "Login.",

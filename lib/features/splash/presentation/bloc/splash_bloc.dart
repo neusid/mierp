@@ -3,8 +3,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
-import 'package:mierp_apps/core/session/auth_session.dart';
-import 'package:mierp_apps/features/onboarding/presentation/onboarding_view_model.dart';
+import 'package:mierp_apps/core/session/bloc/auth_bloc.dart';
+import 'package:mierp_apps/core/session/bloc/auth_state.dart';
+import 'package:mierp_apps/features/onboarding/presentation/onboarding_service.dart';
 
 // --- EVENTS ---
 abstract class SplashEvent extends Equatable {
@@ -30,12 +31,12 @@ class SplashNavigateToFinance extends SplashState {}
 
 // --- BLOC ---
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  final AuthSession authSession;
-  final OnboardingViewModel onboardingViewModel;
+  final AuthBloc authBloc;
+  final OnboardingService onboardingService;
 
   SplashBloc({
-    required this.authSession,
-    required this.onboardingViewModel,
+    required this.authBloc,
+    required this.onboardingService,
   }) : super(SplashInitial()) {
     on<SplashStarted>(_onSplashStarted);
   }
@@ -44,7 +45,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     SplashStarted event,
     Emitter<SplashState> emit,
   ) async {
-    final isFirst = onboardingViewModel.isFirst.value;
+    final isFirst = true;
     
     if (isFirst) {
       await Future.delayed(const Duration(seconds: 2));
@@ -53,7 +54,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       final prefs = await SharedPreferences.getInstance();
       await Future.delayed(const Duration(seconds: 2));
 
-      if (!authSession.isLoggedIn.value) {
+      if (authBloc.state is! AuthAuthenticated) {
         emit(SplashNavigateToLogin());
         return;
       }

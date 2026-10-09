@@ -1,7 +1,7 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
@@ -34,11 +34,11 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       body: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordFailure) {
-            Get.snackbar("Forgot Password Info", state.message);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is ForgotPasswordSuccess) {
-            Get.snackbar("Forgot Password Success", state.message);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
             Future.delayed(const Duration(seconds: 3), () {
-              Get.offAllNamed("/login");
+              context.go("/login");
             });
           }
         },
@@ -136,11 +136,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                         width: 322.w,
                                         height: 45.h,
                                         decoration: BoxDecoration(
-                                          gradient: LinearGradient(colors: [
-                                            AppColors.electricBlue,
-                                            AppColors.blueGradient
-                                          ]),
-                                          borderRadius: BorderRadius.circular(6.w),
+                                          color: AppColors.electricBlue,
+                                          borderRadius: BorderRadius.circular(10.w),
                                         ),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
@@ -187,7 +184,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                             SizedBox(width: 4.w),
                                             GestureDetector(
                                               onTap: () {
-                                                Get.toNamed("/login");
+                                                context.push("/login");
                                               },
                                               child: Text(
                                                 "Login.",

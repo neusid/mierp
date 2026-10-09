@@ -1,4 +1,3 @@
-import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +18,8 @@ class CardOrder extends StatelessWidget {
     required this.unitPrice,
     required this.lineTotal,
     required this.imageProduct,
+    this.discountPercent,
+    this.discountMax,
     this.finance,
     required this.onPayPressed,
   });
@@ -34,301 +35,217 @@ class CardOrder extends StatelessWidget {
       lineTotal,
       imageProduct,
       finance;
-  final converDollar = ConvertDollar();
+  final int? discountPercent;
+  final int? discountMax;
+  
+  final convertDollar = ConvertDollar();
   final VoidCallback onPayPressed;
 
   @override
   Widget build(BuildContext context) {
+    final bool isPayable = !financeApproved && finance != null;
+    
+    int finalDiscountPercent = discountPercent ?? 0;
+    int finalDiscountMax = discountMax ?? 0;
+    
+    // Original price calculation
+    int originalPrice = lineTotal;
+    if (finalDiscountPercent > 0) {
+      // If there's a discount, original price was higher
+      originalPrice = (lineTotal / (1 - (finalDiscountPercent / 100.0))).round();
+    }
+
     return Container(
-      width: 342.w,
-      height: 140.h,
+      width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.w),
         color: Colors.white,
+        borderRadius: BorderRadius.circular(16.w),
+        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowBox,
-            spreadRadius: -3.w,
-            offset: Offset(0, 4),
-            blurRadius: 21.w,
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10.w,
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
-      child: Center(
-        child: Container(
-          width: 317.w,
-          height: 113.h,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 50.18.w,
-                    height: 50.18.h,
-                    decoration: BoxDecoration(
-                      // color: Color(0xFFF1F4FF),
-                      image: DecorationImage(
-                        image: imageProduct == null
-                            ? AssetImage("assets/images/dummy_item.jpg")
-                            : NetworkImage(imageProduct),
-                        fit: BoxFit.fill,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // LEFT IMAGE (Flush with the left corners)
+            Container(
+              width: 110.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15.w),
+                  bottomLeft: Radius.circular(15.w),
+                ),
+                color: const Color(0xFFF8FAFC),
+                image: DecorationImage(
+                  image: (imageProduct == null || imageProduct.toString().isEmpty)
+                      ? const AssetImage("assets/images/dummy_item.jpg")
+                      : NetworkImage(imageProduct) as ImageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            
+            // RIGHT CONTENT
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Title
+                    Text(
+                      namaBarang,
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        fontWeight: AppFontWeight.bold,
+                        color: const Color(0xFF1C1C1C),
                       ),
-                      borderRadius: BorderRadius.circular(10.w),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Container(
-                    width: 250.w,
-                    height: 50.18.w,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    SizedBox(height: 4.h),
+                    
+                    // Subtitle: By user and Date
+                    Row(
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Text(
-                                idBarang,
-                                style: GoogleFonts.inter(
-                                  fontSize: 10.sp,
-                                  fontWeight: AppFontWeight.light,
-                                  color: AppColors.gray,
-                                ),
-                              ),
+                        Icon(Icons.person_outline_rounded, size: 14.w, color: const Color(0xFF6B7280)),
+                        SizedBox(width: 4.w),
+                        Expanded(
+                          child: Text(
+                            "By: $nameUser • $createdOn",
+                            style: GoogleFonts.inter(
+                              fontSize: 11.sp,
+                              fontWeight: AppFontWeight.medium,
+                              color: const Color(0xFF6B7280),
                             ),
-                            Container(
-                              width: 86.w,
-                              height: 15.h,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.w),
-                                ),
-                                color: AppColors.purpleShadow,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Account Payables",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 7.sp,
-                                    fontWeight: AppFontWeight.regular,
-                                    color: AppColors.electricBlue,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Text(
-                                namaBarang,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.inter(
-                                  fontSize: 10.sp,
-                                  fontWeight: AppFontWeight.regular,
-                                  color: AppColors.gray,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 47.w,
-                              height: 14.h,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.w),
-                                ),
-                                color: financeApproved
-                                    ? AppColors.mintGreen
-                                    : AppColors.softCream,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  financeApproved ? "Paid" : "Unpaid",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 7.sp,
-                                    fontWeight: AppFontWeight.regular,
-                                    color: financeApproved
-                                        ? AppColors.neonGreen
-                                        : AppColors.vibrantOrange,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Text(
-                                "Created on",
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.inter(
-                                  fontSize: 8.sp,
-                                  fontWeight: AppFontWeight.regular,
-                                  color: AppColors.gray,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              createdOn.toString(),
-                              style: GoogleFonts.inter(
-                                fontSize: 8.sp,
-                                fontWeight: AppFontWeight.light,
-                                color: AppColors.charcoal,
-                              ),
-                            ),
-                          ],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 13.w),
-              DottedLine(
-                direction: Axis.horizontal,
-                dashColor: AppColors.grayDashline,
-                lineLength: 317.w,
-                lineThickness: 2.w,
-                dashLength: 5.w,
-                dashGapLength: 5.w,
-              ),
-              SizedBox(height: 13.w),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "From",
+                    SizedBox(height: 6.h),
+                    
+                    // Paid/Unpaid Badge + Prices
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Status Badge (similar to PLUS badge)
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: financeApproved ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+                            borderRadius: BorderRadius.circular(4.w),
+                          ),
+                          child: Text(
+                            financeApproved ? "PAID" : "UNPAID",
                             style: GoogleFonts.inter(
-                              fontSize: 8.sp,
-                              fontWeight: AppFontWeight.light,
-                              color: AppColors.gray,
+                              fontSize: 9.sp,
+                              fontWeight: AppFontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
                             ),
                           ),
+                        ),
+                        SizedBox(width: 6.w),
+                        
+                        if (finalDiscountPercent > 0) ...[
+                          // Original Price (Strikethrough)
                           Text(
-                            //"Warehouse",
-                            nameUser,
+                            convertDollar.intToDollar(originalPrice),
                             style: GoogleFonts.inter(
-                              fontSize: 12.sp,
+                              fontSize: 11.sp,
                               fontWeight: AppFontWeight.medium,
-                              color: AppColors.gray,
+                              color: const Color(0xFF9CA3AF),
+                              decoration: TextDecoration.lineThrough,
                             ),
                           ),
+                          SizedBox(width: 4.w),
                         ],
-                      ),
-                      SizedBox(width: 23.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Quantity",
+                        
+                        // Final Price + Qty
+                        Expanded(
+                          child: Text(
+                            "${convertDollar.intToDollar(lineTotal)} · Qty: $quantity",
                             style: GoogleFonts.inter(
-                              fontSize: 8.sp,
-                              fontWeight: AppFontWeight.light,
-                              color: AppColors.gray,
+                              fontSize: 11.sp,
+                              fontWeight: AppFontWeight.semiBold,
+                              color: const Color(0xFF1F2937),
                             ),
-                          ),
-                          Text(
-                            quantity.toString(),
-                            style: GoogleFonts.inter(
-                              fontSize: 10.sp,
-                              fontWeight: AppFontWeight.regular,
-                              color: AppColors.gray,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 9.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Unit Price",
-                            style: GoogleFonts.inter(
-                              fontSize: 8.sp,
-                              fontWeight: AppFontWeight.light,
-                              color: AppColors.gray,
-                            ),
-                          ),
-                          Text(
-                            converDollar.intToDollar(unitPrice),
-                            style: GoogleFonts.inter(
-                              fontSize: 10.sp,
-                              fontWeight: AppFontWeight.regular,
-                              color: AppColors.gray,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 9.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Line Total",
-                            style: GoogleFonts.inter(
-                              fontSize: 8.sp,
-                              fontWeight: AppFontWeight.light,
-                              color: AppColors.gray,
-                            ),
-                          ),
-                          Text(
-                            converDollar.intToDollar(lineTotal),
-                            style: GoogleFonts.inter(
-                              fontSize: 10.sp,
-                              fontWeight: AppFontWeight.regular,
-                              color: AppColors.gray,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: 80.w,
-                    height: 24.81.h,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.w),
-                        ),
-                        backgroundColor: !financeApproved && finance != null
-                            ? AppColors.electricBlue
-                            : AppColors.coolGray,
-                        padding: EdgeInsets.all(0),
-                      ),
-                      onPressed: !financeApproved && finance != null
-                          ? onPayPressed
-                          : null,
-                      child: Center(
-                        child: Text(
-                          "Pay Invoice",
-                          style: GoogleFonts.inter(
-                            fontSize: 9.sp,
-                            color: Colors.white,
-                            fontWeight: AppFontWeight.medium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                ],
+                    SizedBox(height: 10.h),
+                    
+                    // Bottom Section: Discount Pill & Pay Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (finalDiscountPercent > 0)
+                          // Discount Pill
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF3C7), // Light Orange
+                                  borderRadius: BorderRadius.circular(16.w),
+                                ),
+                                child: Text(
+                                  "Diskon ${finalDiscountPercent}%, maks. ${(finalDiscountMax / 1000).toInt()}rb",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10.sp,
+                                    fontWeight: AppFontWeight.bold,
+                                    color: const Color(0xFFB45309), // Brown Orange
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          const Spacer(),
+                        
+                        // Pay Invoice Button (if needed)
+                        if (isPayable)
+                          GestureDetector(
+                            onTap: onPayPressed,
+                            child: Container(
+                              margin: EdgeInsets.only(left: 8.w),
+                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF00AA13), // Gojek Green for action
+                                borderRadius: BorderRadius.circular(16.w),
+                              ),
+                              child: Text(
+                                "Pay Now",
+                                style: GoogleFonts.inter(
+                                  fontSize: 10.sp,
+                                  fontWeight: AppFontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

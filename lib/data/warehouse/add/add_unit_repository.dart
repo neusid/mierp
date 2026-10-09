@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mierp_apps/core/models/product.dart';
@@ -22,7 +21,7 @@ class AddUnitRepository {
         "unit_price": data.unitPrice,
       });
     } catch (e) {
-      Get.snackbar("Error add unit", "$e");
+      throw Exception(e);
     }
   }
 

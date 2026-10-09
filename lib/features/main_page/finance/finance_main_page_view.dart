@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/bottom_navbar_helper.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/dashboard_finance_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
@@ -87,7 +85,7 @@ class FinanceMainPageView extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(20.w),
                 onTap: () {
-                  controller.currentIndex.value = 0;
+                  context.read<MainPageCubit>().changeIndex(0);
                 },
                 child: Container(
                   width: 55.w,
