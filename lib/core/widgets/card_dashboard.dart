@@ -6,11 +6,12 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 
 class CardDashboard extends StatelessWidget {
-  CardDashboard(
+  const CardDashboard(
       {super.key, required this.nameBox, required this.description, required this.totalItems, required this.urgent});
 
-  final nameBox, description, urgent;
-  int totalItems;
+  final String nameBox, description;
+  final bool urgent;
+  final int totalItems;
 
   @override
   Widget build(BuildContext context) {

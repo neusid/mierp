@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
@@ -8,7 +9,7 @@ class WarehouseRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 
-  Future<List<Product?>> getBulkDataStock(collection) async {
+  Future<List<Product?>> getBulkDataStock(String collection) async {
     try {
       final snapshot = await firestore.collection(collection).get();
 
@@ -16,12 +17,12 @@ class WarehouseRepository {
           (doc)=>Product.fromJson(doc.data(), docId: doc.id)
       ).toList();
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
     return [];
   }
 
-  Future<List<OrderProduct>> getBulkDataOrder(collection) async {
+  Future<List<OrderProduct>> getBulkDataOrder(String collection) async {
     try {
       final snapshot = await firestore.collection(collection).get();
 
@@ -31,28 +32,28 @@ class WarehouseRepository {
           }
       ).toList();
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
     return [];
   }
 
-  Future<List<SalesOrder>> getBulkDataSalesOrder(collection) async {
+  Future<List<SalesOrder>> getBulkDataSalesOrder(String collection) async {
     try {
       final snapshot = await firestore.collection(collection).get();
 
       return snapshot.docs.map(
               (doc){
-            print("ini ${doc.data()}");
+            debugPrint("ini ${doc.data()}");
             return SalesOrder.fromJson(doc.data(), docId: doc.id);
           }
       ).toList();
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
     return [];
   }
 
-  Future<List<Product>> searchProducts(collection,searchKey) async {
+  Future<List<Product>> searchProducts(String collection, String searchKey) async {
     try {
       // final snapshot = await firestore.collection(collection).get();
 
@@ -67,12 +68,12 @@ class WarehouseRepository {
 
       return result;
     } catch(e) {
-      print(e);
+      debugPrint(e.toString());
       return [];
     }
   }
 
-  Future<List<OrderProduct>> searchOrder(collection, searchKey) async {
+  Future<List<OrderProduct>> searchOrder(String collection, String searchKey) async {
     try {
       final snapshot = await firestore.collection(collection)
           .where('product_name', isGreaterThanOrEqualTo: searchKey)
@@ -83,12 +84,12 @@ class WarehouseRepository {
 
       return result;
     } catch(e) {
-      print(e);
+      debugPrint(e.toString());
       return [];
     }
   }
 
-  Future<List<SalesOrder>> searchSalesOrder(collection, searchKey) async {
+  Future<List<SalesOrder>> searchSalesOrder(String collection, String searchKey) async {
     try {
       final snapshot = await firestore.collection(collection)
           .where('product_name', isGreaterThanOrEqualTo: searchKey)
@@ -99,7 +100,7 @@ class WarehouseRepository {
 
       return result;
     } catch(e) {
-      print(e);
+      debugPrint(e.toString());
       return [];
     }
   }
@@ -107,10 +108,7 @@ class WarehouseRepository {
   Stream<int> streamTotalProducts() {
     return firestore.collection("products").snapshots().map(
           (event) {
-        int total = 0;
-        for (var data in event.docs) {
-          total += 1;
-        }
+        int total = event.docs.length;
         return total;
       },
     );
@@ -159,7 +157,7 @@ class WarehouseRepository {
     );
   }
 
-  DateTime? parseDate(value) {
+  DateTime? parseDate(dynamic value) {
     if (value is String) return DateTime.tryParse(value);
     return null;
   }

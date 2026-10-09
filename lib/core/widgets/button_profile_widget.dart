@@ -7,10 +7,11 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 
 class ButtonProfileWidget extends StatelessWidget {
-  final icon, label;
-  VoidCallback? onPress;
+  final String icon;
+  final String label;
+  final VoidCallback? onPress;
 
-  ButtonProfileWidget({
+  const ButtonProfileWidget({
     super.key,
     required this.icon,
     required this.label,
@@ -85,10 +86,11 @@ class ButtonProfileWidget extends StatelessWidget {
 }
 
 class ButtonProfileConfirmWidget extends StatelessWidget {
-  final icon, label;
-  VoidCallback? onPress;
+  final String icon;
+  final String label;
+  final VoidCallback? onPress;
 
-  ButtonProfileConfirmWidget({
+  const ButtonProfileConfirmWidget({
     super.key,
     required this.icon,
     required this.label,
