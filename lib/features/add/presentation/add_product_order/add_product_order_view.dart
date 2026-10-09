@@ -111,9 +111,24 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
               backgroundColor: Colors.white,
               elevation: 0,
               centerTitle: false,
-              leading: IconButton(
-                icon: Icon(Icons.close_rounded, color: const Color(0xFF0F172A)),
-                onPressed: () => context.pop(),
+              leadingWidth: 68.w,
+              leading: Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20.w),
+                  child: InkWell(
+                    onTap: () => context.pop(),
+                    borderRadius: BorderRadius.circular(12.w),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9), // Light gray background
+                        borderRadius: BorderRadius.circular(12.w),
+                      ),
+                      child: Icon(Icons.arrow_back_rounded, color: AppColors.charcoal, size: 24.w),
+                    ),
+                  ),
+                ),
               ),
               title: Text(
                 "Add Product Order",

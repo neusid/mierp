@@ -146,13 +146,14 @@ class _DetailProductViewState extends State<DetailProductView> {
                           children: [
                             InkWell(
                               onTap: () => context.pop(),
+                              borderRadius: BorderRadius.circular(12.w),
                               child: Container(
                                 padding: EdgeInsets.all(8.w),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(8.w),
+                                  borderRadius: BorderRadius.circular(12.w),
                                 ),
-                                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16.w, color: const Color(0xFF334155)),
+                                child: Icon(Icons.arrow_back_rounded, color: const Color(0xFF0F172A), size: 24.w),
                               ),
                             ),
                             SizedBox(width: 16.w),

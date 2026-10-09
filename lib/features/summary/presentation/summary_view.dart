@@ -97,9 +97,17 @@ class SummaryView extends StatelessWidget {
                                         onTap: () {
                                           context.pop();
                                         },
-                                        child: Icon(Icons.close, size: 24.w),
+                                        borderRadius: BorderRadius.circular(12.w),
+                                        child: Container(
+                                          padding: EdgeInsets.all(8.w),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF1F5F9),
+                                            borderRadius: BorderRadius.circular(12.w),
+                                          ),
+                                          child: Icon(Icons.arrow_back_rounded, color: AppColors.charcoal, size: 24.w),
+                                        ),
                                       ),
-                                      SizedBox(width: 19.w),
+                                      SizedBox(width: 12.w),
                                       Text(
                                         "Back To Summary",
                                         style: GoogleFonts.poppins(

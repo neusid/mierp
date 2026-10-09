@@ -132,7 +132,7 @@ class DetailProductOrderView extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF1F5F9),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.w)),
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
                       child: Text(
@@ -156,7 +156,7 @@ class DetailProductOrderView extends StatelessWidget {
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFEF2F2),
-                          borderRadius: BorderRadius.circular(8.w),
+                          borderRadius: BorderRadius.circular(12.w),
                           border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
                         ),
                         child: Center(
@@ -219,13 +219,14 @@ class DetailProductOrderView extends StatelessWidget {
                         children: [
                           InkWell(
                             onTap: () => context.pop(),
+                            borderRadius: BorderRadius.circular(12.w),
                             child: Container(
                               padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF1F5F9),
-                                borderRadius: BorderRadius.circular(8.w),
+                                borderRadius: BorderRadius.circular(12.w),
                               ),
-                              child: Icon(Icons.arrow_back_ios_new_rounded, size: 16.w, color: const Color(0xFF334155)),
+                              child: Icon(Icons.arrow_back_rounded, color: const Color(0xFF0F172A), size: 24.w),
                             ),
                           ),
                           SizedBox(width: 16.w),
