@@ -325,15 +325,18 @@ class SummaryView extends StatelessWidget {
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                AnimatedDefaultTextStyle(
-                                                  duration: const Duration(milliseconds: 300),
-                                                  curve: Curves.easeInOut,
-                                                  style: GoogleFonts.manrope(
-                                                    fontSize: 13.sp,
-                                                    fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
-                                                    color: isSelected ? AppColors.electricBlue : Colors.black,
+                                                FittedBox(
+                                                  fit: BoxFit.scaleDown,
+                                                  child: AnimatedDefaultTextStyle(
+                                                    duration: const Duration(milliseconds: 300),
+                                                    curve: Curves.easeInOut,
+                                                    style: GoogleFonts.manrope(
+                                                      fontSize: 13.sp,
+                                                      fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
+                                                      color: isSelected ? AppColors.electricBlue : Colors.black,
+                                                    ),
+                                                    child: Text(data["title"] ?? ""),
                                                   ),
-                                                  child: Text(data["title"] ?? ""),
                                                 ),
                                               ],
                                             ),
