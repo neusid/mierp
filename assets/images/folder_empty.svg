@@ -1,0 +1,26 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Soft shadow underneath -->
+  <ellipse cx="100" cy="180" rx="70" ry="12" fill="#000000" fill-opacity="0.05"/>
+  
+  <!-- Back of the folder -->
+  <path d="M40 70 L 60 50 L 100 50 L 110 60 L 160 60 C 165 60 170 65 170 70 L 170 150 C 170 155 165 160 160 160 L 40 160 C 35 160 30 155 30 150 L 30 80 C 30 75 35 70 40 70 Z" fill="#2563EB"/>
+  
+  <!-- Paper inside -->
+  <rect x="50" y="65" width="100" height="80" rx="2" fill="#FFFFFF"/>
+  <rect x="65" y="80" width="50" height="4" rx="2" fill="#E2E8F0"/>
+  <rect x="65" y="95" width="70" height="4" rx="2" fill="#E2E8F0"/>
+  <rect x="65" y="110" width="40" height="4" rx="2" fill="#E2E8F0"/>
+
+  <!-- Front of the folder (opened) -->
+  <path d="M20 160 L 40 90 C 42 85 46 80 52 80 L 172 80 C 178 80 182 85 180 90 L 160 160 C 158 165 154 170 148 170 L 28 170 C 22 170 18 165 20 160 Z" fill="#3B82F6"/>
+  <path d="M30 160 L 45 95 C 46 92 48 90 52 90 L 162 90 C 166 90 168 92 166 95 L 151 160 C 150 163 148 165 144 165 L 34 165 C 30 165 29 163 30 160 Z" fill="#60A5FA"/>
+
+  <!-- Magnifying glass -->
+  <circle cx="130" cy="110" r="24" fill="#EFF6FF" stroke="#1D4ED8" stroke-width="8"/>
+  <circle cx="130" cy="110" r="14" fill="#DBEAFE"/>
+  <path d="M148 128 L 168 148" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
+  <path d="M148 128 L 168 148" stroke="#60A5FA" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Sparkles -->
+  <path d="M40 50 L42 40 L52 38 L42 36 L40 26 L38 36 L28 38 L38 40 Z" fill="#FDE047"/>
+</svg>

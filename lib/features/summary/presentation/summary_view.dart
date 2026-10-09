@@ -451,47 +451,7 @@ class SummaryView extends StatelessWidget {
                                         SizedBox(height: 10.w),
                                       ],
                                     )
-                                  : Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Lottie.asset(
-                                            "assets/lottie/empty_ghost.json",
-                                            width: 292.w,
-                                          ),
-                                          Container(
-                                            width: 250.w,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              spacing: 10.w,
-                                              children: [
-                                                Text(
-                                                  "Oops! No Data Available…",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 16.w,
-                                                    fontWeight:
-                                                        AppFontWeight.medium,
-                                                    color: AppColors.grayTitle,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "The data you’re looking for isn’t available yet.",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 14.w,
-                                                    fontWeight:
-                                                        AppFontWeight.regular,
-                                                    color: AppColors.grayThin,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  : _buildEmptyState(),
                             ),
                           );
                         } else if (state.selectedTab == "products") {
@@ -523,47 +483,7 @@ class SummaryView extends StatelessWidget {
                                         );
                                       }).toList(),
                                     ).paddingOnly(top: 12.w, bottom: 24.w)
-                                  : Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Lottie.asset(
-                                            "assets/lottie/empty_ghost.json",
-                                            width: 292.w,
-                                          ),
-                                          Container(
-                                            width: 250.w,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              spacing: 10.w,
-                                              children: [
-                                                Text(
-                                                  "Oops! No Data Available…",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 16.w,
-                                                    fontWeight:
-                                                        AppFontWeight.medium,
-                                                    color: AppColors.grayTitle,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "The data you’re looking for isn’t available yet.",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 14.w,
-                                                    fontWeight:
-                                                        AppFontWeight.regular,
-                                                    color: AppColors.grayThin,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  : _buildEmptyState(),
                             ),
                           );
                         } else if (state.selectedTab == "orders") {
@@ -608,47 +528,7 @@ class SummaryView extends StatelessWidget {
                                         );
                                       }).toList(),
                                     ).paddingOnly(top: 12.w, bottom: 24.w)
-                                  : Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Lottie.asset(
-                                            "assets/lottie/empty_ghost.json",
-                                            width: 292.w,
-                                          ),
-                                          Container(
-                                            width: 250.w,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              spacing: 10.w,
-                                              children: [
-                                                Text(
-                                                  "Oops! No Data Available…",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 16.w,
-                                                    fontWeight:
-                                                        AppFontWeight.medium,
-                                                    color: AppColors.grayTitle,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "The data you’re looking for isn’t available yet.",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 14.w,
-                                                    fontWeight:
-                                                        AppFontWeight.regular,
-                                                    color: AppColors.grayThin,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  : _buildEmptyState(),
                             ),
                           );
                         } else {
@@ -683,47 +563,7 @@ class SummaryView extends StatelessWidget {
                                           )
                                           .toList(),
                                     ).paddingOnly(top: 12.w, bottom: 24.w)
-                                  : Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Lottie.asset(
-                                            "assets/lottie/empty_ghost.json",
-                                            width: 292.w,
-                                          ),
-                                          Container(
-                                            width: 250.w,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              spacing: 10.w,
-                                              children: [
-                                                Text(
-                                                  "Oops! No Data Available…",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 16.w,
-                                                    fontWeight:
-                                                        AppFontWeight.medium,
-                                                    color: AppColors.grayTitle,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "The data you’re looking for isn’t available yet.",
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 14.w,
-                                                    fontWeight:
-                                                        AppFontWeight.regular,
-                                                    color: AppColors.grayThin,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  : _buildEmptyState(),
                             ),
                           );
                         }
@@ -763,6 +603,53 @@ extension WidgetPaddingX on Widget {
     return Padding(
       padding: EdgeInsets.only(left: left, top: top, right: right, bottom: bottom),
       child: this,
+    );
+  }
+
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // If you want to use the JPG version, comment the SvgPicture below and uncomment this Image widget:
+          // Image.asset(
+          //   'assets/images/folder_empty.jpg',
+          //   width: 220.w,
+          //   fit: BoxFit.contain,
+          // ),
+          SvgPicture.asset(
+            'assets/images/folder_empty.svg',
+            width: 220.w,
+          ),
+          SizedBox(height: 24.h),
+          Text(
+            "Oops! No Data Available",
+            style: GoogleFonts.inter(
+              fontSize: 22.sp,
+              fontWeight: AppFontWeight.bold,
+              color: const Color(0xFF0F172A),
+              letterSpacing: -0.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40.w),
+            child: Text(
+              "The data you\'re looking for isn\'t available yet.",
+              style: GoogleFonts.inter(
+                fontSize: 14.sp,
+                fontWeight: AppFontWeight.medium,
+                color: const Color(0xFF64748B),
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 60.h),
+        ],
+      ),
     );
   }
 }
