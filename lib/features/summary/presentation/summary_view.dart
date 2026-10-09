@@ -446,7 +446,7 @@ class SummaryView extends StatelessWidget {
                                         }),
                                         SizedBox(height: 10.w),
                                       ],
-                                    )
+                                    ).paddingOnly(top: 12.w, bottom: 24.w, left: 24.w, right: 24.w)
                                   : _buildEmptyState(),
                             ),
                           );
@@ -478,7 +478,7 @@ class SummaryView extends StatelessWidget {
                                           ),
                                         );
                                       }).toList(),
-                                    ).paddingOnly(top: 12.w, bottom: 24.w)
+                                    ).paddingOnly(top: 12.w, bottom: 24.w, left: 24.w, right: 24.w)
                                   : _buildEmptyState(),
                             ),
                           );
@@ -523,7 +523,7 @@ class SummaryView extends StatelessWidget {
                                           ),
                                         );
                                       }).toList(),
-                                    ).paddingOnly(top: 12.w, bottom: 24.w)
+                                    ).paddingOnly(top: 12.w, bottom: 24.w, left: 24.w, right: 24.w)
                                   : _buildEmptyState(),
                             ),
                           );
@@ -558,7 +558,7 @@ class SummaryView extends StatelessWidget {
                                             ),
                                           )
                                           .toList(),
-                                    ).paddingOnly(top: 12.w, bottom: 24.w)
+                                    ).paddingOnly(top: 12.w, bottom: 24.w, left: 24.w, right: 24.w)
                                   : _buildEmptyState(),
                             ),
                           );
