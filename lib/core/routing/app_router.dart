@@ -32,11 +32,19 @@ import 'package:mierp_apps/features/splash/presentation/bloc/splash_bloc.dart';
 import 'package:mierp_apps/features/splash/presentation/splash_view.dart';
 import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mierp_apps/core/session/bloc/auth_event.dart';
+
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 String? _loginGuard(BuildContext context, GoRouterState state) {
   final auth = sl<AuthBloc>();
+  final firebaseUser = FirebaseAuth.instance.currentUser;
   if (auth.state is! AuthAuthenticated) {
+    if (firebaseUser != null) {
+      auth.add(AuthUserChanged(firebaseUser));
+      return null;
+    }
     return '/login';
   }
   return null;

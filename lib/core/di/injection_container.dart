@@ -122,4 +122,7 @@ Future<void> init() async {
   /// --------------------------------------------------------------------------
   /// MAIN FEATURE FLOW (Dashboard & Transaksi)
   /// --------------------------------------------------------------------------
+
+  // Eagerly instantiate AuthBloc so auth state stream is active immediately
+  sl<AuthBloc>();
 }

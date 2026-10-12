@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/data/login/login_repository.dart';
@@ -167,6 +168,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       await loginRepository.authFirebase.signOut();
       await loginRepository.googleSignIn.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user');
       emit(state.copyWith(status: ProfileStatus.logoutSuccess));
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.failure, errorMessage: 'Error signing out: $e'));

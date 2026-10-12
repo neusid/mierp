@@ -25,6 +25,8 @@ class DashboardFinanceTabChanged extends DashboardFinanceEvent {
   List<Object?> get props => [tab];
 }
 
+class DashboardFinanceMessageCleared extends DashboardFinanceEvent {}
+
 class DashboardFinanceStatsUpdated extends DashboardFinanceEvent {
   final int? productsItem;
   final int? settled;
@@ -176,6 +178,7 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
     on<DashboardFinanceStatsUpdated>(_onStatsUpdated);
     on<DashboardFinanceTabChanged>(_onTabChanged);
     on<DashboardFinancePayProductRequested>(_onPayRequested);
+    on<DashboardFinanceMessageCleared>((event, emit) => emit(state.copyWith(successMessage: "", errorMessage: "")));
   }
 
   Future<void> _onStarted(DashboardFinanceStarted event, Emitter<DashboardFinanceState> emit) async {
@@ -249,7 +252,7 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
   }
 
   void _onTabChanged(DashboardFinanceTabChanged event, Emitter<DashboardFinanceState> emit) {
-    emit(state.copyWith(selectedTab: event.tab));
+    emit(state.copyWith(selectedTab: event.tab, successMessage: "", errorMessage: ""));
   }
 
   Future<void> _onPayRequested(DashboardFinancePayProductRequested event, Emitter<DashboardFinanceState> emit) async {

@@ -15,6 +15,7 @@ import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
 
 class SummaryView extends StatelessWidget {
   SummaryView({super.key});
@@ -34,6 +35,9 @@ class SummaryView extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<SummaryBloc>()..add(SummaryStarted()),
       child: BlocConsumer<SummaryBloc, SummaryState>(
+        listenWhen: (previous, current) =>
+            (previous.successMessage != current.successMessage && current.successMessage.isNotEmpty) ||
+            (previous.errorMessage != current.errorMessage && current.errorMessage.isNotEmpty),
         listener: (context, state) {
           if (state.errorMessage.isNotEmpty) {
             final errorText = state.errorMessage.startsWith('Exception')
@@ -44,6 +48,7 @@ class SummaryView extends StatelessWidget {
               errorText,
               title: 'Gagal Memuat Data',
             );
+            context.read<SummaryBloc>().add(SummaryMessageCleared());
           }
           if (state.successMessage.isNotEmpty) {
             CustomTopSnackbar.success(
@@ -51,6 +56,7 @@ class SummaryView extends StatelessWidget {
               state.successMessage,
               title: 'Berhasil',
             );
+            context.read<SummaryBloc>().add(SummaryMessageCleared());
           }
         },
         builder: (context, state) {
@@ -422,15 +428,22 @@ class SummaryView extends StatelessWidget {
                                                       state.role == "finance"
                                                       ? true
                                                       : null,
-                                                  onPayPressed: () => context
-                                                      .read<SummaryBloc>()
-                                                      .add(
-                                                        SummaryPayRequested(
-                                                          e.data.id,
-                                                          e.data.productId,
-                                                          e.data.quantity,
-                                                        ),
-                                                      ),
+                                                  onPayPressed: () {
+                                                    showPayConfirmationModal(
+                                                      context: context,
+                                                      orderId: e.data.id,
+                                                      amount: convertDollar.intToDollar(e.data.totalCost),
+                                                      onConfirm: () => context
+                                                          .read<SummaryBloc>()
+                                                          .add(
+                                                            SummaryPayRequested(
+                                                              e.data.id,
+                                                              e.data.productId,
+                                                              e.data.quantity,
+                                                            ),
+                                                          ),
+                                                    );
+                                                  },
                                                 ),
                                               );
                                             case SummaryType.salesOrder:
@@ -528,14 +541,22 @@ class SummaryView extends StatelessWidget {
                                             finance: state.role == "finance"
                                                 ? true
                                                 : null,
-                                            onPayPressed: () =>
-                                                context.read<SummaryBloc>().add(
-                                                  SummaryPayRequested(
-                                                    data.id ?? '',
-                                                    data.productId,
-                                                    data.quantity,
-                                                  ),
-                                                ),
+                                            onPayPressed: () {
+                                              showPayConfirmationModal(
+                                                context: context,
+                                                orderId: data.id,
+                                                amount: convertDollar.intToDollar(data.totalCost),
+                                                onConfirm: () => context
+                                                    .read<SummaryBloc>()
+                                                    .add(
+                                                      SummaryPayRequested(
+                                                        data.id ?? '',
+                                                        data.productId,
+                                                        data.quantity,
+                                                      ),
+                                                    ),
+                                              );
+                                            },
                                           ),
                                         );
                                       }).toList(),

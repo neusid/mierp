@@ -11,7 +11,9 @@ class OnboardingView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Future.delayed(const Duration(seconds: 2), () {
-      context.go("/login");
+      if (context.mounted) {
+        context.go("/login");
+      }
     });
 
     return Scaffold(

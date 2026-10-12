@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
 import 'package:mierp_apps/core/widgets/coming_soon_view.dart';
+import 'package:mierp_apps/features/main_page/finance/finance_graph_view.dart';
 
 class FinanceMainPageView extends StatelessWidget {
   const FinanceMainPageView({super.key});
@@ -24,7 +25,7 @@ class FinanceMainPageView extends StatelessWidget {
             children: [
               DashboardFinanceView(),
               ComingSoonView(title: "Search Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
-              ComingSoonView(title: "Graph Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
+              const FinanceGraphView(),
               ComingSoonView(title: "Clock Segera Hadir", onHomePressed: () => context.read<MainPageCubit>().goToDashboard()),
               ProfileView(onBack: () => context.read<MainPageCubit>().goToDashboard()),
             ],

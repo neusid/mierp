@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
@@ -9,14 +8,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
-import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
-import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
 
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
 
 
 class DashboardFinanceView extends StatelessWidget {
@@ -34,12 +32,17 @@ class DashboardFinanceView extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<DashboardFinanceBloc>()..add(DashboardFinanceStarted()),
       child: BlocConsumer<DashboardFinanceBloc, DashboardFinanceState>(
+        listenWhen: (previous, current) =>
+            (previous.successMessage != current.successMessage && current.successMessage.isNotEmpty) ||
+            (previous.errorMessage != current.errorMessage && current.errorMessage.isNotEmpty),
         listener: (context, state) {
           if (state.successMessage.isNotEmpty) {
             CustomTopSnackbar.success(context, state.successMessage);
+            context.read<DashboardFinanceBloc>().add(DashboardFinanceMessageCleared());
           }
           if (state.errorMessage.isNotEmpty) {
             CustomTopSnackbar.error(context, state.errorMessage);
+            context.read<DashboardFinanceBloc>().add(DashboardFinanceMessageCleared());
           }
         },
         builder: (context, state) {
@@ -48,81 +51,278 @@ class DashboardFinanceView extends StatelessWidget {
         CustomScrollView(
           slivers: [
             SliverAppBar(
-              toolbarHeight: 60.h,
-              collapsedHeight: 70.h,
+              toolbarHeight: 110.h,
+              collapsedHeight: 110.h,
               pinned: true,
               floating: false,
-              backgroundColor: AppColors.bgColor,
-              surfaceTintColor: AppColors.bgColor,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF2E1052),
+                      Color(0xFF1E0B36),
+                      AppColors.gray,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(28.w),
+                    bottomRight: Radius.circular(28.w),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2E1052).withValues(alpha: 0.35),
+                      offset: Offset(0, 8.w),
+                      blurRadius: 16.w,
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Top-Left Purple Ambient Light Orb
+                    Positioned(
+                      top: -30.h,
+                      left: -20.w,
+                      child: Container(
+                        width: 140.w,
+                        height: 140.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF9333EA).withValues(alpha: 0.16),
+                        ),
+                      ),
+                    ),
+                    // Bottom-Right Deep Indigo Ambient Orb
+                    Positioned(
+                      bottom: -20.h,
+                      right: -20.w,
+                      child: Container(
+                        width: 130.w,
+                        height: 130.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.12),
+                        ),
+                      ),
+                    ),
+                    // Hairline Frosted Glass Bottom Border
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 1.5.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(28.w),
+                            bottomRight: Radius.circular(28.w),
+                          ),
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF9333EA).withValues(alpha: 0.4),
+                              const Color(0xFFC084FC).withValues(alpha: 0.5),
+                              const Color(0xFF818CF8).withValues(alpha: 0.2),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               title: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: SizedBox(
-                  height: 60.h,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 37.w,
-                            height: 37.h,
-                            decoration: BoxDecoration(
-                              color: AppColors.electricBlue,
-                              borderRadius: BorderRadius.circular(10.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 1. AVATAR WITH GLOW RING
+                    Stack(
+                      children: [
+                        Container(
+                          width: 48.w,
+                          height: 48.w,
+                          padding: EdgeInsets.all(2.5.w),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFC084FC), Color(0xFF7C3AED)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Image.asset(
-                                  "assets/images/person.png",
-                                  width: 33.w,
-                                  height: 33.h,
+                          ),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFF2E1052),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.person_rounded,
+                                color: const Color(0xFFE9D5FF),
+                                size: 26.w,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 1.w,
+                          right: 1.w,
+                          child: Container(
+                            width: 12.w,
+                            height: 12.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFF10B981),
+                              border: Border.all(
+                                color: const Color(0xFF2E1052),
+                                width: 2.w,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                                  blurRadius: 4.w,
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(width: 10.w),
-                          Expanded(
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 12.w),
+                    // 2. USER INFO: ROLE PILL, GREETING, NAME
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Role Badge Pill "FINANCE DEPT"
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.5.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7C3AED).withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(10.w),
+                              border: Border.all(
+                                color: const Color(0xFFA855F7).withValues(alpha: 0.35),
+                                width: 1.w,
+                              ),
+                            ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Hello!",
-                                      style: GoogleFonts.lexendDeca(
-                                        fontWeight: AppFontWeight.regular,
-                                        fontSize: 14.sp,
-                                        color: AppColors.grayTitle,
+                                Container(
+                                  width: 5.w,
+                                  height: 5.w,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFFA855F7),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFFA855F7).withValues(alpha: 0.6),
+                                        blurRadius: 3.w,
                                       ),
-                                    ),
-                                    Text(
-                                        "${state.userName}!",
-                                        style: GoogleFonts.lexendDeca(
-                                          fontWeight: AppFontWeight.semiBold,
-                                          fontSize: 19.sp,
-                                          color: AppColors.grayTitle,
-                                        ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    context.push('/notification');
-                                  },
-                                  icon: Icon(
-                                    Icons.notifications_active,
-                                    size: 24.w,
+                                SizedBox(width: 5.w),
+                                Text(
+                                  "FINANCE DEPT",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9.5.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFD8B4FE),
+                                    letterSpacing: 0.4,
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          SizedBox(height: 3.h),
+                          Text(
+                            "Good Morning,",
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 11.5.sp,
+                              color: const Color(0xFFCBD5E1),
+                            ),
+                          ),
+                          Text(
+                            state.userName.isNotEmpty ? state.userName : "Finance Officer",
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 17.5.sp,
+                              color: Colors.white,
+                              letterSpacing: -0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 8.w),
+                    // 3. FROSTED SQUIRCLE NOTIFICATION BUTTON WITH UNREAD DOT
+                    InkWell(
+                      onTap: () {
+                        context.push('/notification');
+                      },
+                      borderRadius: BorderRadius.circular(13.w),
+                      child: Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(13.w),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.14),
+                            width: 1.2.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              offset: Offset(0, 2.w),
+                              blurRadius: 4.w,
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.notifications_none_rounded,
+                              color: const Color(0xFFF1F5F9),
+                              size: 22.w,
+                            ),
+                            Positioned(
+                              top: 9.w,
+                              right: 9.w,
+                              child: Container(
+                                width: 8.w,
+                                height: 8.w,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0xFFEF4444),
+                                  border: Border.all(
+                                    color: AppColors.gray,
+                                    width: 1.2.w,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFEF4444).withValues(alpha: 0.6),
+                                      blurRadius: 4.w,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -131,54 +331,155 @@ class DashboardFinanceView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 23.w, vertical: 12.w),
                 child: Column(
                   children: [
+                    // 1. HERO TOTAL BALANCE CARD (REPLACES CARDBOX.PNG)
                     Container(
-                      width: 343.w,
-                      height: 76.h,
-                      padding: EdgeInsets.only(
-                        left: 17.w,
-                        top: 10.w,
-                        bottom: 10.w,
-                      ),
+                      width: 345.w,
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/cardbox.png"),
-                          fit: BoxFit.fill,
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF241042),
+                            Color(0xFF1E1238),
+                            Color(0xFF0F172A),
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(20.w),
+                        border: Border.all(
+                          color: const Color(0xFFA855F7).withValues(alpha: 0.35),
+                          width: 1.2.w,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF2E1052).withValues(alpha: 0.32),
+                            offset: Offset(0, 10.w),
+                            blurRadius: 16.w,
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "Total Balance",
-                            style: GoogleFonts.manrope(
-                              fontSize: 10.sp,
-                              color: Color(0xFFE7E0FB),
-                              fontWeight: AppFontWeight.medium,
-                            ),
-                          ),
-                          Container(
-                              child: Text(
-                                ConvertDollar().intToDollar(
-                                  state.productsItem,
-                                ),
-                                style: GoogleFonts.manrope(
-                                  fontSize: 16.sp,
-                                  color: Color(0xFFFEFEFE),
-                                  fontWeight: AppFontWeight.medium,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Total Net Balance",
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.5.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFFC4B5FD),
+                                  letterSpacing: 0.3,
                                 ),
                               ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF10B981).withValues(alpha: 0.16),
+                                  borderRadius: BorderRadius.circular(10.w),
+                                  border: Border.all(
+                                    color: const Color(0xFF34D399).withValues(alpha: 0.35),
+                                    width: 1.w,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 5.w,
+                                      height: 5.w,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFF34D399),
+                                      ),
+                                    ),
+                                    SizedBox(width: 5.w),
+                                    Text(
+                                      "Updated Today",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF6EE7B7),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            ConvertDollar().intToDollar(state.productsItem),
+                            style: GoogleFonts.inter(
+                              fontSize: 26.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: -0.8,
                             ),
+                          ),
+                          SizedBox(height: 10.h),
                           Row(
-                            spacing: 4.w,
                             children: [
-                              SvgPicture.asset("assets/icons/check_mark.svg"),
-                              Text(
-                                "Updated Today",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 8.sp,
-                                  color: Color(0xFFFEFEFE),
-                                  fontWeight: AppFontWeight.regular,
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6.w),
+                                ),
+                                child: Text(
+                                  "USD (\$)",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.trending_up_rounded,
+                                    color: const Color(0xFF34D399),
+                                    size: 14.w,
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Text(
+                                    "+12.4% this month",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 10.5.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF34D399),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  context.push("/summary");
+                                },
+                                borderRadius: BorderRadius.circular(11.w),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(11.w),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      width: 1.w,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Report ➔",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 9.5.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -186,328 +487,52 @@ class DashboardFinanceView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 12.3.h),
-                    SizedBox(
-                      width: 343.w,
-                      height: 20.w,
-                      child: Row(
-                        spacing: 16.w,
-                        children: [
-                          Text(
-                            "Finance Details",
-                            style: GoogleFonts.manrope(
-                              fontSize: 14.sp,
-                              color: AppColors.gray,
-                              fontWeight: AppFontWeight.medium,
-                            ),
-                            maxLines: 1,
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: AppColors.coolGray,
-                              thickness: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12.3.h),
+                    SizedBox(height: 18.h),
+                    // 2. FINANCE DETAILS SECTION HEADER
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 110.w,
-                            height: 60.h,
-                            margin: EdgeInsets.zero,
-                            padding: EdgeInsets.only(
-                              left: 10.w,
-                              top: 8.w,
-                              right: 10.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.w),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.shadowBox,
-                                  spreadRadius: -3.w,
-                                  offset: Offset(0, 4),
-                                  blurRadius: 21.w,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  spacing: 5.w,
-                                  children: [
-                                    Image.asset(
-                                      'assets/icons/top_right_red.png',
-                                      width: 10.w,
-                                      height: 10.h,
-                                    ),
-                                    Text(
-                                      "Payables",
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 10.sp,
-                                        color: Color(0xFF707070),
-                                        fontWeight: AppFontWeight.medium,
-                                      ),
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 7.w),
-                                Row(
-                                  spacing: 6.w,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/line_red.svg',
-                                      width: 2.w,
-                                      height: 12.w,
-                                    ),
-                                    SizedBox(
-                                      width: 40.w,
-                                      child: Text(
-                                        ConvertDollar().intToDollar(
-                                          state.accountPayables,
-                                        ),
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 10.sp,
-                                          color: Colors.black,
-                                          fontWeight: AppFontWeight.medium,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: AppColors.grayDashline,
-                                  height: 12.w,
-                                  thickness: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: 110.w,
-                            height: 60.h,
-                            margin: EdgeInsets.zero,
-                            padding: EdgeInsets.only(
-                              left: 10.w,
-                              top: 8.w,
-                              right: 10.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.w),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.shadowBox,
-                                  spreadRadius: -3.w,
-                                  offset: Offset(0, 4),
-                                  blurRadius: 21.w,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  spacing: 5.w,
-                                  children: [
-                                    Image.asset(
-                                      'assets/icons/top-right-blue.png',
-                                      width: 10.w,
-                                      height: 10.h,
-                                    ),
-                                    Text(
-                                      "Receivables",
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 10.sp,
-                                        color: Color(0xFF707070),
-                                        fontWeight: AppFontWeight.medium,
-                                      ),
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 7.w),
-                                Row(
-                                  spacing: 6.w,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/line_blue.svg',
-                                      width: 2.w,
-                                      height: 12.w,
-                                    ),
-                                    SizedBox(
-                                      width: 40.w,
-                                      child: Text(
-                                        ConvertDollar().intToDollar(
-                                          state.accountReceivables,
-                                        ),
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 10.sp,
-                                          color: Colors.black,
-                                          fontWeight: AppFontWeight.medium,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: AppColors.grayDashline,
-                                  height: 12.w,
-                                  thickness: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: 110.w,
-                            height: 60.h,
-                            margin: EdgeInsets.zero,
-                            padding: EdgeInsets.only(
-                              left: 10.w,
-                              top: 8.w,
-                              right: 10.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.w),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.shadowBox,
-                                  spreadRadius: -3.w,
-                                  offset: Offset(0, 4),
-                                  blurRadius: 21.w,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  spacing: 5.w,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/check_mark.svg',
-                                      width: 10.w,
-                                      height: 10.h,
-                                    ),
-                                    Text(
-                                      "Settled",
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 10.sp,
-                                        color: Color(0xFF707070),
-                                        fontWeight: AppFontWeight.medium,
-                                      ),
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 7.w),
-                                Row(
-                                  spacing: 6.w,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icons/line_green.svg',
-                                      width: 2.w,
-                                      height: 12.w,
-                                    ),
-                                    SizedBox(
-                                      width: 40.w,
-                                      child: Text(
-                                        ConvertDollar().intToDollar(
-                                          state.settled,
-                                        ),
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 10.sp,
-                                          color: Colors.black,
-                                          fontWeight: AppFontWeight.medium,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: AppColors.grayDashline,
-                                  height: 12.w,
-                                  thickness: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    SizedBox(height: 12.3.h),
-                    Column(
-                      spacing: 0,
                       children: [
-                        BlanketMattressWidget(
-                          title: "Low Stock",
-                          subtitle: "Items Low Stock",
-                          count: state.lowStock,
-                          rightTitle: "Action Required",
-                          rightSubtitle: "2/5",
-                          progress: 0.4,
-                          themeColor: const Color(0xFFEF4444),
-                          themeBgColor: const Color(0xFFFEF2F2),
-                          headerIcon: Icons.warning_amber_rounded,
-                          buttonText: "View All Low Stock Items ➔",
-                          items: [
-                            {"title": "MacBook Pro M2", "subtitle": "Electronics • SKU-MBP22", "badge": "2 Left"},
-                            {"title": "Logitech MX Master 3S", "subtitle": "Peripherals • SKU-LOGI3S", "badge": "0 Left"},
-                          ],
+                        Text(
+                          "Finance Details",
+                          style: GoogleFonts.inter(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF1E293B),
+                            letterSpacing: -0.2,
+                          ),
                         ),
-                        BlanketMattressWidget(
-                          title: "Incoming",
-                          subtitle: "Incoming Deliveries",
-                          count: state.upComingStock,
-                          rightTitle: "Arriving Today",
-                          rightSubtitle: "3/8",
-                          progress: 0.375,
-                          themeColor: const Color(0xFF4F46E5),
-                          themeBgColor: const Color(0xFFEEF2FF),
-                          headerIcon: Icons.local_shipping_outlined,
-                          buttonText: "View All Incoming Stock ➔",
-                          items: [
-                            {"title": "Sony WH-1000XM5", "subtitle": "Audio • PO-1024", "badge": "15 Units"},
-                            {"title": "Keychron K2 V2", "subtitle": "Peripherals • PO-1025", "badge": "40 Units"},
-                          ],
+                        SizedBox(width: 12.w),
+                        const Expanded(
+                          child: Divider(
+                            color: Color(0xFFE2E8F0),
+                            thickness: 1.2,
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 22.h),
+                    SizedBox(height: 14.h),
+                    // 3. CONSOLIDATED METRIC STRIP CARD
+                    _ConsolidatedMetricsCard(
+                      payables: state.accountPayables,
+                      receivables: state.accountReceivables,
+                      settled: state.settled,
+                    ),
+                    SizedBox(height: 18.h),
+                    // 4. SEGMENTED TAB BAR
                     Container(
                       width: 345.w,
-                      height: 49.h,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 8.h,
-                        horizontal: 22.w,
-                      ),
+                      height: 48.h,
+                      padding: EdgeInsets.all(4.w),
                       decoration: BoxDecoration(
                         color: Colors.white,
+                        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2.w),
+                        borderRadius: BorderRadius.circular(14.w),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.shadowBox,
-                            spreadRadius: -3.w,
-                            offset: Offset(0, 4),
-                            blurRadius: 21.w,
+                            color: Colors.black.withValues(alpha: 0.04),
+                            offset: Offset(0, 4.w),
+                            blurRadius: 14.w,
                           ),
                         ],
-                        borderRadius: BorderRadius.circular(10.w),
                       ),
                       child: Center(
                         child: Builder(
@@ -521,8 +546,8 @@ class DashboardFinanceView extends StatelessWidget {
                             if (selectedIndex == 3) alignmentX = 1.0;
 
                             return SizedBox(
-                              width: 310.w,
-                              height: 33.h,
+                              width: 337.w,
+                              height: 40.h,
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
@@ -531,17 +556,25 @@ class DashboardFinanceView extends StatelessWidget {
                                     curve: Curves.easeOutQuart,
                                     alignment: Alignment(alignmentX, 0),
                                     child: Container(
-                                      width: 310.w / 4,
-                                      height: 33.h,
+                                      width: 337.w / 4,
+                                      height: 38.h,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(55.w),
-                                        gradient: LinearGradient(
+                                        borderRadius: BorderRadius.circular(10.w),
+                                        gradient: const LinearGradient(
                                           colors: [
-                                            Color(0xFF00B2FF),
-                                            Color(0xFF7A00E6),
+                                            Color(0xFF7C3AED),
+                                            Color(0xFF4F46E5),
                                           ],
-                                          transform: GradientRotation(-0.05.sw),
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
                                         ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF7C3AED).withValues(alpha: 0.3),
+                                            blurRadius: 8.w,
+                                            offset: Offset(0, 2.w),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -556,9 +589,9 @@ class DashboardFinanceView extends StatelessWidget {
                                             );
                                           },
                                           child: Container(
-                                            height: 33.h,
+                                            height: 38.h,
                                             color: Colors.transparent,
-                                            padding: EdgeInsets.symmetric(horizontal: 4.w),
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
                                             child: Center(
                                               child: FittedBox(
                                                 fit: BoxFit.scaleDown,
@@ -567,8 +600,8 @@ class DashboardFinanceView extends StatelessWidget {
                                                   curve: Curves.easeOutQuart,
                                                   style: GoogleFonts.inter(
                                                     fontSize: 11.sp,
-                                                    fontWeight: isActive ? AppFontWeight.bold : AppFontWeight.medium,
-                                                    color: isActive ? Colors.white : AppColors.charcoal,
+                                                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                                                    color: isActive ? Colors.white : const Color(0xFF64748B),
                                                   ),
                                                   child: Text(e['title']!),
                                                 ),
@@ -586,18 +619,20 @@ class DashboardFinanceView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
-                    Container(
+                    SizedBox(height: 18.h),
+                    // 6. RECENT SUMMARY HEADER
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 2.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Summary",
-                            style: GoogleFonts.manrope(
-                              fontSize: 14.sp,
-                              color: AppColors.gray,
-                              fontWeight: AppFontWeight.semiBold,
+                            "Recent Summary",
+                            style: GoogleFonts.inter(
+                              fontSize: 15.sp,
+                              color: const Color(0xFF0F172A),
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
                             ),
                             maxLines: 1,
                           ),
@@ -609,18 +644,18 @@ class DashboardFinanceView extends StatelessWidget {
                               children: [
                                 Text(
                                   "View all",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14.sp,
-                                    color: AppColors.gray,
-                                    fontWeight: AppFontWeight.semiBold,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12.5.sp,
+                                    color: const Color(0xFF7C3AED),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                   maxLines: 1,
                                 ),
-                                SizedBox(width: 5.w),
+                                SizedBox(width: 4.w),
                                 Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: AppColors.charcoal,
-                                  size: 10.w,
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: const Color(0xFF7C3AED),
+                                  size: 11.w,
                                 ),
                               ],
                             ),
@@ -628,11 +663,10 @@ class DashboardFinanceView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 22.h),
+                    SizedBox(height: 14.h),
                     Builder(builder: (context) {
                       if (state.selectedTab == "all_summary") {
-                        return Container(
-                          child: Column(
+                        return Column(
                             spacing: 10.w,
                             children: [
                               ...state.listAllSummary.take(2).map((
@@ -705,12 +739,10 @@ class DashboardFinanceView extends StatelessWidget {
                               }),
                               SizedBox(height: 5.w),
                             ],
-                          ),
-                        );
+                          );
                       } else if (state.selectedTab == "products") {
                         if (state.selectedTab.isNotEmpty) {
-                          return Container(
-                            child: Column(
+                          return Column(
                               spacing: 10.w,
                               children: [
                                 ...state.listProduct
@@ -738,8 +770,7 @@ class DashboardFinanceView extends StatelessWidget {
                                     ,
                                 SizedBox(height: 5.w),
                               ],
-                            ),
-                          );
+                            );
                         } else {
                           return CircularProgressIndicator();
                         }
@@ -768,12 +799,22 @@ class DashboardFinanceView extends StatelessWidget {
                                     lineTotal: data.totalCost,
                                     finance: true,
                                     imageProduct: data.imageProduct,
-                                    onPayPressed: () =>
-                                        context.read<DashboardFinanceBloc>().add(DashboardFinancePayProductRequested(
-                                          data.id ?? "",
-                                          data.productId,
-                                          data.quantity,
-                                        )),
+                                    onPayPressed: () {
+                                      showPayConfirmationModal(
+                                        context: context,
+                                        orderId: data.id,
+                                        amount: ConvertDollar().intToDollar(data.totalCost),
+                                        onConfirm: () => context
+                                            .read<DashboardFinanceBloc>()
+                                            .add(
+                                              DashboardFinancePayProductRequested(
+                                                data.id ?? "",
+                                                data.productId,
+                                                data.quantity,
+                                              ),
+                                            ),
+                                      );
+                                    },
                                   ),
                                 );
                               }),
@@ -846,3 +887,147 @@ class DashboardFinanceView extends StatelessWidget {
     );
   }
 }
+
+class _ConsolidatedMetricsCard extends StatelessWidget {
+  final int payables;
+  final int receivables;
+  final int settled;
+
+  const _ConsolidatedMetricsCard({
+    required this.payables,
+    required this.receivables,
+    required this.settled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 345.w,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.w),
+        border: Border.all(
+          color: const Color(0xFFF1F5F9),
+          width: 1.5.w,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            offset: Offset(0, 4.h),
+            blurRadius: 10.w,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // 1. Payables
+          Expanded(
+            child: _buildMetricItem(
+              title: "Payables",
+              value: ConvertDollar().intToDollar(payables),
+              accentColor: const Color(0xFFEF4444),
+              bgAccentColor: const Color(0xFFFEF2F2),
+              icon: Icons.arrow_outward_rounded,
+            ),
+          ),
+          // Vertical Divider 1
+          Container(
+            width: 1.w,
+            height: 46.h,
+            color: const Color(0xFFF1F5F9),
+          ),
+          // 2. Receivables
+          Expanded(
+            child: _buildMetricItem(
+              title: "Receivable",
+              value: ConvertDollar().intToDollar(receivables),
+              accentColor: const Color(0xFF4F46E5),
+              bgAccentColor: const Color(0xFFEEF2FF),
+              icon: Icons.south_west_rounded,
+            ),
+          ),
+          // Vertical Divider 2
+          Container(
+            width: 1.w,
+            height: 46.h,
+            color: const Color(0xFFF1F5F9),
+          ),
+          // 3. Settled
+          Expanded(
+            child: _buildMetricItem(
+              title: "Settled",
+              value: ConvertDollar().intToDollar(settled),
+              accentColor: const Color(0xFF10B981),
+              bgAccentColor: const Color(0xFFECFDF5),
+              icon: Icons.check_circle_outline_rounded,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricItem({
+    required String title,
+    required String value,
+    required Color accentColor,
+    required Color bgAccentColor,
+    required IconData icon,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 20.w,
+                height: 20.w,
+                decoration: BoxDecoration(
+                  color: bgAccentColor,
+                  borderRadius: BorderRadius.circular(6.w),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: accentColor,
+                    size: 11.5.w,
+                  ),
+                ),
+              ),
+              SizedBox(width: 6.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 10.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF64748B),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 14.5.sp,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF0F172A),
+              letterSpacing: -0.3,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+

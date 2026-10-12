@@ -6,9 +6,11 @@ import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/features/detail/presentation/detail_product_order/bloc/detail_product_order_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
 
 class DetailProductOrderView extends StatelessWidget {
   final String id;
@@ -401,23 +403,33 @@ class DetailProductOrderView extends StatelessWidget {
                           : // FINANCE ROLE: Pay Invoice
                             GestureDetector(
                               onTap: () {
-                                context.read<DetailProductOrderBloc>().add(
-                                  DetailProductOrderPayRequested(
-                                    state.orderProduct!.id!,
-                                    state.orderProduct!.productId,
-                                    state.orderProduct!.quantity,
-                                  ),
+                                showPayConfirmationModal(
+                                  context: context,
+                                  orderId: state.orderProduct!.id,
+                                  amount: converDollar.intToDollar(state.orderProduct!.totalCost),
+                                  onConfirm: () {
+                                    context.read<DetailProductOrderBloc>().add(
+                                      DetailProductOrderPayRequested(
+                                        state.orderProduct!.id!,
+                                        state.orderProduct!.productId,
+                                        state.orderProduct!.quantity,
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                               child: Container(
                                 height: 52.h,
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Color(0xFF3B82F6), Color(0xFF6D28D9)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                                  gradient: AppColors.premiumDarkGradient,
                                   borderRadius: BorderRadius.circular(10.w),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.premiumDarkSolid.withValues(alpha: 0.25),
+                                      blurRadius: 8.w,
+                                      offset: Offset(0, 4.w),
+                                    ),
+                                  ],
                                 ),
                                 child: Center(
                                   child: Text(

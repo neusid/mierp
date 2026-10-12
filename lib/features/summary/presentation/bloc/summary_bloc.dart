@@ -49,6 +49,8 @@ class SummaryPayRequested extends SummaryEvent {
   List<Object> get props => [docId, prodId, totalQty];
 }
 
+class SummaryMessageCleared extends SummaryEvent {}
+
 // --- STATE ---
 class SummaryState extends Equatable {
   final String role;
@@ -145,10 +147,11 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
     on<SummarySearchChanged>(_onSearchChanged);
     on<SummaryFilterChanged>(_onFilterChanged);
     on<SummaryPayRequested>(_onPayRequested);
+    on<SummaryMessageCleared>((event, emit) => emit(state.copyWith(successMessage: "", errorMessage: "")));
   }
 
   Future<void> _onStarted(SummaryStarted event, Emitter<SummaryState> emit) async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, successMessage: "", errorMessage: ""));
     try {
       UserModel? userModel = await userDataController.getDataUser();
       String role = userModel.role ?? "warehouse";
@@ -174,6 +177,8 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
         filteredSalesOrders: salesOrders,
         filteredSummaries: combined,
         isLoading: false,
+        successMessage: "",
+        errorMessage: "",
       ));
       
       _applyFilters(emit, state.keyword, state.tag);
@@ -183,17 +188,17 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   }
 
   void _onTabChanged(SummaryTabChanged event, Emitter<SummaryState> emit) {
-    emit(state.copyWith(selectedTab: event.tab, tag: 0));
+    emit(state.copyWith(selectedTab: event.tab, tag: 0, successMessage: "", errorMessage: ""));
     _applyFilters(emit, state.keyword, 0);
   }
 
   void _onSearchChanged(SummarySearchChanged event, Emitter<SummaryState> emit) {
-    emit(state.copyWith(keyword: event.keyword));
+    emit(state.copyWith(keyword: event.keyword, successMessage: "", errorMessage: ""));
     _applyFilters(emit, event.keyword, state.tag);
   }
 
   void _onFilterChanged(SummaryFilterChanged event, Emitter<SummaryState> emit) {
-    emit(state.copyWith(tag: event.tag));
+    emit(state.copyWith(tag: event.tag, successMessage: "", errorMessage: ""));
     _applyFilters(emit, state.keyword, event.tag);
   }
 
@@ -238,6 +243,8 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
       filteredOrders: fOrders,
       filteredSalesOrders: fSales,
       filteredSummaries: fSummaries,
+      successMessage: "",
+      errorMessage: "",
     ));
   }
 

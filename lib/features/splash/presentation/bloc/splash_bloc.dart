@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mierp_apps/core/controller/user_data_controller.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/session/bloc/auth_bloc.dart';
+import 'package:mierp_apps/core/session/bloc/auth_event.dart';
 import 'package:mierp_apps/core/session/bloc/auth_state.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_service.dart';
 
@@ -45,34 +50,77 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     SplashStarted event,
     Emitter<SplashState> emit,
   ) async {
-    final isFirst = onboardingService.isFirst;
+    final prefs = await SharedPreferences.getInstance();
+    final isFirst = await onboardingService.isFirstLaunch();
     
+    await Future.delayed(const Duration(seconds: 2));
+
     if (isFirst) {
-      await Future.delayed(const Duration(seconds: 2));
+      await onboardingService.completeFirstLaunch();
       emit(SplashNavigateToOnboarding());
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await Future.delayed(const Duration(seconds: 2));
+      return;
+    }
 
-      if (authBloc.state is! AuthAuthenticated) {
-        emit(SplashNavigateToLogin());
-        return;
+    // Check Firebase Auth current user and local session
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final dataUserRaw = prefs.getString("user");
+
+    // If neither Firebase Auth nor local session has data, go to login
+    if (currentUser == null && dataUserRaw == null) {
+      emit(SplashNavigateToLogin());
+      return;
+    }
+
+    // Ensure AuthBloc is synced with active Firebase user
+    if (currentUser != null && authBloc.state is! AuthAuthenticated) {
+      authBloc.add(AuthUserChanged(currentUser));
+    }
+
+    // Route by saved user role in SharedPreferences
+    if (dataUserRaw != null) {
+      try {
+        final Map<String, dynamic> dataUserJson = jsonDecode(dataUserRaw);
+        final dataUser = UserModel.fromJson(dataUserJson);
+        if (dataUser.role == "warehouse") {
+          emit(SplashNavigateToWarehouse());
+          return;
+        } else if (dataUser.role == "finance") {
+          emit(SplashNavigateToFinance());
+          return;
+        }
+      } catch (_) {
+        // Fallback to Firestore check below
       }
+    }
 
-      final dataUserRaw = prefs.getString("user");
-      if (dataUserRaw != null) {
-        try {
-          Map<String, dynamic> dataUserJson = jsonDecode(dataUserRaw);
-          final dataUser = UserModel.fromJson(dataUserJson);
-          if (dataUser.role == "warehouse") {
+    // If local session lacked role but Firebase user is active, fetch from Firestore
+    if (currentUser != null) {
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+        if (doc.exists) {
+          final data = doc.data() as Map<String, dynamic>;
+          final userModel = UserModel(
+            uid: currentUser.uid,
+            email: data['email'],
+            firstName: data['first_name'],
+            lastName: data['last_name'],
+            role: data['role'],
+            allowGoogleLogin: data['allow_google_login'],
+          );
+          await prefs.setString('user', jsonEncode(userModel));
+          await sl<UserDataController>().setDataUser(userModel);
+
+          if (userModel.role == "warehouse") {
             emit(SplashNavigateToWarehouse());
             return;
+          } else {
+            emit(SplashNavigateToFinance());
+            return;
           }
-        } catch (e) {
-          // Fallback to finance or login if parsing fails
         }
-      }
-      emit(SplashNavigateToFinance());
+      } catch (_) {}
     }
+
+    emit(SplashNavigateToLogin());
   }
 }
