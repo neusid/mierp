@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 class DetailProductOrderView extends StatelessWidget {
   final String id;
@@ -188,14 +189,19 @@ class DetailProductOrderView extends StatelessWidget {
       child: BlocConsumer<DetailProductOrderBloc, DetailProductOrderState>(
         listener: (context, state) {
           if (state.status == DetailProductOrderStatus.paySuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+            CustomTopSnackbar.success(context, state.successMessage);
           } else if (state.status == DetailProductOrderStatus.deleteSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
-            Future.delayed(const Duration(seconds: 2), () {
-              context.push("warehouse_main_page");
-            });
+            CustomTopSnackbar.success(
+              context,
+              state.successMessage,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.push("warehouse_main_page");
+                }
+              },
+            );
           } else if (state.status == DetailProductOrderStatus.failure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            CustomTopSnackbar.error(context, state.errorMessage);
           }
         },
         builder: (context, state) {

@@ -36,7 +36,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
   void _submitData(BuildContext context) {
     if (formKey.currentState!.validate()) {
       if (selectedProduct == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please select a product")));
+        CustomTopSnackbar.warning(context, "Please select a product");
         return;
       }
       
@@ -98,8 +98,15 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
       child: BlocConsumer<AddProductOrderBloc, AddProductOrderState>(
         listener: (context, state) {
           if (state.status == AddProductOrderStatus.success) {
-            CustomTopSnackbar.show(context, "Berhasil menyimpan data!", isError: false);
-            context.pop();
+            CustomTopSnackbar.success(
+              context,
+              "Berhasil menyimpan data!",
+              onDismissed: () {
+                if (context.mounted) {
+                  context.pop();
+                }
+              },
+            );
           } else if (state.status == AddProductOrderStatus.failure) {
             CustomTopSnackbar.show(context, state.errorMessage, isError: true);
           }

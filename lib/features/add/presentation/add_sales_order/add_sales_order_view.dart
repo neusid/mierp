@@ -38,7 +38,7 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
   void _submitData(BuildContext context) {
     if (formKey.currentState!.validate()) {
       if (selectedProduct == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please select a product")));
+        CustomTopSnackbar.warning(context, "Please select a product");
         return;
       }
       
@@ -104,8 +104,15 @@ class _AddSalesOrderState extends State<AddSalesOrder> {
       child: BlocConsumer<AddSalesOrderBloc, AddSalesOrderState>(
         listener: (context, state) {
           if (state.status == AddSalesOrderStatus.success) {
-            CustomTopSnackbar.show(context, state.successMessage, isError: false);
-            context.pop();
+            CustomTopSnackbar.success(
+              context,
+              state.successMessage,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.pop();
+                }
+              },
+            );
           } else if (state.status == AddSalesOrderStatus.failure) {
             CustomTopSnackbar.show(context, state.errorMessage, isError: true);
           }

@@ -14,6 +14,7 @@ import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 class SummaryView extends StatelessWidget {
   SummaryView({super.key});
@@ -35,14 +36,21 @@ class SummaryView extends StatelessWidget {
       child: BlocConsumer<SummaryBloc, SummaryState>(
         listener: (context, state) {
           if (state.errorMessage.isNotEmpty) {
-            ScaffoldMessenger.of(
+            final errorText = state.errorMessage.startsWith('Exception')
+                ? 'Gagal memuat data ringkasan. Silakan periksa koneksi Anda.'
+                : state.errorMessage;
+            CustomTopSnackbar.error(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+              errorText,
+              title: 'Gagal Memuat Data',
+            );
           }
           if (state.successMessage.isNotEmpty) {
-            ScaffoldMessenger.of(
+            CustomTopSnackbar.success(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.successMessage)));
+              state.successMessage,
+              title: 'Berhasil',
+            );
           }
         },
         builder: (context, state) {

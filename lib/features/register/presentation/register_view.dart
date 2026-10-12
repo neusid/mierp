@@ -10,6 +10,7 @@ import 'package:mierp_apps/core/widgets/auth/input_auth_widget.dart';
 import 'package:mierp_apps/core/widgets/auth/input_short_auth_widget.dart';
 import 'package:mierp_apps/features/register/presentation/bloc/register_bloc.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -44,12 +45,17 @@ class _RegisterViewState extends State<RegisterView> {
       body: BlocConsumer<RegisterBloc, RegisterState>(
         listener: (context, state) {
           if (state is RegisterFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            CustomTopSnackbar.error(context, state.message);
           } else if (state is RegisterSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-            Future.delayed(const Duration(seconds: 3), () {
-              context.go("/login");
-            });
+            CustomTopSnackbar.success(
+              context,
+              state.message,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.go("/login");
+                }
+              },
+            );
           }
         },
         builder: (context, state) {

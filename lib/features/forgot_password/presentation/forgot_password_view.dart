@@ -8,6 +8,7 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/auth/input_auth_widget.dart';
 import 'package:mierp_apps/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({super.key});
@@ -38,12 +39,17 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
         listener: (context, state) {
           if (state is ForgotPasswordFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            CustomTopSnackbar.error(context, state.message);
           } else if (state is ForgotPasswordSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-            Future.delayed(const Duration(seconds: 3), () {
-              context.go("/login");
-            });
+            CustomTopSnackbar.success(
+              context,
+              state.message,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.go("/login");
+                }
+              },
+            );
           }
         },
         builder: (context, state) {

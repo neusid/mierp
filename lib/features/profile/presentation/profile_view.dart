@@ -29,8 +29,15 @@ class ProfileView extends StatelessWidget {
           } else if (state.status == ProfileStatus.logoutSuccess) {
             context.go("/login");
           } else if (state.status == ProfileStatus.deleteSuccess) {
-            context.go("/login");
-            CustomTopSnackbar.show(context, state.successMessage, isError: false);
+            CustomTopSnackbar.success(
+              context,
+              state.successMessage,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.go("/login");
+                }
+              },
+            );
           }
         },
         builder: (context, state) {

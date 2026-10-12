@@ -16,6 +16,7 @@ import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
 import 'package:mierp_apps/core/widgets/card_order.dart';
 import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 
 class DashboardFinanceView extends StatelessWidget {
@@ -35,10 +36,10 @@ class DashboardFinanceView extends StatelessWidget {
       child: BlocConsumer<DashboardFinanceBloc, DashboardFinanceState>(
         listener: (context, state) {
           if (state.successMessage.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+            CustomTopSnackbar.success(context, state.successMessage);
           }
           if (state.errorMessage.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            CustomTopSnackbar.error(context, state.errorMessage);
           }
         },
         builder: (context, state) {

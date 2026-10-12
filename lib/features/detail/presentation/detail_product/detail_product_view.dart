@@ -13,6 +13,7 @@ import 'package:mierp_apps/core/widgets/date_picker_widget.dart';
 import 'package:mierp_apps/core/widgets/detail/input_select_update_widget.dart';
 import 'package:mierp_apps/core/widgets/input_short_widget.dart';
 import 'package:mierp_apps/core/widgets/input_widget.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 
 class DetailProductView extends StatefulWidget {
   final String id;
@@ -111,15 +112,20 @@ class _DetailProductViewState extends State<DetailProductView> {
                 categoryProductC = state.product!.category;
             });
             if (state.successMessage.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
+              CustomTopSnackbar.success(context, state.successMessage);
             }
           } else if (state.status == DetailProductStatus.deleteSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.successMessage)));
-            Future.delayed(Duration(seconds: 2), () {
-               context.push("warehouse_main_page");
-            });
+            CustomTopSnackbar.success(
+              context,
+              state.successMessage,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.push("warehouse_main_page");
+                }
+              },
+            );
           } else if (state.status == DetailProductStatus.failure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            CustomTopSnackbar.error(context, state.errorMessage);
           }
         },
         builder: (context, state) {
