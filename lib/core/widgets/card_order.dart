@@ -253,19 +253,26 @@ class CardOrder extends StatelessWidget {
                         // Right: Pay Now Button or Status Badge
                         if (rejected)
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDC2626),
+                              color: const Color(0xFFE2E8F0),
                               borderRadius: BorderRadius.circular(8.w),
                             ),
-                            child: Text(
-                              "REJECTED",
-                              style: GoogleFonts.inter(
-                                fontSize: 9.5.sp,
-                                fontWeight: AppFontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.block_rounded, size: 12.w, color: const Color(0xFF64748B)),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  "REJECTED",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10.5.w,
+                                    fontWeight: AppFontWeight.bold,
+                                    color: const Color(0xFF64748B),
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ],
                             ),
                           )
                         else if (isPayable)
@@ -292,7 +299,7 @@ class CardOrder extends StatelessWidget {
                                   Text(
                                     "Pay Now",
                                     style: GoogleFonts.inter(
-                                      fontSize: 10.5.sp,
+                                      fontSize: 10.5.w,
                                       fontWeight: AppFontWeight.bold,
                                       color: Colors.white,
                                       letterSpacing: 0.2,
@@ -312,7 +319,7 @@ class CardOrder extends StatelessWidget {
                             child: Text(
                               isApproved ? "PAID" : "UNPAID",
                               style: GoogleFonts.inter(
-                                fontSize: 9.5.sp,
+                                fontSize: 9.5.w,
                                 fontWeight: AppFontWeight.bold,
                                 color: Colors.white,
                                 letterSpacing: 0.5,

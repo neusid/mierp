@@ -74,8 +74,8 @@ class _SummaryViewState extends State<SummaryView> {
                 amount: orderInfo['amount'] ?? '\$0',
                 requestedBy: orderInfo['requestedBy'],
                 paymentType: orderInfo['paymentType'] ?? 'Warehouse Order',
-              ).then((result) {
-                if (mounted && result == true) {
+              ).then((_) {
+          if (mounted) {
                   bloc.add(SummaryStarted());
                 }
               });
@@ -464,8 +464,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                 onTap: () {
                                                   context.push(
                                                     "/detail_product_order/${e.data.id}",
-                                                  ).then((result) {
-                                                    if (context.mounted && result == true) {
+                                                  ).then((_) {
+                                                    if (context.mounted) {
                                                       context.read<SummaryBloc>().add(SummaryStarted());
                                                     }
                                                   });
@@ -529,8 +529,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                 onTap: () {
                                                   context.push(
                                                     "/detail_sales_order/${e.data.id}",
-                                                  ).then((result) {
-                                                    if (context.mounted && result == true) {
+                                                  ).then((_) {
+                                                    if (context.mounted) {
                                                       context.read<SummaryBloc>().add(SummaryStarted());
                                                     }
                                                   });
@@ -654,8 +654,8 @@ class _SummaryViewState extends State<SummaryView> {
                                             if (orderId.isNotEmpty) {
                                               context.push(
                                                 "/detail_product_order/$orderId",
-                                              ).then((result) {
-                                                if (context.mounted && result == true) {
+                                              ).then((_) {
+                                                    if (context.mounted) {
                                                   context.read<SummaryBloc>().add(SummaryStarted());
                                                 }
                                               });
@@ -730,8 +730,8 @@ class _SummaryViewState extends State<SummaryView> {
                                               onTap: () {
                                                 context.push(
                                                   "/detail_sales_order/${data.id}",
-                                                ).then((result) {
-                                                  if (context.mounted && result == true) {
+                                                ).then((_) {
+                                                    if (context.mounted) {
                                                     context.read<SummaryBloc>().add(SummaryStarted());
                                                   }
                                                 });

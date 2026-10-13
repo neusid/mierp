@@ -369,7 +369,10 @@ class DetailProductOrderView extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          return Scaffold(
+          return PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {},
+            child: Scaffold(
             backgroundColor: const Color(0xFFF8FAFC), // Soft off-white background
             body: Stack(
               children: [
@@ -765,8 +768,9 @@ class DetailProductOrderView extends StatelessWidget {
                   ),
               ],
             ),
-          );
-        },
+          ),
+        );
+      },
       ),
     );
   }

@@ -712,8 +712,8 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                       onTap: () {
                                         context.push(
                                           "/detail_product_order/${data.id}",
-                                        ).then((result) {
-                                          if (mounted && result == true) {
+                                        ).then((_) {
+                                          if (context.mounted) {
                                             context.read<DashboardFinanceBloc>().add(DashboardFinanceStarted());
                                           }
                                         });
@@ -774,8 +774,8 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                       onTap: () {
                                         context.push(
                                           "/detail_sales_order/${data.id}",
-                                        ).then((result) {
-                                          if (mounted && result == true) {
+                                        ).then((_) {
+                                          if (context.mounted) {
                                             context.read<DashboardFinanceBloc>().add(DashboardFinanceStarted());
                                           }
                                         });
