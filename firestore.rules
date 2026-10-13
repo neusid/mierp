@@ -2,38 +2,34 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users collection
     match /users/{userId} {
-      allow read, write: if request.auth != null;
+      allow read: if true; 
+      allow write: if request.auth != null;
     }
-
-    // Products & Units
-    match /products/{productId} {
-      allow read, write: if request.auth != null;
+    match /products/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null;
     }
-    match /units/{unitId} {
-      allow read, write: if request.auth != null;
+    match /warehouse_orders/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null;
     }
-
-    // Orders
-    match /sales_orders/{orderId} {
-      allow read, write: if request.auth != null;
+    match /sales_orders/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null;
     }
-    match /warehouse_orders/{orderId} {
-      allow read, write: if request.auth != null;
+    match /financial_mutations/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null;
     }
-    match /financial_mutations/{mutationId} {
-      allow read, write: if request.auth != null;
+    match /units/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
-
-    // ✅ Realtime Notifications for Finance & Warehouse
-    match /notifications/{notificationId} {
-      allow read, write: if request.auth != null;
+    // Realtime Notifications for Finance & Warehouse
+    match /notifications/{notifId} {
+      allow read: if true; 
+      allow write: if true;
     }
-
-    // Fallback for development / testing (jika user login anonymous / auth belum aktif)
-    // match /{document=**} {
-    //   allow read, write: if true;
-    // }
   }
 }
