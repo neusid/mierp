@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
@@ -145,24 +146,58 @@ class NotificationCubit extends Cubit<NotificationState> {
           ? role.trim().toLowerCase()
           : (state.activeRole.isNotEmpty ? state.activeRole : 'finance');
 
+      String resolvedOrderType = orderType ?? 'sales_order';
+      String resolvedOrderId = orderId ?? '';
+      String resolvedProductName = productName ?? '';
+
+      // Otomatis ambil dokumen pesanan ASLI dari Firestore jika ada, agar saat di-tap benar-benar membuka detail order nyata!
+      if (resolvedOrderId.isEmpty ||
+          resolvedOrderId.startsWith('TEST-') ||
+          resolvedOrderId == 'SO-SELF') {
+        try {
+          final collectionName = resolvedOrderType == 'sales_order'
+              ? 'sales_orders'
+              : 'warehouse_orders';
+          final realOrderSnap = await FirebaseFirestore.instance
+              .collection(collectionName)
+              .limit(1)
+              .get();
+          if (realOrderSnap.docs.isNotEmpty) {
+            final realDoc = realOrderSnap.docs.first;
+            resolvedOrderId = realDoc.id;
+            final realData = realDoc.data();
+            resolvedProductName = realData['product_name']?.toString() ??
+                realData['name']?.toString() ??
+                'Produk MiERP';
+          }
+        } catch (_) {}
+      }
+
+      if (resolvedOrderId.isEmpty) {
+        resolvedOrderId =
+            'TEST-${DateTime.now().millisecondsSinceEpoch % 10000}';
+      }
+      if (resolvedProductName.isEmpty) {
+        resolvedProductName = 'Produk Sampel';
+      }
+
       final defaultType =
           target == 'finance' ? 'new_sales_order' : 'order_approved';
       final defaultTitle = target == 'finance'
-          ? 'Sales Order Baru #SO-TEST'
-          : 'Order Disetujui #SO-TEST';
+          ? 'Sales Order Baru ($resolvedProductName)'
+          : 'Order Disetujui ($resolvedProductName)';
       final defaultMessage = target == 'finance'
-          ? 'Pesanan penjualan baru telah dibuat dari Warehouse dan menunggu persetujuan.'
-          : 'Pesanan telah disetujui & diverifikasi oleh Finance.';
+          ? 'Pesanan penjualan untuk $resolvedProductName siap diproses dan menunggu persetujuan.'
+          : 'Pesanan untuk $resolvedProductName telah disetujui & diverifikasi oleh Finance.';
 
       await _notificationRepository.sendNotification(
         targetRole: target,
         type: type ?? defaultType,
         title: title ?? defaultTitle,
         message: message ?? defaultMessage,
-        orderId:
-            orderId ?? 'TEST-${DateTime.now().millisecondsSinceEpoch % 10000}',
-        orderType: orderType ?? 'sales_order',
-        productName: productName ?? 'Produk Sampel Uji Coba',
+        orderId: resolvedOrderId,
+        orderType: resolvedOrderType,
+        productName: resolvedProductName,
       );
       return true;
     } catch (e) {
@@ -179,13 +214,32 @@ class NotificationCubit extends Cubit<NotificationState> {
     String? orderType,
   }) async {
     try {
+      String resolvedOrderId = orderId ?? '';
+      String resolvedOrderType = orderType ?? 'sales_order';
+
+      if (resolvedOrderId.isEmpty || resolvedOrderId.startsWith('TEST-')) {
+        try {
+          final realOrderSnap = await FirebaseFirestore.instance
+              .collection('sales_orders')
+              .limit(1)
+              .get();
+          if (realOrderSnap.docs.isNotEmpty) {
+            resolvedOrderId = realOrderSnap.docs.first.id;
+          }
+        } catch (_) {}
+      }
+
+      if (resolvedOrderId.isEmpty) {
+        resolvedOrderId = 'TEST-999';
+      }
+
       await _fcmNotificationService.showNotification(
         title: title ?? '🔔 Uji Coba Status Bar MiERP',
         body: body ??
             'Notifikasi FCM Status Bar & Heads-up Banner berhasil diterima!',
         payload: jsonEncode({
-          'order_id': orderId ?? 'TEST-999',
-          'order_type': orderType ?? 'sales_order',
+          'order_id': resolvedOrderId,
+          'order_type': resolvedOrderType,
         }),
       );
     } catch (e) {
