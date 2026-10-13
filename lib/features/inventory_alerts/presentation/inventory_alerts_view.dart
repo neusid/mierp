@@ -144,6 +144,8 @@ class _InventoryAlertsViewState extends State<InventoryAlertsView> with SingleTi
               type: data.category,
               image: data.imageProduct,
               createdOn: data.createdOn,
+              discountPercent: data.discountPercent,
+              discountMax: data.discountMax,
             ),
           ),
         );

@@ -486,6 +486,8 @@ class DashboardWarehouseView extends StatelessWidget {
                                           type: product.category,
                                           image: product.imageProduct,
                                           createdOn: product.createdOn,
+                                          discountPercent: product.discountPercent,
+                                          discountMax: product.discountMax,
                                         ),
                                       );
                                     }),

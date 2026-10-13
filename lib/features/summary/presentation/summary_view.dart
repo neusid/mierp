@@ -455,6 +455,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                       e.data.quantity,
                                                   type: e.data.category,
                                                   image: e.data.imageProduct,
+                                                  discountPercent: e.data.discountPercent,
+                                                  discountMax: e.data.discountMax,
                                                 ),
                                               );
                                             case SummaryType.order:
@@ -616,6 +618,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                 data.quantity,
                                             type: data.category,
                                             image: data.imageProduct,
+                                            discountPercent: data.discountPercent,
+                                            discountMax: data.discountMax,
                                           ),
                                         );
                                       }).toList(),

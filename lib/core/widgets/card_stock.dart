@@ -15,6 +15,8 @@ class CardStock extends StatelessWidget {
     required this.type,
     required this.image,
     this.createdOn,
+    this.discountPercent,
+    this.discountMax,
   });
 
   final dynamic idBarang;
@@ -25,10 +27,19 @@ class CardStock extends StatelessWidget {
   final dynamic type;
   final dynamic image;
   final String? createdOn;
+  final int? discountPercent;
+  final int? discountMax;
 
   @override
   Widget build(BuildContext context) {
     final convertDollar = ConvertDollar();
+    final int finalDiscountPercent = discountPercent ?? 0;
+    final int finalDiscountMax = discountMax ?? 0;
+    final bool hasDiscount = finalDiscountPercent > 0;
+    final String discountMaxStr = finalDiscountMax > 0
+        ? (finalDiscountMax >= 1000 ? "${(finalDiscountMax / 1000).toInt()}rb" : "$finalDiscountMax")
+        : "";
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -94,6 +105,34 @@ class CardStock extends StatelessWidget {
                       ),
                     ),
                   ),
+                if (hasDiscount)
+                  Positioned(
+                    bottom: 6.h,
+                    left: 6.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444),
+                        borderRadius: BorderRadius.circular(4.w),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                            blurRadius: 4.w,
+                            offset: Offset(0, 1.h),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        "-$finalDiscountPercent%",
+                        style: GoogleFonts.inter(
+                          fontSize: 8.5.sp,
+                          fontWeight: AppFontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
             
@@ -131,6 +170,45 @@ class CardStock extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (hasDiscount) ...[
+                            SizedBox(height: 3.h),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFEF3C7),
+                                borderRadius: BorderRadius.circular(4.w),
+                                border: Border.all(
+                                  color: const Color(0xFFFDE68A),
+                                  width: 0.8.w,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.discount_outlined,
+                                    size: 10.w,
+                                    color: const Color(0xFFB45309),
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Flexible(
+                                    child: Text(
+                                      discountMaxStr.isNotEmpty
+                                          ? "Diskon $finalDiscountPercent%, maks. $discountMaxStr"
+                                          : "Diskon $finalDiscountPercent%",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 8.5.sp,
+                                        fontWeight: AppFontWeight.bold,
+                                        color: const Color(0xFFB45309),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                           SizedBox(height: 4.h),
                           if (createdOn != null && createdOn!.isNotEmpty) ...[
                             Row(
