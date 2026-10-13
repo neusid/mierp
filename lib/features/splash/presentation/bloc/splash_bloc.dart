@@ -11,6 +11,7 @@ import 'package:mierp_apps/core/session/bloc/auth_bloc.dart';
 import 'package:mierp_apps/core/session/bloc/auth_event.dart';
 import 'package:mierp_apps/core/session/bloc/auth_state.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_service.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 
 // --- EVENTS ---
 abstract class SplashEvent extends Equatable {
@@ -82,9 +83,11 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         final Map<String, dynamic> dataUserJson = jsonDecode(dataUserRaw);
         final dataUser = UserModel.fromJson(dataUserJson);
         if (dataUser.role == "warehouse") {
+          sl<NotificationCubit>().init("warehouse");
           emit(SplashNavigateToWarehouse());
           return;
         } else if (dataUser.role == "finance") {
+          sl<NotificationCubit>().init("finance");
           emit(SplashNavigateToFinance());
           return;
         }
@@ -111,9 +114,11 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           await sl<UserDataController>().setDataUser(userModel);
 
           if (userModel.role == "warehouse") {
+            sl<NotificationCubit>().init("warehouse");
             emit(SplashNavigateToWarehouse());
             return;
           } else {
+            sl<NotificationCubit>().init("finance");
             emit(SplashNavigateToFinance());
             return;
           }

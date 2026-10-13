@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/domain/credential/repository/credential_repository.dart';
 import 'package:mierp_apps/features/login/domain/usecases/do_login.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 
 // --- EVENTS ---
 abstract class LoginEvent extends Equatable {
@@ -106,13 +108,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final dataUserRaw = jsonEncode(user);
         await credentialRepository.setDataUser(dataUserRaw);
         await userDataController.setDataUser(user);
-
         if (event.saveCredential) {
           await credentialRepository.setCredentialUser(event.email, true);
         } else {
           await credentialRepository.deletePreference();
         }
 
+        sl<NotificationCubit>().init(user.role);
         emit(LoginSuccess(user.role ?? ''));
       },
     );
@@ -134,6 +136,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await userDataController.setDataUser(user);
         
         await Future.delayed(const Duration(seconds: 3));
+        sl<NotificationCubit>().init(user.role);
         emit(LoginSuccess(user.role ?? ''));
       },
     );

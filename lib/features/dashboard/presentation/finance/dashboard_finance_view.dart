@@ -15,6 +15,8 @@ import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
 import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
 
 class DashboardFinanceView extends StatefulWidget {
   const DashboardFinanceView({super.key});
@@ -319,23 +321,29 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                             Positioned(
                               top: 9.w,
                               right: 9.w,
-                              child: Container(
-                                width: 8.w,
-                                height: 8.w,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFFEF4444),
-                                  border: Border.all(
-                                    color: AppColors.gray,
-                                    width: 1.2.w,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFFEF4444).withValues(alpha: 0.6),
-                                      blurRadius: 4.w,
+                              child: BlocSelector<NotificationCubit, NotificationState, bool>(
+                                selector: (state) => state.unreadCount > 0,
+                                builder: (context, hasUnread) {
+                                  if (!hasUnread) return const SizedBox.shrink();
+                                  return Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color(0xFFEF4444),
+                                      border: Border.all(
+                                        color: AppColors.gray,
+                                        width: 1.2.w,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFFEF4444).withValues(alpha: 0.6),
+                                          blurRadius: 4.w,
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
                             ),
                           ],

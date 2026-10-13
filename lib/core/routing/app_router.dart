@@ -37,7 +37,7 @@ import 'package:mierp_apps/core/session/bloc/auth_event.dart';
 import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
 import 'package:mierp_apps/core/routing/page_transitions.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 String? _loginGuard(BuildContext context, GoRouterState state) {
   final auth = sl<AuthBloc>();
@@ -53,7 +53,7 @@ String? _loginGuard(BuildContext context, GoRouterState state) {
 }
 
 final GoRouter appRouter = GoRouter(
-  navigatorKey: _rootNavigatorKey,
+  navigatorKey: rootNavigatorKey,
   initialLocation: '/splash',
   routes: [
     GoRoute(
@@ -266,7 +266,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/payment_success',
       name: 'payment_success',
-      parentNavigatorKey: _rootNavigatorKey,
+      parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) {
         final extra = state.extra as Map<String, dynamic>? ?? {};
         return SmoothPageTransitions.modalSlideUp(

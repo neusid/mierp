@@ -11,6 +11,8 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 import 'package:mierp_apps/core/widgets/dashboard/quick_add_card.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
 
 class DashboardWarehouseView extends StatelessWidget {
   const DashboardWarehouseView({super.key});
@@ -165,17 +167,23 @@ class DashboardWarehouseView extends StatelessWidget {
                                         Positioned(
                                           top: 10.w,
                                           right: 10.w,
-                                          child: Container(
-                                            width: 8.w,
-                                            height: 8.w,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: const Color(0xFFEF4444),
-                                              border: Border.all(
-                                                color: const Color(0xFF4F46E5),
-                                                width: 1.5.w,
-                                              ),
-                                            ),
+                                          child: BlocSelector<NotificationCubit, NotificationState, bool>(
+                                            selector: (state) => state.unreadCount > 0,
+                                            builder: (context, hasUnread) {
+                                              if (!hasUnread) return const SizedBox.shrink();
+                                              return Container(
+                                                width: 8.w,
+                                                height: 8.w,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: const Color(0xFFEF4444),
+                                                  border: Border.all(
+                                                    color: const Color(0xFF4F46E5),
+                                                    width: 1.5.w,
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
                                       ],

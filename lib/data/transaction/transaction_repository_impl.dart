@@ -1,12 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/domain/transaction/repository/transaction_repository.dart';
+import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 
 class TransactionRepositoryImpl implements TransactionRepository {
+  final FirebaseFirestore firestore;
+  final NotificationRepository notificationRepository;
 
-  FirebaseFirestore firestore;
-
-  TransactionRepositoryImpl({required this.firestore});
+  TransactionRepositoryImpl({
+    required this.firestore,
+    NotificationRepository? notificationRepository,
+  }) : notificationRepository =
+            notificationRepository ?? sl<NotificationRepository>();
 
   @override
   Future<void> payProductOrderInvoice(docId, prodId, totalQty, date) async {
@@ -46,11 +52,13 @@ class TransactionRepositoryImpl implements TransactionRepository {
       );
 
       // Best-effort atomic ledger recording in dedicated collection
+      String productName = '';
       try {
         final dt = DateTime.tryParse(date.toString()) ?? DateTime.now();
         final period = "${dt.year}-${dt.month.toString().padLeft(2, '0')}";
         final orderSnap = await firestore.collection("warehouse_orders").doc(docId.toString()).get();
         final orderData = orderSnap.data() ?? {};
+        productName = orderData['product_name']?.toString() ?? '';
         final mutationRef = firestore.collection("financial_mutations").doc("mut_po_$docId");
         await mutationRef.set({
           'id': "mut_po_$docId",
@@ -62,7 +70,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           'party_name': (orderData['first_name'] != null && orderData['first_name'].toString().isNotEmpty)
               ? orderData['first_name']
               : 'Pengadaan Unit',
-          'product_name': orderData['product_name'] ?? '',
+          'product_name': productName,
           'quantity': num.tryParse(totalQty.toString()) ?? 0,
           'unit_price': orderData['unit_price'] ?? 0,
           'discount_percent': orderData['discount_percent'],
@@ -78,6 +86,21 @@ class TransactionRepositoryImpl implements TransactionRepository {
         });
       } catch (e) {
         debugPrint("Notice: Ledger write to financial_mutations skipped: $e");
+      }
+
+      // Best-effort live notification to Warehouse
+      try {
+        await notificationRepository.sendNotification(
+          targetRole: "warehouse",
+          type: "order_approved",
+          title: "Product Order Disetujui",
+          message: "Pesanan unit #${docId.toString()}${productName.isNotEmpty ? ' ($productName)' : ''} telah disetujui & dibayar oleh Finance.",
+          orderId: docId.toString(),
+          orderType: "product_order",
+          productName: productName,
+        );
+      } catch (notifErr) {
+        debugPrint("Notice: Failed to dispatch live notification: $notifErr");
       }
     } catch (e) {
       debugPrint("Found Error in payProductOrderInvoice: $e");
@@ -124,11 +147,13 @@ class TransactionRepositoryImpl implements TransactionRepository {
       );
 
       // Best-effort atomic ledger recording in dedicated collection
+      String productName = '';
       try {
         final dt = DateTime.tryParse(date.toString()) ?? DateTime.now();
         final period = "${dt.year}-${dt.month.toString().padLeft(2, '0')}";
         final salesSnap = await firestore.collection("sales_orders").doc(docId.toString()).get();
         final salesData = salesSnap.data() ?? {};
+        productName = salesData['product_name']?.toString() ?? '';
         final mutationRef = firestore.collection("financial_mutations").doc("mut_so_$docId");
         await mutationRef.set({
           'id': "mut_so_$docId",
@@ -140,7 +165,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           'party_name': (salesData['company_name'] != null && salesData['company_name'].toString().isNotEmpty)
               ? salesData['company_name']
               : (salesData['first_name'] ?? 'Customer'),
-          'product_name': salesData['product_name'] ?? '',
+          'product_name': productName,
           'quantity': num.tryParse(totalQty.toString()) ?? 0,
           'unit_price': salesData['unit_price'] ?? 0,
           'discount_percent': salesData['discount_percent'],
@@ -156,6 +181,21 @@ class TransactionRepositoryImpl implements TransactionRepository {
         });
       } catch (e) {
         debugPrint("Notice: Ledger write to financial_mutations skipped: $e");
+      }
+
+      // Best-effort live notification to Warehouse
+      try {
+        await notificationRepository.sendNotification(
+          targetRole: "warehouse",
+          type: "order_approved",
+          title: "Sales Order Disetujui",
+          message: "Sales Order #${docId.toString()}${productName.isNotEmpty ? ' ($productName)' : ''} telah disetujui & dibayar oleh Finance.",
+          orderId: docId.toString(),
+          orderType: "sales_order",
+          productName: productName,
+        );
+      } catch (notifErr) {
+        debugPrint("Notice: Failed to dispatch live notification: $notifErr");
       }
     } catch (e) {
       debugPrint("Found Error in paySalesOrderInvoice: $e");
@@ -173,6 +213,24 @@ class TransactionRepositoryImpl implements TransactionRepository {
         'rejected_date': date,
         'finance_approved': false,
       });
+
+      // Best-effort live notification to Warehouse
+      try {
+        final orderSnap = await orderRef.get();
+        final orderData = orderSnap.data() ?? {};
+        final productName = orderData['product_name']?.toString() ?? '';
+        await notificationRepository.sendNotification(
+          targetRole: "warehouse",
+          type: "order_rejected",
+          title: "Product Order Ditolak",
+          message: "Pesanan unit #$docId${productName.isNotEmpty ? ' ($productName)' : ''} ditolak oleh Finance. Alasan: $reason",
+          orderId: docId,
+          orderType: "product_order",
+          productName: productName,
+        );
+      } catch (notifErr) {
+        debugPrint("Notice: Failed to dispatch live notification: $notifErr");
+      }
     } catch (e) {
       debugPrint("Found Error in rejectProductOrderInvoice: $e");
       rethrow;
@@ -189,6 +247,24 @@ class TransactionRepositoryImpl implements TransactionRepository {
         'rejected_date': date,
         'finance_approved': false,
       });
+
+      // Best-effort live notification to Warehouse
+      try {
+        final salesSnap = await salesRef.get();
+        final salesData = salesSnap.data() ?? {};
+        final productName = salesData['product_name']?.toString() ?? '';
+        await notificationRepository.sendNotification(
+          targetRole: "warehouse",
+          type: "order_rejected",
+          title: "Sales Order Ditolak",
+          message: "Sales Order #$docId${productName.isNotEmpty ? ' ($productName)' : ''} ditolak oleh Finance. Alasan: $reason",
+          orderId: docId,
+          orderType: "sales_order",
+          productName: productName,
+        );
+      } catch (notifErr) {
+        debugPrint("Notice: Failed to dispatch live notification: $notifErr");
+      }
     } catch (e) {
       debugPrint("Found Error in rejectSalesOrderInvoice: $e");
       rethrow;

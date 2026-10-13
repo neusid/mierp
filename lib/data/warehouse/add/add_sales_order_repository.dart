@@ -1,12 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
+import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 
 class AddSalesOrderRepository {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore;
+  final NotificationRepository notificationRepository;
+
+  AddSalesOrderRepository({
+    FirebaseFirestore? firestore,
+    NotificationRepository? notificationRepository,
+  })  : firestore = firestore ?? FirebaseFirestore.instance,
+        notificationRepository =
+            notificationRepository ?? sl<NotificationRepository>();
 
   Future<void> addSalesOrderToFireStore(SalesOrder salesOrder) async {
     try {
-      await firestore.collection("sales_orders").add({
+      final docRef = await firestore.collection("sales_orders").add({
         "company_name": salesOrder.companyName,
         "finance_approved": salesOrder.financeApproved,
         "finance_approved_date": salesOrder.financeApprovedDate,
@@ -22,6 +33,22 @@ class AddSalesOrderRepository {
         "user_id": salesOrder.userId,
         "image_product": salesOrder.imageProduct,
       });
+
+      // Best-effort live notification to Finance
+      try {
+        await notificationRepository.sendNotification(
+          targetRole: "finance",
+          type: "new_sales_order",
+          title: "Sales Order Baru",
+          message:
+              "Pesanan penjualan untuk ${salesOrder.productName} (Qty: ${salesOrder.quantity}) siap diproses Finance.",
+          orderId: docRef.id,
+          orderType: "sales_order",
+          productName: salesOrder.productName,
+        );
+      } catch (notifErr) {
+        debugPrint("Notice: Failed to dispatch live notification: $notifErr");
+      }
     } catch (e) {
       rethrow;
     }

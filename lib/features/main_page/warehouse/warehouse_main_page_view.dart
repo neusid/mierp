@@ -10,14 +10,33 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/profile/presentation/profile_view.dart';
 import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/features/history/presentation/history_view.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
 
 class WarehouseMainPageView extends StatelessWidget {
   const WarehouseMainPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocListener<NotificationCubit, NotificationState>(
+      listenWhen: (prev, curr) => curr.latestIncomingNotification != null,
+      listener: (context, state) {
+        final incoming = state.latestIncomingNotification;
+        if (incoming != null) {
+          context.read<NotificationCubit>().clearLatestIncoming();
+          CustomTopSnackbar.show(
+            context,
+            incoming.message,
+            title: incoming.title,
+            isError: incoming.type == 'order_rejected',
+            isWarning: incoming.type == 'new_sales_order' ||
+                incoming.type == 'new_product_order',
+          );
+        }
+      },
+      child: Scaffold(
       backgroundColor: AppColors.bgColor,
       body: BlocBuilder<MainPageCubit, int>(
         builder: (context, currentIndex) {
@@ -54,6 +73,7 @@ class WarehouseMainPageView extends StatelessWidget {
           );
         }
       ),
+    ),
     );
   }
 

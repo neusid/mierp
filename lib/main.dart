@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mierp_apps/core/routing/app_router.dart';
 import 'package:mierp_apps/core/di/injection_container.dart' as di;
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,24 +22,27 @@ class MierpApps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(393, 852),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            pageTransitionsTheme: const PageTransitionsTheme(
-              builders: {
-                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-              },
+    return BlocProvider<NotificationCubit>(
+      create: (_) => di.sl<NotificationCubit>()..init(),
+      child: ScreenUtilInit(
+        designSize: const Size(393, 852),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                },
+              ),
             ),
-          ),
-          routerConfig: appRouter,
-        );
-      },
+            routerConfig: appRouter,
+          );
+        },
+      ),
     );
   }
 }
