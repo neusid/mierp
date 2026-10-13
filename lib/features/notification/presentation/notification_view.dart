@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -706,6 +707,45 @@ class _NotificationViewState extends State<NotificationView> {
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   cubit.triggerLocalNotificationTest();
+                },
+              ),
+              SizedBox(height: 10.h),
+              _buildTriggerItem(
+                icon: Icons.copy_rounded,
+                iconColor: const Color(0xFF0D9488),
+                bgColor: const Color(0xFFF0FDFA),
+                title: "Salin Token FCM Perangkat Ini 📋",
+                description:
+                    "Gunakan untuk tombol 'Send test message' di Firebase Console",
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  try {
+                    final token = await FirebaseMessaging.instance.getToken();
+                    if (token != null && token.isNotEmpty) {
+                      await Clipboard.setData(ClipboardData(text: token));
+                      if (parentContext.mounted) {
+                        ScaffoldMessenger.of(parentContext).showSnackBar(
+                          const SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Color(0xFF0D9488),
+                            duration: Duration(seconds: 4),
+                            content: Text(
+                                "📋 Token FCM berhasil disalin ke clipboard! Tempelkan pada 'Send test message' di Firebase Console."),
+                          ),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (parentContext.mounted) {
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: const Color(0xFFEF4444),
+                          content: Text("Gagal mengambil token: $e"),
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
             ],
