@@ -93,9 +93,17 @@ Future<void> init() async {
   sl.registerFactory(() => RegisterBloc(doRegister: sl()));
   sl.registerFactory(() => ForgotPasswordBloc(doResetPassword: sl()));
   sl.registerFactory(() => DashboardWarehouseBloc(warehouseRepository: sl(), userDataController: sl()));
-  sl.registerFactory(() => DashboardFinanceBloc(financeRepository: sl(), userDataController: sl()));
+  sl.registerFactory(() => DashboardFinanceBloc(
+        financeRepository: sl(),
+        userDataController: sl(),
+        transactionServices: sl(),
+      ));
   sl.registerFactory(() => ProfileBloc(loginRepository: sl(), userDataController: sl()));
-  sl.registerFactory(() => SummaryBloc(financeRepository: sl(), userDataController: sl()));
+  sl.registerFactory(() => SummaryBloc(
+        financeRepository: sl(),
+        userDataController: sl(),
+        transactionServices: sl(),
+      ));
   sl.registerFactory(() => DetailProductBloc(itemRepository: sl(), detailProductServices: sl()));
   sl.registerFactory(() => DetailSalesOrderBloc(itemRepository: sl(), itemStore: sl(), transactionServices: sl(), detailSalesOrderRepository: sl(), userDataController: sl()));
   sl.registerFactory(() => DetailProductOrderBloc(itemRepository: sl(), transactionServices: sl(), detailProductOrderRepository: sl(), userDataController: sl()));

@@ -11,6 +11,7 @@ import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
+import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
 
 class DetailProductOrderView extends StatelessWidget {
   final String id;
@@ -191,7 +192,24 @@ class DetailProductOrderView extends StatelessWidget {
       child: BlocConsumer<DetailProductOrderBloc, DetailProductOrderState>(
         listener: (context, state) {
           if (state.status == DetailProductOrderStatus.paySuccess) {
-            CustomTopSnackbar.success(context, state.successMessage);
+            final order = state.orderProduct;
+            if (order != null) {
+              PaymentSuccessView.open(
+                context,
+                invoiceId: order.id ?? id,
+                productName: order.productName,
+                quantity: order.quantity,
+                amount: converDollar.intToDollar(order.totalCost),
+                requestedBy: order.firstName,
+                paymentType: "Warehouse Order",
+              ).then((result) {
+                if (context.mounted && result == true) {
+                  context.read<DetailProductOrderBloc>().add(DetailProductOrderStarted(id));
+                }
+              });
+            } else {
+              CustomTopSnackbar.success(context, state.successMessage);
+            }
           } else if (state.status == DetailProductOrderStatus.deleteSuccess) {
             CustomTopSnackbar.success(
               context,
@@ -315,7 +333,7 @@ class DetailProductOrderView extends StatelessWidget {
                                                   borderRadius: BorderRadius.circular(20.w),
                                                 ),
                                                 child: Text(
-                                                  state.orderProduct!.financeApproved! ? "PAID" : "UNPAID",
+                                                  (state.orderProduct!.financeApproved ?? false) ? "PAID" : "UNPAID",
                                                   style: GoogleFonts.inter(
                                                     fontSize: 9.sp,
                                                     fontWeight: AppFontWeight.bold,
@@ -338,21 +356,72 @@ class DetailProductOrderView extends StatelessWidget {
                                 title: "Order Summary",
                                 child: Column(
                                   children: [
-                                    _buildDataRow("Order ID", state.orderProduct!.id!),
-                                    _buildDataRow("Created On", state.orderProduct!.orderDate!),
+                                    _buildDataRow("Order ID", state.orderProduct!.id ?? id),
+                                    _buildDataRow("Created On", state.orderProduct!.orderDate ?? "-"),
                                     _buildDataRow("From", "Warehouse"),
                                     SizedBox(height: 8.h),
                                     _buildDataRow("Quantity", state.orderProduct!.quantity.toString()),
                                       _buildDataRow("Unit Price", converDollar.intToDollar(state.orderProduct!.unitPrice)),
                                       _buildDataRow("Subtotal", converDollar.intToDollar(state.orderProduct!.quantity * state.orderProduct!.unitPrice)),
                                       if (((state.orderProduct!.quantity * state.orderProduct!.unitPrice) - state.orderProduct!.totalCost) > 0)
-                                        _buildDataRow("Discount", "-${converDollar.intToDollar((state.orderProduct!.quantity * state.orderProduct!.unitPrice) - state.orderProduct!.totalCost)} (${state.orderProduct!.discountPercent}%)"),
+                                        _buildDataRow("Discount", "-${converDollar.intToDollar((state.orderProduct!.quantity * state.orderProduct!.unitPrice) - state.orderProduct!.totalCost)} (${state.orderProduct!.discountPercent ?? 0}%)"),
                                       Divider(color: const Color(0xFFF1F5F9), height: 24.h, thickness: 1.w),
                                       _buildDataRow("Line Total", converDollar.intToDollar(state.orderProduct!.totalCost), isBold: true),
                                   ],
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      )
+                    else if (state.status == DetailProductOrderStatus.failure)
+                      Expanded(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(24.w),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.error_outline_rounded, size: 54.w, color: const Color(0xFFEF4444)),
+                                SizedBox(height: 12.h),
+                                Text(
+                                  "Gagal Memuat Detail Order",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16.sp,
+                                    fontWeight: AppFontWeight.bold,
+                                    color: const Color(0xFF0F172A),
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  state.errorMessage.isNotEmpty ? state.errorMessage : "Koneksi bermasalah atau data order tidak ditemukan.",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12.sp,
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    context.read<DetailProductOrderBloc>().add(DetailProductOrderStarted(id));
+                                  },
+                                  icon: Icon(Icons.refresh_rounded, size: 18.w, color: Colors.white),
+                                  label: Text(
+                                    "Coba Lagi",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: AppFontWeight.semiBold,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0F172A),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
+                                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -377,40 +446,27 @@ class DetailProductOrderView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: state.role == "warehouse"
-                          ? // WAREHOUSE ROLE: Delete Order
-                            GestureDetector(
-                              onTap: () => _showDeleteConfirmation(context, state.orderProduct!.id!),
-                              child: Container(
-                                height: 52.h,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFEF2F2),
-                                  border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
-                                  borderRadius: BorderRadius.circular(10.w),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Delete Order",
-                                    style: GoogleFonts.inter(
-                                      fontWeight: AppFontWeight.bold,
-                                      fontSize: 16.sp,
-                                      color: const Color(0xFFEF4444),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : // FINANCE ROLE: Pay Invoice
+                      child: (state.role ?? "").toLowerCase() == "finance"
+                          ? // FINANCE ROLE: Pay Invoice
                             GestureDetector(
                               onTap: () {
                                 showPayConfirmationModal(
                                   context: context,
-                                  orderId: state.orderProduct!.id,
-                                  amount: converDollar.intToDollar(state.orderProduct!.totalCost),
+                                  orderId: state.orderProduct!.id ?? "",
+                                  productName: state.orderProduct!.productName,
+                                  productCode: state.orderProduct!.productCode,
+                                  imageProduct: state.orderProduct!.imageProduct,
+                                  quantity: state.orderProduct!.quantity,
+                                  unitPrice: state.orderProduct!.unitPrice,
+                                  totalCost: state.orderProduct!.totalCost,
+                                  discountPercent: state.orderProduct!.discountPercent,
+                                  discountMax: state.orderProduct!.discountMax,
+                                  requestedBy: state.orderProduct!.firstName,
+                                  orderDate: state.orderProduct!.orderDate,
                                   onConfirm: () {
                                     context.read<DetailProductOrderBloc>().add(
                                       DetailProductOrderPayRequested(
-                                        state.orderProduct!.id!,
+                                        state.orderProduct!.id ?? id,
                                         state.orderProduct!.productId,
                                         state.orderProduct!.quantity,
                                       ),
@@ -442,12 +498,34 @@ class DetailProductOrderView extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            )
+                          : // WAREHOUSE ROLE: Delete Order
+                            GestureDetector(
+                              onTap: () => _showDeleteConfirmation(context, state.orderProduct!.id ?? id),
+                              child: Container(
+                                height: 52.h,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF2F2),
+                                  border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
+                                  borderRadius: BorderRadius.circular(10.w),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Delete Order",
+                                    style: GoogleFonts.inter(
+                                      fontWeight: AppFontWeight.bold,
+                                      fontSize: 16.sp,
+                                      color: const Color(0xFFEF4444),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                     ),
                   ),
 
                 // LOADING OVERLAY
-                if (state.status == DetailProductOrderStatus.loading || state.orderProduct == null)
+                if (state.status == DetailProductOrderStatus.loading)
                   Container(
                     color: Colors.black.withValues(alpha: 0.3),
                     child: Center(

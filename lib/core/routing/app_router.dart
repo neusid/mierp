@@ -34,6 +34,8 @@ import 'package:mierp_apps/features/summary/presentation/summary_view.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mierp_apps/core/session/bloc/auth_event.dart';
+import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
+import 'package:mierp_apps/core/routing/page_transitions.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -57,127 +59,228 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding',
       name: 'onboarding',
-      builder: (context, state) => OnboardingView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: OnboardingView(),
+      ),
     ),
     GoRoute(
       path: '/splash',
       name: 'splash',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<SplashBloc>(),
-        child: const SplashView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => sl<SplashBloc>(),
+          child: const SplashView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/login',
       name: 'login',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<LoginBloc>(),
-        child: const LoginView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => sl<LoginBloc>(),
+          child: const LoginView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/loading',
       name: 'loading',
-      builder: (context, state) => const LoadingView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: const LoadingView(),
+      ),
     ),
     GoRoute(
       path: '/register',
       name: 'register',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<RegisterBloc>(),
-        child: const RegisterView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => sl<RegisterBloc>(),
+          child: const RegisterView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/forgot',
       name: 'forgot',
-      builder: (context, state) => BlocProvider(
-        create: (_) => sl<ForgotPasswordBloc>(),
-        child: const ForgotPasswordView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => sl<ForgotPasswordBloc>(),
+          child: const ForgotPasswordView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/finance_main_page',
       name: 'finance_main_page',
       redirect: _loginGuard,
-      builder: (context, state) => BlocProvider(
-        create: (_) => MainPageCubit(),
-        child: const FinanceMainPageView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => MainPageCubit(),
+          child: const FinanceMainPageView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/warehouse_main_page',
       name: 'warehouse_main_page',
       redirect: _loginGuard,
-      builder: (context, state) => BlocProvider(
-        create: (_) => MainPageCubit(),
-        child: const WarehouseMainPageView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => MainPageCubit(),
+          child: const WarehouseMainPageView(),
+        ),
       ),
     ),
     GoRoute(
       path: '/dashboard_warehouse',
       name: 'dashboard_warehouse',
-      builder: (context, state) => DashboardWarehouseView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: DashboardWarehouseView(),
+      ),
     ),
     GoRoute(
       path: '/dashboard_finance',
       name: 'dashboard_finance',
-      builder: (context, state) => DashboardFinanceView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: DashboardFinanceView(),
+      ),
     ),
     GoRoute(
       path: '/summary',
       name: 'summary',
-      builder: (context, state) => SummaryView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: SummaryView(),
+      ),
     ),
     GoRoute(
       path: '/add_unit',
       name: 'add_unit',
-      builder: (context, state) => AddUnitView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: AddUnitView(),
+      ),
     ),
     GoRoute(
       path: '/add_sales_order',
       name: 'add_sales_order',
-      builder: (context, state) => AddSalesOrder(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: AddSalesOrder(),
+      ),
     ),
     GoRoute(
       path: '/add_product_order',
       name: 'add_product_order',
-      builder: (context, state) => AddProductOrderView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: AddProductOrderView(),
+      ),
     ),
     GoRoute(
       path: '/detail_product/:id',
       name: 'detail_product',
-      builder: (context, state) => DetailProductView(id: state.pathParameters['id'] ?? ''),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: DetailProductView(id: state.pathParameters['id'] ?? ''),
+      ),
     ),
     GoRoute(
       path: '/detail_product_order/:id',
       name: 'detail_product_order',
-      builder: (context, state) => DetailProductOrderView(id: state.pathParameters['id'] ?? ''),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: DetailProductOrderView(id: state.pathParameters['id'] ?? ''),
+      ),
     ),
     GoRoute(
       path: '/detail_sales_order/:id',
       name: 'detail_sales_order',
-      builder: (context, state) => DetailSalesOrderView(id: state.pathParameters['id'] ?? ''),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: DetailSalesOrderView(id: state.pathParameters['id'] ?? ''),
+      ),
     ),
     GoRoute(
       path: '/account_info',
       name: 'account_info',
-      builder: (context, state) => const AccountInfoView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: const AccountInfoView(),
+      ),
     ),
     GoRoute(
       path: '/notification',
       name: 'notification',
-      builder: (context, state) => NotificationView(),
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: NotificationView(),
+      ),
     ),
     GoRoute(
       path: '/inventory_alerts/:tabIndex',
       name: 'inventory_alerts',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final tabIndexStr = state.pathParameters['tabIndex'] ?? '0';
         final tabIndex = int.tryParse(tabIndexStr) ?? 0;
-        return BlocProvider(
-          create: (_) => sl<InventoryAlertsBloc>(),
-          child: InventoryAlertsView(initialTabIndex: tabIndex),
+        return SmoothPageTransitions.slideHorizontal(
+          key: state.pageKey,
+          name: state.name,
+          child: BlocProvider(
+            create: (_) => sl<InventoryAlertsBloc>(),
+            child: InventoryAlertsView(initialTabIndex: tabIndex),
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/payment_success',
+      name: 'payment_success',
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return SmoothPageTransitions.modalSlideUp(
+          key: state.pageKey,
+          name: state.name,
+          child: PaymentSuccessView(
+            invoiceId: extra['invoiceId']?.toString() ?? '-',
+            productName: extra['productName']?.toString() ?? 'Produk',
+            quantity: extra['quantity'] as int? ?? 1,
+            amount: extra['amount']?.toString() ?? '\$0',
+            transactionDate: extra['transactionDate'] as DateTime? ?? DateTime.now(),
+            paymentType: extra['paymentType']?.toString() ?? 'Warehouse Order',
+            requestedBy: extra['requestedBy']?.toString(),
+          ),
         );
       },
     ),

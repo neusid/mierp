@@ -16,11 +16,20 @@ import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
+import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 
-class SummaryView extends StatelessWidget {
-  SummaryView({super.key});
+class SummaryView extends StatefulWidget {
+  final VoidCallback? onBack;
+  const SummaryView({super.key, this.onBack});
 
+  @override
+  State<SummaryView> createState() => _SummaryViewState();
+}
+
+class _SummaryViewState extends State<SummaryView> {
   final convertDollar = ConvertDollar();
+  Map<String, dynamic>? _lastPaidOrder;
 
   final tabs = [
     {"title": "All Summary", "collection": "all_summary"},
@@ -51,12 +60,32 @@ class SummaryView extends StatelessWidget {
             context.read<SummaryBloc>().add(SummaryMessageCleared());
           }
           if (state.successMessage.isNotEmpty) {
-            CustomTopSnackbar.success(
-              context,
-              state.successMessage,
-              title: 'Berhasil',
-            );
-            context.read<SummaryBloc>().add(SummaryMessageCleared());
+            final orderInfo = _lastPaidOrder;
+            _lastPaidOrder = null;
+            final bloc = context.read<SummaryBloc>();
+            bloc.add(SummaryMessageCleared());
+
+            if (orderInfo != null) {
+              PaymentSuccessView.open(
+                context,
+                invoiceId: orderInfo['invoiceId'] ?? '-',
+                productName: orderInfo['productName'] ?? 'Order',
+                quantity: orderInfo['quantity'] ?? 1,
+                amount: orderInfo['amount'] ?? '\$0',
+                requestedBy: orderInfo['requestedBy'],
+                paymentType: orderInfo['paymentType'] ?? 'Warehouse Order',
+              ).then((result) {
+                if (mounted && result == true) {
+                  bloc.add(SummaryStarted());
+                }
+              });
+            } else {
+              CustomTopSnackbar.success(
+                context,
+                state.successMessage,
+                title: 'Berhasil',
+              );
+            }
           }
         },
         builder: (context, state) {
@@ -109,7 +138,15 @@ class SummaryView extends StatelessWidget {
                                     children: [
                                       InkWell(
                                         onTap: () {
-                                          context.pop();
+                                          if (widget.onBack != null) {
+                                            widget.onBack!();
+                                          } else if (context.canPop()) {
+                                            context.pop();
+                                          } else {
+                                            try {
+                                              context.read<MainPageCubit>().goToDashboard();
+                                            } catch (_) {}
+                                          }
                                         },
                                         borderRadius: BorderRadius.circular(12.w),
                                         child: Container(
@@ -123,7 +160,9 @@ class SummaryView extends StatelessWidget {
                                       ),
                                       SizedBox(width: 12.w),
                                       Text(
-                                        "Back To Summary",
+                                        state.role.toLowerCase() == "finance"
+                                            ? "Approvals Summary"
+                                            : "Back To Summary",
                                         style: GoogleFonts.poppins(
                                           fontSize: 16.sp,
                                           fontWeight: AppFontWeight.medium,
@@ -276,15 +315,30 @@ class SummaryView extends StatelessWidget {
                           SizedBox(height: 22.71.h),
                           Builder(
                             builder: (context) {
-                              int selectedIndex = tabs.indexWhere(
+                              final bool isFinance = state.role.toLowerCase() == "finance";
+                              final activeTabs = isFinance
+                                  ? tabs.where((t) => t["collection"] != "products").toList()
+                                  : tabs;
+
+                              int selectedIndex = activeTabs.indexWhere(
                                 (t) => t["collection"] == state.selectedTab,
                               );
                               if (selectedIndex == -1) selectedIndex = 0;
 
                               double alignmentX = -1.0;
-                              if (selectedIndex == 1) alignmentX = -0.333;
-                              if (selectedIndex == 2) alignmentX = 0.333;
-                              if (selectedIndex == 3) alignmentX = 1.0;
+                              if (activeTabs.length == 3) {
+                                if (selectedIndex == 0) alignmentX = -1.0;
+                                if (selectedIndex == 1) alignmentX = 0.0;
+                                if (selectedIndex == 2) alignmentX = 1.0;
+                              } else {
+                                if (selectedIndex == 0) alignmentX = -1.0;
+                                if (selectedIndex == 1) alignmentX = -0.333;
+                                if (selectedIndex == 2) alignmentX = 0.333;
+                                if (selectedIndex == 3) alignmentX = 1.0;
+                              }
+
+                              final double tabItemWidth = activeTabs.length == 3 ? 96.w : 78.w;
+                              final double indicatorWidth = activeTabs.length == 3 ? 84.w : 78.w;
 
                               return SizedBox(
                                 width: 344.w,
@@ -299,7 +353,7 @@ class SummaryView extends StatelessWidget {
                                       curve: Curves.easeOutQuart,
                                       alignment: Alignment(alignmentX, 1.0),
                                       child: Container(
-                                        width: 78.w,
+                                        width: indicatorWidth,
                                         height: 3.h,
                                         decoration: BoxDecoration(
                                           gradient: AppColors.premiumDarkGradient,
@@ -314,7 +368,7 @@ class SummaryView extends StatelessWidget {
                                           MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: tabs.map((data) {
+                                      children: activeTabs.map((data) {
                                         bool isSelected =
                                             state.selectedTab ==
                                             data["collection"];
@@ -327,7 +381,7 @@ class SummaryView extends StatelessWidget {
                                             );
                                           },
                                           child: Container(
-                                            width: 78.w,
+                                            width: tabItemWidth,
                                             height: 30.h,
                                             color: Colors.transparent,
                                             child: Column(
@@ -424,26 +478,42 @@ class SummaryView extends StatelessWidget {
                                                   lineTotal: e.data.totalCost,
                                                   imageProduct:
                                                       e.data.imageProduct,
-                                                  finance:
-                                                      state.role == "finance"
-                                                      ? true
-                                                      : null,
-                                                  onPayPressed: () {
-                                                    showPayConfirmationModal(
+                                                  finance: state.role.toLowerCase() == "finance",
+                                                  onPayPressed: state.role.toLowerCase() == "finance"
+                                                      ? () {
+                                                          showPayConfirmationModal(
                                                       context: context,
-                                                      orderId: e.data.id,
-                                                      amount: convertDollar.intToDollar(e.data.totalCost),
-                                                      onConfirm: () => context
-                                                          .read<SummaryBloc>()
-                                                          .add(
-                                                            SummaryPayRequested(
-                                                              e.data.id,
-                                                              e.data.productId,
-                                                              e.data.quantity,
-                                                            ),
+                                                      orderId: e.data.id ?? '',
+                                                      productName: e.data.productName ?? '',
+                                                      productCode: e.data.productCode ?? '',
+                                                      imageProduct: e.data.imageProduct ?? '',
+                                                      quantity: e.data.quantity ?? 1,
+                                                      unitPrice: e.data.unitPrice ?? 0,
+                                                      totalCost: e.data.totalCost ?? 0,
+                                                      discountPercent: e.data.discountPercent,
+                                                      discountMax: e.data.discountMax,
+                                                      requestedBy: e.data.firstName ?? '',
+                                                      orderDate: e.data.orderDate ?? '',
+                                                      onConfirm: () {
+                                                        _lastPaidOrder = {
+                                                          'invoiceId': e.data.id ?? '',
+                                                          'productName': e.data.productName ?? '',
+                                                          'quantity': e.data.quantity ?? 1,
+                                                          'amount': convertDollar.intToDollar(e.data.totalCost ?? 0),
+                                                          'requestedBy': e.data.firstName ?? '',
+                                                          'paymentType': 'Warehouse Order',
+                                                        };
+                                                        context.read<SummaryBloc>().add(
+                                                          SummaryPayRequested(
+                                                            e.data.id,
+                                                            e.data.productId,
+                                                            e.data.quantity,
                                                           ),
+                                                        );
+                                                      },
                                                     );
-                                                  },
+                                                  }
+                                                : null,
                                                 ),
                                               );
                                             case SummaryType.salesOrder:
@@ -469,6 +539,48 @@ class SummaryView extends StatelessWidget {
                                                       e.data.companyName,
                                                   imageProduct:
                                                       e.data.imageProduct,
+                                                  discountPercent: e.data.discountPercent,
+                                                  discountMax: e.data.discountMax,
+                                                  finance: state.role.toLowerCase() == "finance",
+                                                  onPayPressed: state.role.toLowerCase() == "finance"
+                                                      ? () {
+                                                          showPayConfirmationModal(
+                                                      context: context,
+                                                      orderId: e.data.id ?? '',
+                                                      productName: e.data.productName ?? '',
+                                                      productCode: e.data.productCode ?? '',
+                                                      imageProduct: e.data.imageProduct ?? '',
+                                                      quantity: e.data.quantity ?? 1,
+                                                      unitPrice: e.data.unitPrice ?? 0,
+                                                      totalCost: e.data.totalPrice ?? 0,
+                                                      discountPercent: e.data.discountPercent,
+                                                      discountMax: e.data.discountMax,
+                                                      requestedBy: (e.data.companyName != null && e.data.companyName.toString().isNotEmpty)
+                                                          ? e.data.companyName
+                                                          : (e.data.firstName ?? ''),
+                                                      orderDate: e.data.purchasedDate ?? '',
+                                                      onConfirm: () {
+                                                        _lastPaidOrder = {
+                                                          'invoiceId': e.data.id ?? '',
+                                                          'productName': e.data.productName ?? '',
+                                                          'quantity': e.data.quantity ?? 1,
+                                                          'amount': convertDollar.intToDollar(e.data.totalPrice ?? 0),
+                                                          'requestedBy': (e.data.companyName != null && e.data.companyName.toString().isNotEmpty)
+                                                              ? e.data.companyName
+                                                              : (e.data.firstName ?? ''),
+                                                          'paymentType': 'Sales Order',
+                                                        };
+                                                        context.read<SummaryBloc>().add(
+                                                          SummaryPaySalesRequested(
+                                                            e.data.id,
+                                                            e.data.productId,
+                                                            e.data.quantity,
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                : null,
                                                 ),
                                               );
                                           }
@@ -522,9 +634,12 @@ class SummaryView extends StatelessWidget {
                                       ) {
                                         return GestureDetector(
                                           onTap: () {
-                                            context.push(
-                                              "/detail_product_order/data.id",
-                                            );
+                                            final orderId = data.id ?? '';
+                                            if (orderId.isNotEmpty) {
+                                              context.push(
+                                                "/detail_product_order/$orderId",
+                                              );
+                                            }
                                           },
                                           child: CardOrder(
                                             idOrder: data.id ?? '',
@@ -538,25 +653,42 @@ class SummaryView extends StatelessWidget {
                                             unitPrice: data.unitPrice,
                                             lineTotal: data.totalCost,
                                             imageProduct: data.imageProduct,
-                                            finance: state.role == "finance"
-                                                ? true
-                                                : null,
-                                            onPayPressed: () {
-                                              showPayConfirmationModal(
+                                            finance: state.role.toLowerCase() == "finance",
+                                            onPayPressed: state.role.toLowerCase() == "finance"
+                                                ? () {
+                                                    showPayConfirmationModal(
                                                 context: context,
-                                                orderId: data.id,
-                                                amount: convertDollar.intToDollar(data.totalCost),
-                                                onConfirm: () => context
-                                                    .read<SummaryBloc>()
-                                                    .add(
-                                                      SummaryPayRequested(
-                                                        data.id ?? '',
-                                                        data.productId,
-                                                        data.quantity,
-                                                      ),
+                                                orderId: data.id ?? '',
+                                                productName: data.productName,
+                                                productCode: data.productCode,
+                                                imageProduct: data.imageProduct,
+                                                quantity: data.quantity,
+                                                unitPrice: data.unitPrice,
+                                                totalCost: data.totalCost,
+                                                discountPercent: data.discountPercent,
+                                                discountMax: data.discountMax,
+                                                requestedBy: data.firstName,
+                                                orderDate: data.orderDate,
+                                                onConfirm: () {
+                                                  _lastPaidOrder = {
+                                                    'invoiceId': data.id ?? '',
+                                                    'productName': data.productName,
+                                                    'quantity': data.quantity,
+                                                    'amount': convertDollar.intToDollar(data.totalCost),
+                                                    'requestedBy': data.firstName,
+                                                    'paymentType': 'Warehouse Order',
+                                                  };
+                                                  context.read<SummaryBloc>().add(
+                                                    SummaryPayRequested(
+                                                      data.id ?? '',
+                                                      data.productId,
+                                                      data.quantity,
                                                     ),
+                                                  );
+                                                },
                                               );
-                                            },
+                                            }
+                                          : null,
                                           ),
                                         );
                                       }).toList(),
@@ -591,6 +723,48 @@ class SummaryView extends StatelessWidget {
                                                 nameCustomer: data.companyName,
                                                 imageProduct:
                                                     data.imageProduct,
+                                                discountPercent: data.discountPercent,
+                                                discountMax: data.discountMax,
+                                                finance: state.role.toLowerCase() == "finance",
+                                                onPayPressed: state.role.toLowerCase() == "finance"
+                                                    ? () {
+                                                        showPayConfirmationModal(
+                                                    context: context,
+                                                    orderId: data.id ?? '',
+                                                    productName: data.productName,
+                                                    productCode: data.productCode,
+                                                    imageProduct: data.imageProduct,
+                                                    quantity: data.quantity,
+                                                    unitPrice: data.unitPrice,
+                                                    totalCost: data.totalPrice,
+                                                    discountPercent: data.discountPercent,
+                                                    discountMax: data.discountMax,
+                                                    requestedBy: data.companyName.isNotEmpty
+                                                        ? data.companyName
+                                                        : data.firstName,
+                                                    orderDate: data.purchasedDate,
+                                                    onConfirm: () {
+                                                      _lastPaidOrder = {
+                                                        'invoiceId': data.id ?? '',
+                                                        'productName': data.productName,
+                                                        'quantity': data.quantity,
+                                                        'amount': convertDollar.intToDollar(data.totalPrice),
+                                                        'requestedBy': data.companyName.isNotEmpty
+                                                            ? data.companyName
+                                                            : data.firstName,
+                                                        'paymentType': 'Sales Order',
+                                                      };
+                                                      context.read<SummaryBloc>().add(
+                                                        SummaryPaySalesRequested(
+                                                          data.id ?? '',
+                                                          data.productId,
+                                                          data.quantity,
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              : null,
                                               ),
                                             ),
                                           )
@@ -620,25 +794,6 @@ class SummaryView extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-extension WidgetPaddingX on Widget {
-  Widget paddingOnly({
-    double left = 0.0,
-    double top = 0.0,
-    double right = 0.0,
-    double bottom = 0.0,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: left,
-        top: top,
-        right: right,
-        bottom: bottom,
-      ),
-      child: this,
     );
   }
 
@@ -682,6 +837,25 @@ extension WidgetPaddingX on Widget {
           SizedBox(height: 60.h),
         ],
       ),
+    );
+  }
+}
+
+extension WidgetPaddingX on Widget {
+  Widget paddingOnly({
+    double left = 0.0,
+    double top = 0.0,
+    double right = 0.0,
+    double bottom = 0.0,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: left,
+        top: top,
+        right: right,
+        bottom: bottom,
+      ),
+      child: this,
     );
   }
 }

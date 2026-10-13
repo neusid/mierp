@@ -38,22 +38,40 @@ class OrderProduct {
     required String? docId,
   }) => OrderProduct(
     id: docId,
-    financeApproved: json["finance_approved"] ?? false,
-    financeApprovedDate: json["finance_approved_date"] != null
-        ? DateTime.tryParse(json["finance_approved_date"])
-        : null,
-    orderDate: json["order_date"],
-    productId: json["product_id"],
-    productCode: json["product_code"],
-    productName: json["product_name"],
-    quantity: json["quantity"],
-    totalCost: json["total_cost"],
-    unitPrice: json["unit_price"],
-    discountPercent: json["discount_percent"],
-    discountMax: json["discount_max"],
-    userId: json["user_id"],
-    firstName: json["first_name"],
-    imageProduct: json["image_product"],
+    financeApproved: json["finance_approved"] == true,
+    financeApprovedDate: () {
+      final raw = json["finance_approved_date"];
+      if (raw == null) return null;
+      if (raw is DateTime) return raw;
+      if (raw.runtimeType.toString().contains("Timestamp")) {
+        try {
+          return (raw as dynamic).toDate();
+        } catch (_) {}
+      }
+      return DateTime.tryParse(raw.toString());
+    }(),
+    orderDate: json["order_date"]?.toString() ?? '',
+    productId: json["product_id"]?.toString() ?? '',
+    productCode: json["product_code"]?.toString() ?? '',
+    productName: json["product_name"]?.toString() ?? '',
+    quantity: (json["quantity"] is num)
+        ? (json["quantity"] as num).toInt()
+        : (int.tryParse(json["quantity"]?.toString() ?? '0') ?? 0),
+    totalCost: (json["total_cost"] is num)
+        ? (json["total_cost"] as num).toInt()
+        : (int.tryParse(json["total_cost"]?.toString() ?? '0') ?? 0),
+    unitPrice: (json["unit_price"] is num)
+        ? (json["unit_price"] as num).toInt()
+        : (int.tryParse(json["unit_price"]?.toString() ?? '0') ?? 0),
+    discountPercent: (json["discount_percent"] is num)
+        ? (json["discount_percent"] as num).toInt()
+        : int.tryParse(json["discount_percent"]?.toString() ?? ''),
+    discountMax: (json["discount_max"] is num)
+        ? (json["discount_max"] as num).toInt()
+        : int.tryParse(json["discount_max"]?.toString() ?? ''),
+    userId: json["user_id"]?.toString() ?? '',
+    firstName: json["first_name"]?.toString() ?? '',
+    imageProduct: json["image_product"]?.toString() ?? '',
   );
 
   Map<String, dynamic> toJson() => {

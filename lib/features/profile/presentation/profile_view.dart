@@ -275,40 +275,48 @@ class ProfileView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 44.w,
-                    height: 44.w,
-                    decoration: BoxDecoration(
-                      color: iconBgColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        "assets/icons/$icon.svg",
-                        width: 20.w,
-                        colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44.w,
+                      height: 44.w,
+                      decoration: BoxDecoration(
+                        color: iconBgColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          "assets/icons/$icon.svg",
+                          width: 20.w,
+                          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Text(
-                    label,
-                    style: GoogleFonts.inter(
-                      fontSize: 15.sp,
-                      fontWeight: AppFontWeight.semiBold,
-                      color: textColor,
+                    SizedBox(width: 14.w),
+                    Expanded(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 14.5.w,
+                          fontWeight: AppFontWeight.semiBold,
+                          color: textColor,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              if (onTap != null)
+              if (onTap != null) ...[
+                SizedBox(width: 6.w),
                 Icon(
                   Icons.chevron_right_rounded,
                   color: AppColors.coolGray,
-                  size: 24.w,
+                  size: 22.w,
                 ),
+              ],
             ],
           ),
         ),

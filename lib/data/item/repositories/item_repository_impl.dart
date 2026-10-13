@@ -56,26 +56,125 @@ class ItemStoreRepositoryImpl implements ItemRepository {
 
   @override
   Future<Product> getDetailDataStock(String docId) async {
-    final snapshot = await firestore.collection("products").doc(docId).get();
-    final data = Product.fromJson(snapshot.data() as Map<String, dynamic>, docId: docId);
-    itemStore.setProducts(data);
-    return data;
+    Product? cached;
+    try {
+      cached = itemStore.listProduct.firstWhere(
+        (e) => e != null && e.id == docId,
+        orElse: () => null,
+      );
+    } catch (_) {}
+
+    try {
+      final snapshot = await firestore
+          .collection("products")
+          .doc(docId)
+          .get()
+          .timeout(const Duration(seconds: 4));
+
+      if (snapshot.exists && snapshot.data() != null) {
+        final data = Product.fromJson(
+          snapshot.data() as Map<String, dynamic>,
+          docId: docId,
+        );
+        itemStore.setProducts(data);
+        return data;
+      }
+    } catch (e) {
+      if (cached != null) {
+        itemStore.setProducts(cached);
+        return cached;
+      }
+      rethrow;
+    }
+
+    if (cached != null) {
+      itemStore.setProducts(cached);
+      return cached;
+    }
+
+    throw Exception("Data produk tidak ditemukan ($docId)");
   }
 
   @override
   Future<OrderProduct> getDetailDataOrder(String docId) async {
-    final snapshot = await firestore.collection("warehouse_orders").doc(docId).get();
-    final data = OrderProduct.fromJson(snapshot.data() as Map<String, dynamic>, docId: docId);
-    itemStore.setOrderProduct(data);
-    return data;
+    OrderProduct? cached;
+    try {
+      cached = itemStore.listOrder.firstWhere(
+        (e) => e != null && e.id == docId,
+        orElse: () => null,
+      );
+    } catch (_) {}
+
+    try {
+      final snapshot = await firestore
+          .collection("warehouse_orders")
+          .doc(docId)
+          .get()
+          .timeout(const Duration(seconds: 4));
+
+      if (snapshot.exists && snapshot.data() != null) {
+        final data = OrderProduct.fromJson(
+          snapshot.data() as Map<String, dynamic>,
+          docId: docId,
+        );
+        itemStore.setOrderProduct(data);
+        return data;
+      }
+    } catch (e) {
+      if (cached != null) {
+        itemStore.setOrderProduct(cached);
+        return cached;
+      }
+      rethrow;
+    }
+
+    if (cached != null) {
+      itemStore.setOrderProduct(cached);
+      return cached;
+    }
+
+    throw Exception("Data order tidak ditemukan ($docId)");
   }
 
   @override
   Future<SalesOrder> getDetailDataSalesOrder(String prodId) async {
-    final snapshot = await firestore.collection("sales_orders").doc(prodId).get();
-    final data = SalesOrder.fromJson(snapshot.data() as Map<String, dynamic>, docId: prodId);
-    itemStore.setSalesOrder(data);
-    return data;
+    SalesOrder? cached;
+    try {
+      cached = itemStore.listSalesOrder.firstWhere(
+        (e) => e != null && e.id == prodId,
+        orElse: () => null,
+      );
+    } catch (_) {}
+
+    try {
+      final snapshot = await firestore
+          .collection("sales_orders")
+          .doc(prodId)
+          .get()
+          .timeout(const Duration(seconds: 4));
+
+      if (snapshot.exists && snapshot.data() != null) {
+        final data = SalesOrder.fromJson(
+          snapshot.data() as Map<String, dynamic>,
+          docId: prodId,
+        );
+        itemStore.setSalesOrder(data);
+        return data;
+      }
+    } catch (e) {
+      if (cached != null) {
+        itemStore.setSalesOrder(cached);
+        return cached;
+      }
+      rethrow;
+    }
+
+    if (cached != null) {
+      itemStore.setSalesOrder(cached);
+      return cached;
+    }
+
+    throw Exception("Data sales order tidak ditemukan ($prodId)");
   }
 
   @override

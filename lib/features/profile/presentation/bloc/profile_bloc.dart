@@ -23,6 +23,19 @@ class ProfileDeleteAccountRequested extends ProfileEvent {}
 
 class ProfileLogoutRequested extends ProfileEvent {}
 
+class ProfileUpdateRequested extends ProfileEvent {
+  final String firstName;
+  final String lastName;
+
+  const ProfileUpdateRequested({
+    required this.firstName,
+    required this.lastName,
+  });
+
+  @override
+  List<Object> get props => [firstName, lastName];
+}
+
 // --- STATE ---
 enum ProfileStatus { initial, loading, success, failure, logoutSuccess, deleteSuccess }
 
@@ -30,6 +43,8 @@ class ProfileState extends Equatable {
   final ProfileStatus status;
   final String role;
   final String name;
+  final String firstName;
+  final String lastName;
   final String uid;
   final String email;
   final bool isVerif;
@@ -40,6 +55,8 @@ class ProfileState extends Equatable {
     this.status = ProfileStatus.initial,
     this.role = "warehouse",
     this.name = "",
+    this.firstName = "",
+    this.lastName = "",
     this.uid = "",
     this.email = "",
     this.isVerif = true,
@@ -51,6 +68,8 @@ class ProfileState extends Equatable {
     ProfileStatus? status,
     String? role,
     String? name,
+    String? firstName,
+    String? lastName,
     String? uid,
     String? email,
     bool? isVerif,
@@ -61,6 +80,8 @@ class ProfileState extends Equatable {
       status: status ?? this.status,
       role: role ?? this.role,
       name: name ?? this.name,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       uid: uid ?? this.uid,
       email: email ?? this.email,
       isVerif: isVerif ?? this.isVerif,
@@ -70,7 +91,7 @@ class ProfileState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, role, name, uid, email, isVerif, errorMessage, successMessage];
+  List<Object> get props => [status, role, name, firstName, lastName, uid, email, isVerif, errorMessage, successMessage];
 }
 
 // --- BLOC ---
@@ -83,6 +104,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.userDataController,
   }) : super(const ProfileState()) {
     on<ProfileStarted>(_onStarted);
+    on<ProfileUpdateRequested>(_onUpdateRequested);
     on<ProfileLinkGoogleRequested>(_onLinkGoogleRequested);
     on<ProfileUnlinkGoogleRequested>(_onUnlinkGoogleRequested);
     on<ProfileDeleteAccountRequested>(_onDeleteAccountRequested);
@@ -93,16 +115,65 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     try {
       UserModel? userModel = await userDataController.getDataUser();
+      final fName = userModel.firstName ?? "";
+      final lName = userModel.lastName ?? "";
+      final fullName = (fName.isNotEmpty || lName.isNotEmpty)
+          ? "$fName $lName".trim()
+          : "";
+
       emit(state.copyWith(
         status: ProfileStatus.success,
         role: userModel.role ?? "warehouse",
-        name: "${userModel.firstName} ${userModel.lastName}",
+        name: fullName,
+        firstName: fName,
+        lastName: lName,
         email: userModel.email ?? "",
         isVerif: userModel.allowGoogleLogin,
         uid: userModel.uid ?? "",
       ));
     } catch (e) {
       emit(state.copyWith(status: ProfileStatus.failure, errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateRequested(ProfileUpdateRequested event, Emitter<ProfileState> emit) async {
+    emit(state.copyWith(status: ProfileStatus.loading));
+    try {
+      final uid = state.uid;
+      if (uid.isNotEmpty) {
+        try {
+          await loginRepository.authStore.collection('users').doc(uid).update({
+            'first_name': event.firstName,
+            'last_name': event.lastName,
+          }).timeout(const Duration(seconds: 4));
+        } catch (_) {}
+      }
+
+      // Update local storage
+      final current = await userDataController.getDataUser();
+      final updated = UserModel(
+        uid: current.uid,
+        email: current.email,
+        firstName: event.firstName,
+        lastName: event.lastName,
+        role: current.role,
+        allowGoogleLogin: current.allowGoogleLogin,
+      );
+      await userDataController.setDataUser(updated);
+
+      final fullName = "${event.firstName} ${event.lastName}".trim();
+      emit(state.copyWith(
+        status: ProfileStatus.success,
+        name: fullName.isNotEmpty ? fullName : state.name,
+        firstName: event.firstName,
+        lastName: event.lastName,
+        successMessage: "Profil berhasil diperbarui",
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProfileStatus.failure,
+        errorMessage: "Gagal memperbarui profil: $e",
+      ));
     }
   }
 

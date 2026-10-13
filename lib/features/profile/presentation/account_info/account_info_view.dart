@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
@@ -18,18 +19,34 @@ class AccountInfoView extends StatefulWidget {
 
 class _AccountInfoViewState extends State<AccountInfoView> {
   bool _isEditing = false;
-  late TextEditingController _nameController;
+  late TextEditingController _firstNameController;
+  late TextEditingController _lastNameController;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _firstNameController = TextEditingController();
+    _lastNameController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     super.dispose();
+  }
+
+  void _syncControllers(ProfileState state) {
+    if (_firstNameController.text.isEmpty && _lastNameController.text.isEmpty) {
+      if (state.firstName.isNotEmpty || state.lastName.isNotEmpty) {
+        _firstNameController.text = state.firstName;
+        _lastNameController.text = state.lastName;
+      } else if (state.name.isNotEmpty) {
+        final parts = state.name.trim().split(RegExp(r'\s+'));
+        _firstNameController.text = parts.isNotEmpty ? parts[0] : '';
+        _lastNameController.text = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+      }
+    }
   }
 
   @override
@@ -38,29 +55,35 @@ class _AccountInfoViewState extends State<AccountInfoView> {
       create: (context) => sl<ProfileBloc>()..add(ProfileStarted()),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          // If we added update logic, we'd listen for success here
+          if (state.status == ProfileStatus.success && state.successMessage.isNotEmpty) {
+            CustomTopSnackbar.success(context, state.successMessage);
+            setState(() {
+              _isEditing = false;
+            });
+          } else if (state.status == ProfileStatus.failure && state.errorMessage.isNotEmpty) {
+            CustomTopSnackbar.error(context, state.errorMessage);
+          }
         },
         builder: (context, state) {
-          // Initialize controller with current name if empty
-          if (_nameController.text.isEmpty && !_isEditing) {
-            _nameController.text = state.name;
-          }
+          _syncControllers(state);
 
+          // Compute user initials for avatar
           String initials = "U";
-          if (state.name.isNotEmpty) {
-            final parts = state.name.trim().split(RegExp(r'\s+'));
-            if (parts.length > 1) {
-              initials = parts[0][0].toUpperCase() + parts[1][0].toUpperCase();
-            } else {
+          final displayName = state.name.isNotEmpty ? state.name : "User Name";
+          if (displayName.isNotEmpty) {
+            final parts = displayName.trim().split(RegExp(r'\s+'));
+            if (parts.length > 1 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
+              initials = (parts[0][0] + parts[1][0]).toUpperCase();
+            } else if (parts.isNotEmpty && parts[0].isNotEmpty) {
               initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
             }
           }
 
           return Scaffold(
-            backgroundColor: AppColors.softWhite,
+            backgroundColor: const Color(0xFFF8FAFC),
             body: Stack(
               children: [
-                // 1. Premium Dark Header
+                // 1. Premium Dark Header with Ambient Gradient Orbs
                 Positioned(
                   top: 0,
                   left: 0,
@@ -70,45 +93,92 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                     decoration: BoxDecoration(
                       gradient: AppColors.premiumDarkGradient,
                     ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: -30.w,
+                          left: -30.w,
+                          child: Container(
+                            width: 140.w,
+                            height: 140.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: [
+                                  const Color(0xFF9333EA).withValues(alpha: 0.35),
+                                  const Color(0xFF9333EA).withValues(alpha: 0.0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20.w,
+                          right: -20.w,
+                          child: Container(
+                            width: 120.w,
+                            height: 120.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: RadialGradient(
+                                colors: [
+                                  const Color(0xFF6366F1).withValues(alpha: 0.25),
+                                  const Color(0xFF6366F1).withValues(alpha: 0.0),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
-                // 2. Content
+                // 2. Scrollable Symmetrical Body Content
                 SafeArea(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.only(top: 80.h, bottom: 120.h),
-                      child: Column(
-                        children: [
-                          // Avatar & Info Card
-                          Container(
-                            width: 335.w,
-                            padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 20.w),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24.w),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 24.w,
-                                  offset: Offset(0, 8.w),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                // Dynamic Avatar
-                                Stack(
-                                  alignment: Alignment.bottomRight,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(top: 64.h, bottom: 120.h, left: 20.w, right: 20.w),
+                    child: Column(
+                      children: [
+                        // Main Profile Card (Fully symmetrical with screen padding)
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(24.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24.w),
+                            border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 24.w,
+                                offset: Offset(0, 8.w),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Avatar with Center Alignment & Edit Badge
+                              Center(
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  alignment: Alignment.center,
                                   children: [
                                     Container(
                                       width: 88.w,
                                       height: 88.w,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: AppColors.purpleTransparent,
-                                        border: Border.all(color: AppColors.lavenderMist, width: 2.w),
+                                        color: const Color(0xFFF3E8FF),
+                                        border: Border.all(color: const Color(0xFFC084FC), width: 2.5.w),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+                                            blurRadius: 12.w,
+                                            offset: Offset(0, 4.w),
+                                          ),
+                                        ],
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
@@ -116,57 +186,87 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                                         style: GoogleFonts.inter(
                                           fontSize: 32.sp,
                                           fontWeight: AppFontWeight.bold,
-                                          color: AppColors.vividPurple,
+                                          color: const Color(0xFF7C3AED),
                                           letterSpacing: -1,
                                         ),
                                       ),
                                     ),
                                     if (_isEditing)
-                                      Container(
-                                        padding: EdgeInsets.all(6.w),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.vividPurple,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.white, width: 2.w),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          width: 28.w,
+                                          height: 28.w,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF7C3AED),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.white, width: 2.w),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.15),
+                                                blurRadius: 6.w,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14.w),
+                                          ),
                                         ),
-                                        child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14.w),
                                       ),
                                   ],
                                 ),
-                                SizedBox(height: 16.h),
-                                Text(
-                                  state.name.isEmpty ? "User Name" : state.name,
-                                  textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 14.h),
+
+                              // Name Heading
+                              Text(
+                                displayName,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(
+                                  fontSize: 18.sp,
+                                  fontWeight: AppFontWeight.bold,
+                                  color: const Color(0xFF0F172A),
+                                  letterSpacing: -0.4,
+                                ),
+                              ),
+                              SizedBox(height: 6.h),
+
+                              // Role Badge (MiERP Gojek-Style Pill Badge)
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF3E8FF),
+                                  borderRadius: BorderRadius.circular(20.w),
+                                  border: Border.all(color: const Color(0xFFE9D5FF), width: 1.w),
+                                ),
+                                child: Text(
+                                  state.role.toUpperCase(),
                                   style: GoogleFonts.inter(
-                                    fontSize: 20.sp,
-                                    fontWeight: AppFontWeight.semiBold,
-                                    color: AppColors.grayTitle,
-                                    letterSpacing: -0.5,
+                                    fontSize: 10.5.sp,
+                                    fontWeight: AppFontWeight.bold,
+                                    color: const Color(0xFF7C3AED),
+                                    letterSpacing: 0.6,
                                   ),
                                 ),
-                                SizedBox(height: 32.h),
+                              ),
+                              SizedBox(height: 28.h),
 
-                                // Editable Name Field
-                                _buildEditableRow("Full Name", _nameController, isEditing: _isEditing),
-                                Divider(height: 24.h, thickness: 1, color: AppColors.softWhite),
-                                _buildInfoRow("Email Address", state.email.isEmpty ? "-" : state.email),
-                                Divider(height: 24.h, thickness: 1, color: AppColors.softWhite),
-                                _buildInfoRow("Role", state.role.toUpperCase()),
-                                Divider(height: 24.h, thickness: 1, color: AppColors.softWhite),
-                                _buildInfoRow("Account ID", state.uid, isMonospace: true),
-                                Divider(height: 24.h, thickness: 1, color: AppColors.softWhite),
-                                _buildInfoRow("Verification", state.isVerif ? "Verified" : "Unverified", 
-                                  valueColor: state.isVerif ? const Color(0xFF10B981) : const Color(0xFFEF4444)),
-                              ],
-                            ),
+                              // Form Body (Symmetrical View vs Edit Modes)
+                              if (_isEditing)
+                                _buildEditForm(state)
+                              else
+                                _buildViewProfile(state, displayName),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
 
-                // 3. Custom App Bar (Placed last in Stack to catch tap events!)
+                // 3. Custom Symmetrical App Bar
                 SafeArea(
                   bottom: false,
                   child: Padding(
@@ -174,20 +274,32 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        // Back Button
                         InkWell(
-                          onTap: () => context.pop(),
+                          onTap: () {
+                            if (_isEditing) {
+                              setState(() => _isEditing = false);
+                            } else {
+                              context.pop();
+                            }
+                          },
                           borderRadius: BorderRadius.circular(12.w),
                           child: Container(
-                            padding: EdgeInsets.all(8.w),
+                            width: 40.w,
+                            height: 40.w,
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12.w),
                             ),
-                            child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24.w),
+                            child: Center(
+                              child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20.w),
+                            ),
                           ),
                         ),
+
+                        // Title
                         Text(
-                          "Account Info",
+                          _isEditing ? "Edit Profile" : "Account Info",
                           style: GoogleFonts.inter(
                             fontSize: 18.sp,
                             fontWeight: AppFontWeight.semiBold,
@@ -195,13 +307,37 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                             letterSpacing: -0.3,
                           ),
                         ),
-                        SizedBox(width: 40.w), // Symmetrical balance
+
+                        // Symmetrical Right Action / Placeholder
+                        if (_isEditing)
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _syncControllers(state);
+                                _isEditing = false;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(12.w),
+                            child: Container(
+                              width: 40.w,
+                              height: 40.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(12.w),
+                              ),
+                              child: Center(
+                                child: Icon(Icons.close_rounded, color: Colors.white, size: 22.w),
+                              ),
+                            ),
+                          )
+                        else
+                          SizedBox(width: 40.w), // Mathematical dead-center balance
                       ],
                     ),
                   ),
                 ),
 
-                // BOTTOM ACTION BAR
+                // 4. Sticky Bottom Action Bar
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
@@ -218,47 +354,169 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                         ),
                       ],
                     ),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (_isEditing) {
-                            // TODO: Dispatch update event to Bloc
-                            // context.read<ProfileBloc>().add(ProfileUpdateRequested(_nameController.text));
-                            _isEditing = false;
-                            CustomTopSnackbar.show(context, "Profil berhasil diperbarui", isError: false);
-                          } else {
-                            _isEditing = true;
-                          }
-                        });
-                      },
-                      child: Container(
-                        height: 52.h,
-                        decoration: BoxDecoration(
-                          gradient: _isEditing ? AppColors.premiumDarkGradient : null,
-                          color: _isEditing ? null : AppColors.softWhite,
-                          borderRadius: BorderRadius.circular(10.w),
-                          boxShadow: _isEditing ? [
-                            BoxShadow(
-                              color: const Color(0xFF0F172A).withValues(alpha: 0.2),
-                              blurRadius: 8.w,
-                              offset: Offset(0, 4.w),
-                            ),
-                          ] : [],
-                        ),
-                        child: Center(
-                          child: Text(
-                            _isEditing ? "Save Changes" : "Edit Profile",
-                            style: GoogleFonts.inter(
-                              fontWeight: AppFontWeight.bold,
-                              fontSize: 16.sp,
-                              color: _isEditing ? Colors.white : AppColors.vividPurple,
+                    child: _isEditing
+                        ? Row(
+                            children: [
+                              // Cancel Button (50% Width)
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _syncControllers(state);
+                                      _isEditing = false;
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(12.w),
+                                  child: Container(
+                                    height: 50.h,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF1F5F9),
+                                      borderRadius: BorderRadius.circular(12.w),
+                                      border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 6.w),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.close_rounded, size: 18.w, color: const Color(0xFF475569)),
+                                              SizedBox(width: 6.w),
+                                              Text(
+                                                "Cancel",
+                                                style: GoogleFonts.inter(
+                                                  fontWeight: AppFontWeight.bold,
+                                                  fontSize: 14.5.w,
+                                                  color: const Color(0xFF475569),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+
+                              // Save Changes Button (50% Width)
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    final first = _firstNameController.text.trim();
+                                    final last = _lastNameController.text.trim();
+                                    if (first.isEmpty) {
+                                      CustomTopSnackbar.error(context, "First name tidak boleh kosong");
+                                      return;
+                                    }
+                                    context.read<ProfileBloc>().add(
+                                          ProfileUpdateRequested(
+                                            firstName: first,
+                                            lastName: last,
+                                          ),
+                                        );
+                                  },
+                                  borderRadius: BorderRadius.circular(12.w),
+                                  child: Container(
+                                    height: 50.h,
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.premiumDarkGradient,
+                                      borderRadius: BorderRadius.circular(12.w),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFF2E1052).withValues(alpha: 0.25),
+                                          blurRadius: 8.w,
+                                          offset: Offset(0, 4.w),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 6.w),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.check_rounded, size: 18.w, color: Colors.white),
+                                              SizedBox(width: 6.w),
+                                              Text(
+                                                "Save Changes",
+                                                style: GoogleFonts.inter(
+                                                  fontWeight: AppFontWeight.bold,
+                                                  fontSize: 14.5.w,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : InkWell(
+                            onTap: () {
+                              setState(() {
+                                _syncControllers(state);
+                                _isEditing = true;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(12.w),
+                            child: Container(
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                gradient: AppColors.premiumDarkGradient,
+                                borderRadius: BorderRadius.circular(12.w),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF2E1052).withValues(alpha: 0.25),
+                                    blurRadius: 8.w,
+                                    offset: Offset(0, 4.w),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.edit_rounded, size: 18.w, color: Colors.white),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      "Edit Profile",
+                                      style: GoogleFonts.inter(
+                                        fontWeight: AppFontWeight.bold,
+                                        fontSize: 15.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                  ),
+                ),
+
+                // 5. Loading Overlay
+                if (state.status == ProfileStatus.loading)
+                  Container(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    child: Center(
+                      child: LoadingAnimationWidget.stretchedDots(
+                        color: Colors.white,
+                        size: 70.w,
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           );
@@ -267,88 +525,341 @@ class _AccountInfoViewState extends State<AccountInfoView> {
     );
   }
 
-  Widget _buildEditableRow(String label, TextEditingController controller, {required bool isEditing}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // --- Symmetrical View Profile Section ---
+  Widget _buildViewProfile(ProfileState state, String displayName) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section 1 Header
         Text(
-          label,
+          "PERSONAL INFORMATION",
           style: GoogleFonts.inter(
-            fontSize: 14.sp,
-            fontWeight: AppFontWeight.medium,
-            color: AppColors.grayThin,
+            fontSize: 11.sp,
+            fontWeight: AppFontWeight.bold,
+            color: const Color(0xFF94A3B8),
+            letterSpacing: 0.5,
           ),
         ),
-        SizedBox(width: 16.w),
-        Expanded(
-          child: isEditing 
-            ? Container(
-                height: 40.h,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                decoration: BoxDecoration(
-                  color: AppColors.softWhite,
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: AppColors.vividPurple.withValues(alpha: 0.5), width: 1.w),
-                ),
-                child: TextField(
-                  controller: controller,
-                  style: GoogleFonts.inter(
-                    fontSize: 14.sp,
-                    fontWeight: AppFontWeight.semiBold,
-                    color: AppColors.grayTitle,
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              )
-            : Text(
-                controller.text,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.inter(
-                  fontSize: 14.sp,
-                  fontWeight: AppFontWeight.semiBold,
-                  color: AppColors.grayTitle,
-                ),
-              ),
+        SizedBox(height: 12.h),
+
+        _buildInfoRow(
+          icon: Icons.person_outline_rounded,
+          label: "Full Name",
+          value: displayName,
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        SizedBox(height: 10.h),
+
+        // Section 2 Header
+        Text(
+          "ACCOUNT CREDENTIALS",
+          style: GoogleFonts.inter(
+            fontSize: 11.sp,
+            fontWeight: AppFontWeight.bold,
+            color: const Color(0xFF94A3B8),
+            letterSpacing: 0.5,
+          ),
+        ),
+        SizedBox(height: 12.h),
+
+        _buildInfoRow(
+          icon: Icons.alternate_email_rounded,
+          label: "Email Address",
+          value: state.email.isEmpty ? "-" : state.email,
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.shield_outlined,
+          label: "Role",
+          value: state.role.toUpperCase(),
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.fingerprint_rounded,
+          label: "Account ID",
+          value: state.uid,
+          isMonospace: true,
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.verified_user_outlined,
+          label: "Google Link",
+          value: state.isVerif ? "Linked" : "Not Linked",
+          valueColor: state.isVerif ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+          isBadge: true,
         ),
       ],
     );
   }
 
-  Widget _buildInfoRow(String label, String value, {bool isMonospace = false, Color? valueColor}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // --- Symmetrical Edit Form Section ---
+  Widget _buildEditForm(ProfileState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Row(
+          children: [
+            Icon(Icons.edit_note_rounded, size: 16.w, color: const Color(0xFF7C3AED)),
+            SizedBox(width: 6.w),
+            Text(
+              "EDIT PERSONAL INFORMATION",
+              style: GoogleFonts.inter(
+                fontSize: 11.sp,
+                fontWeight: AppFontWeight.bold,
+                color: const Color(0xFF7C3AED),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 14.h),
+
+        // 50/50 Symmetrical Row for First Name & Last Name
+        Row(
+          children: [
+            Expanded(
+              child: _buildFormField(
+                label: "First Name",
+                controller: _firstNameController,
+                hint: "First name",
+                icon: Icons.badge_outlined,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: _buildFormField(
+                label: "Last Name",
+                controller: _lastNameController,
+                hint: "Last name",
+                icon: Icons.badge_outlined,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 20.h),
+
+        Divider(color: const Color(0xFFF1F5F9), height: 1.h, thickness: 1.w),
+        SizedBox(height: 20.h),
+
+        // Read-only section header
+        Row(
+          children: [
+            Icon(Icons.lock_outline_rounded, size: 14.w, color: const Color(0xFF94A3B8)),
+            SizedBox(width: 6.w),
+            Text(
+              "READ-ONLY CREDENTIALS",
+              style: GoogleFonts.inter(
+                fontSize: 11.sp,
+                fontWeight: AppFontWeight.bold,
+                color: const Color(0xFF94A3B8),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 14.h),
+
+        // Clean Read-Only Info Rows
+        _buildInfoRow(
+          icon: Icons.alternate_email_rounded,
+          label: "Email Address",
+          value: state.email.isEmpty ? "-" : state.email,
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.shield_outlined,
+          label: "Role",
+          value: state.role.toUpperCase(),
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.fingerprint_rounded,
+          label: "Account ID",
+          value: state.uid,
+          isMonospace: true,
+        ),
+        Divider(height: 20.h, thickness: 1.w, color: const Color(0xFFF1F5F9)),
+
+        _buildInfoRow(
+          icon: Icons.verified_user_outlined,
+          label: "Google Link",
+          value: state.isVerif ? "Linked" : "Not Linked",
+          valueColor: state.isVerif ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+          isBadge: true,
+        ),
+      ],
+    );
+  }
+
+  // --- Reusable Form Field with Consistent Height & Symmetric Bounds ---
+  Widget _buildFormField({
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: GoogleFonts.inter(
-            fontSize: 14.sp,
+            fontSize: 12.sp,
             fontWeight: AppFontWeight.medium,
-            color: AppColors.grayThin,
+            color: const Color(0xFF64748B),
           ),
         ),
-        SizedBox(width: 16.w),
-        Expanded(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: isMonospace 
-                ? GoogleFonts.jetBrainsMono(
-                    fontSize: 14.sp,
-                    fontWeight: AppFontWeight.medium,
-                    color: valueColor ?? AppColors.grayTitle,
-                  )
-                : GoogleFonts.inter(
-                    fontSize: 14.sp,
+        SizedBox(height: 6.h),
+        Container(
+          height: 48.h,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(10.w),
+            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(icon, size: 16.w, color: const Color(0xFF94A3B8)),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.5.sp,
                     fontWeight: AppFontWeight.semiBold,
-                    color: valueColor ?? AppColors.grayTitle,
+                    color: const Color(0xFF0F172A),
                   ),
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: GoogleFonts.inter(
+                      fontSize: 13.5.sp,
+                      color: const Color(0xFF94A3B8),
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  // --- Reusable Info Row with Balanced 2-Column Alignment ---
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    bool isMonospace = false,
+    Color? valueColor,
+    bool isBadge = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Left Column: Icon + Label
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(8.w),
+                  border: Border.all(color: const Color(0xFFE2E8F0), width: 0.8.w),
+                ),
+                child: Center(
+                  child: Icon(icon, size: 16.w, color: const Color(0xFF64748B)),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 13.sp,
+                  fontWeight: AppFontWeight.medium,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(width: 12.w),
+
+          // Right Column: Value Text or Solid Pill Badge
+          Flexible(
+            child: isBadge
+                ? Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: (valueColor ?? const Color(0xFF00AA13)).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20.w),
+                      border: Border.all(
+                        color: (valueColor ?? const Color(0xFF00AA13)).withValues(alpha: 0.3),
+                        width: 1.w,
+                      ),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6.w,
+                            height: 6.w,
+                            decoration: BoxDecoration(
+                              color: valueColor ?? const Color(0xFF00AA13),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 5.w),
+                          Text(
+                            value,
+                            style: GoogleFonts.inter(
+                              fontSize: 11.w,
+                              fontWeight: AppFontWeight.bold,
+                              color: valueColor ?? const Color(0xFF00AA13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Text(
+                    value,
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: isMonospace
+                        ? GoogleFonts.jetBrainsMono(
+                            fontSize: 12.5.sp,
+                            fontWeight: AppFontWeight.medium,
+                            color: valueColor ?? const Color(0xFF0F172A),
+                          )
+                        : GoogleFonts.inter(
+                            fontSize: 13.5.sp,
+                            fontWeight: AppFontWeight.semiBold,
+                            color: valueColor ?? const Color(0xFF0F172A),
+                          ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }

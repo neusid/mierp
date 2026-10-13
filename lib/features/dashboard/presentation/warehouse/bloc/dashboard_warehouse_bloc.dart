@@ -8,6 +8,7 @@ import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/data/warehouse/warehouse_repository.dart';
+import 'package:mierp_apps/core/utils/order_sort_utils.dart';
 
 // --- EVENTS ---
 abstract class DashboardWarehouseEvent extends Equatable {
@@ -148,18 +149,23 @@ class DashboardWarehouseBloc extends Bloc<DashboardWarehouseEvent, DashboardWare
     final orders = await warehouseRepository.getBulkDataOrder("warehouse_orders");
     final salesOrders = await warehouseRepository.getBulkDataSalesOrder("sales_orders");
 
+    // Sort: Pay Now priority
+    orders.sort(OrderSortUtils.compareOrders);
+    salesOrders.sort(OrderSortUtils.compareSalesOrders);
+    products.sort((a, b) => OrderSortUtils.compareDatesDesc(a.createdOn, b.createdOn));
+
     // Combine for All Summary
     final combined = <AllSummary>[];
     combined.addAll(products.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e.createdOn)));
-    combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate!)));
+    combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate ?? '')));
     combined.addAll(salesOrders.map((e) => AllSummary(summaryType: SummaryType.salesOrder, data: e, createdOn: e.purchasedDate)));
-    combined.sort((a, b) => b.createdOn.compareTo(a.createdOn));
+    combined.sort(OrderSortUtils.compareSummaries);
     
     emit(state.copyWith(
       userName: name,
-      listProduct: products..sort((a, b) => b.createdOn.compareTo(a.createdOn)),
-      listOrder: orders..sort((a, b) => b.orderDate!.compareTo(a.orderDate!)),
-      listSalesOrder: salesOrders..sort((a, b) => b.purchasedDate.compareTo(a.purchasedDate)),
+      listProduct: products,
+      listOrder: orders,
+      listSalesOrder: salesOrders,
       listAllSummary: combined,
       isLoading: false,
     ));

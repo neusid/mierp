@@ -13,12 +13,6 @@ class TransactionServices {
 
   Future<void> payProductOrderServices(docId, prodId, totalQty) async {
     try {
-      await itemRepository.getDetailDataStock(prodId);
-      final stock = itemStore.products.value!.quantity;
-
-      if (totalQty >= stock) {
-        throw Exception("Out of stock");
-      }
       final now = DateTime.now();
       final dateParse = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
       await transactionRepository.payProductOrderInvoice(docId, prodId, totalQty, dateParse);

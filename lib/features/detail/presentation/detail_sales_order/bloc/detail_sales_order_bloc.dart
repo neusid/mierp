@@ -39,11 +39,18 @@ class DetailSalesOrderBloc extends Bloc<DetailSalesOrderEvent, DetailSalesOrderS
   Future<void> _onStarted(DetailSalesOrderStarted event, Emitter<DetailSalesOrderState> emit) async {
     emit(state.copyWith(status: DetailSalesOrderStatus.loading));
     try {
-      final user = await userDataController.getDataUser();
-      final role = user.role;
-      emit(state.copyWith(role: role, status: DetailSalesOrderStatus.success));
-      
-      await itemRepository.getDetailDataSalesOrder(event.id);
+      String? role;
+      try {
+        final user = await userDataController.getDataUser();
+        role = user.role;
+      } catch (_) {}
+
+      final salesOrder = await itemRepository.getDetailDataSalesOrder(event.id);
+      emit(state.copyWith(
+        role: role,
+        salesOrder: salesOrder,
+        status: DetailSalesOrderStatus.success,
+      ));
     } catch (e) {
       emit(state.copyWith(
         status: DetailSalesOrderStatus.failure,
@@ -63,11 +70,12 @@ class DetailSalesOrderBloc extends Bloc<DetailSalesOrderEvent, DetailSalesOrderS
     emit(state.copyWith(status: DetailSalesOrderStatus.loading));
     try {
       await transactionServices.paySalesOrderServices(event.docId, event.prodId, event.totalQty);
-      await itemRepository.getDetailDataSalesOrder(event.docId);
+      final salesOrder = await itemRepository.getDetailDataSalesOrder(event.docId);
       await itemRepository.getBulkDataSalesOrder();
       
       emit(state.copyWith(
         status: DetailSalesOrderStatus.success,
+        salesOrder: salesOrder,
         successMessage: "Success pay invoice",
       ));
     } catch (e) {

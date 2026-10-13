@@ -96,12 +96,17 @@ class DetailProductOrderBloc extends Bloc<DetailProductOrderEvent, DetailProduct
   Future<void> _onStarted(DetailProductOrderStarted event, Emitter<DetailProductOrderState> emit) async {
     emit(state.copyWith(status: DetailProductOrderStatus.loading));
     try {
+      String? role;
+      try {
+        final UserModel user = await userDataController.getDataUser();
+        role = user.role;
+      } catch (_) {}
+
       final orderProduct = await itemRepository.getDetailDataOrder(event.id);
-      final UserModel user = await userDataController.getDataUser();
       emit(state.copyWith(
         status: DetailProductOrderStatus.success, 
         orderProduct: orderProduct,
-        role: user.role,
+        role: role,
       ));
     } catch (e) {
       emit(state.copyWith(status: DetailProductOrderStatus.failure, errorMessage: e.toString()));

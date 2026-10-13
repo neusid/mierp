@@ -46,30 +46,37 @@ class ButtonProfileWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              spacing: 24.w,
-              children: [
-                SizedBox(
-                  width: 24.w,
-                  height: 24.w,
-                  child: SvgPicture.asset(
-                    "assets/icons/$icon.svg",
-                    colorFilter: ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
+            Expanded(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: SvgPicture.asset(
+                      "assets/icons/$icon.svg",
+                      colorFilter: ColorFilter.mode(
+                        Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    fontSize: 16.sp,
-                    fontWeight: AppFontWeight.medium,
-                    color: AppColors.grayTitle,
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 15.sp,
+                        fontWeight: AppFontWeight.medium,
+                        color: AppColors.grayTitle,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            SizedBox(width: 8.w),
             SizedBox(
               width: 27.26.w,
               height: 25.5.w,
@@ -221,30 +228,37 @@ class ButtonProfileConfirmWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              spacing: 24.w,
-              children: [
-                SizedBox(
-                  width: 24.w,
-                  height: 24.w,
-                  child: SvgPicture.asset(
-                    "assets/icons/$icon.svg",
-                    colorFilter: ColorFilter.mode(
-                      Colors.black,
-                      BlendMode.srcIn,
+            Expanded(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: SvgPicture.asset(
+                      "assets/icons/$icon.svg",
+                      colorFilter: ColorFilter.mode(
+                        Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    fontSize: 16.sp,
-                    fontWeight: AppFontWeight.medium,
-                    color: AppColors.grayTitle,
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 15.sp,
+                        fontWeight: AppFontWeight.medium,
+                        color: AppColors.grayTitle,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            SizedBox(width: 8.w),
             SizedBox(
               width: 27.26.w,
               height: 25.5.w,

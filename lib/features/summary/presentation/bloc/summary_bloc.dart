@@ -9,6 +9,9 @@ import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/data/finance/dashboard_finance_repository.dart';
+import 'package:mierp_apps/data/transaction/services/transaction_services.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
+import 'package:mierp_apps/core/utils/order_sort_utils.dart';
 
 // --- EVENTS ---
 abstract class SummaryEvent extends Equatable {
@@ -45,6 +48,15 @@ class SummaryPayRequested extends SummaryEvent {
   final String prodId;
   final int totalQty;
   const SummaryPayRequested(this.docId, this.prodId, this.totalQty);
+  @override
+  List<Object> get props => [docId, prodId, totalQty];
+}
+
+class SummaryPaySalesRequested extends SummaryEvent {
+  final String docId;
+  final String prodId;
+  final int totalQty;
+  const SummaryPaySalesRequested(this.docId, this.prodId, this.totalQty);
   @override
   List<Object> get props => [docId, prodId, totalQty];
 }
@@ -137,16 +149,22 @@ class SummaryState extends Equatable {
 class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   final DashboardFinanceRepository financeRepository;
   final UserDataController userDataController;
+  final TransactionServices transactionServices;
 
   SummaryBloc({
-    required this.financeRepository,
-    required this.userDataController,
-  }) : super(const SummaryState()) {
+    DashboardFinanceRepository? financeRepository,
+    UserDataController? userDataController,
+    TransactionServices? transactionServices,
+  })  : financeRepository = financeRepository ?? sl<DashboardFinanceRepository>(),
+        userDataController = userDataController ?? sl<UserDataController>(),
+        transactionServices = transactionServices ?? sl<TransactionServices>(),
+        super(const SummaryState()) {
     on<SummaryStarted>(_onStarted);
     on<SummaryTabChanged>(_onTabChanged);
     on<SummarySearchChanged>(_onSearchChanged);
     on<SummaryFilterChanged>(_onFilterChanged);
     on<SummaryPayRequested>(_onPayRequested);
+    on<SummaryPaySalesRequested>(_onPaySalesRequested);
     on<SummaryMessageCleared>((event, emit) => emit(state.copyWith(successMessage: "", errorMessage: "")));
   }
 
@@ -160,11 +178,18 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
       final orders = await financeRepository.getAllDataOrder();
       final salesOrders = await financeRepository.getAllDataSalesOrder();
 
+      // Pay Now priority sorting
+      orders.sort(OrderSortUtils.compareOrders);
+      salesOrders.sort(OrderSortUtils.compareSalesOrders);
+      products.sort((a, b) => OrderSortUtils.compareDatesDesc(a.createdOn, b.createdOn));
+
       final combined = <AllSummary>[];
-      combined.addAll(products.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e.createdOn)));
-      combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate!)));
+      if (role.toLowerCase() != "finance") {
+        combined.addAll(products.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e.createdOn)));
+      }
+      combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate ?? '')));
       combined.addAll(salesOrders.map((e) => AllSummary(summaryType: SummaryType.salesOrder, data: e, createdOn: e.purchasedDate)));
-      combined.sort((a, b) => b.createdOn.compareTo(a.createdOn));
+      combined.sort(OrderSortUtils.compareSummaries);
 
       emit(state.copyWith(
         role: role,
@@ -203,10 +228,10 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   }
 
   void _applyFilters(Emitter<SummaryState> emit, String keyword, int tag) {
-    List<Product> fProducts = state.allProducts;
-    List<OrderProduct> fOrders = state.allOrders;
-    List<SalesOrder> fSales = state.allSalesOrders;
-    List<AllSummary> fSummaries = state.allSummaries;
+    List<Product> fProducts = List.from(state.allProducts);
+    List<OrderProduct> fOrders = List.from(state.allOrders);
+    List<SalesOrder> fSales = List.from(state.allSalesOrders);
+    List<AllSummary> fSummaries = List.from(state.allSummaries);
 
     final query = keyword.toLowerCase();
 
@@ -218,25 +243,29 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
       fSummaries = fSummaries.where((p) => p.data.productName.toLowerCase().contains(query)).toList();
     }
 
-    // 2. Tag filter (only applies to orders and sales orders, because products don't have financeApproved usually, wait, they don't have it)
+    // 2. Tag filter
     if (tag == 1) { // Paid
-      fOrders = fOrders.where((p) => p.financeApproved!).toList();
-      fSales = fSales.where((p) => p.financeApproved!).toList();
-      // fSummaries also needs filtering if it's an order or sales order
+      fOrders = fOrders.where((p) => p.financeApproved ?? false).toList();
+      fSales = fSales.where((p) => p.financeApproved ?? false).toList();
       fSummaries = fSummaries.where((p) {
-        if (p.summaryType == SummaryType.order) return p.data.financeApproved;
-        if (p.summaryType == SummaryType.salesOrder) return p.data.financeApproved;
+        if (p.summaryType == SummaryType.order) return (p.data is OrderProduct ? (p.data as OrderProduct).financeApproved : p.data.financeApproved) ?? false;
+        if (p.summaryType == SummaryType.salesOrder) return (p.data is SalesOrder ? (p.data as SalesOrder).financeApproved : p.data.financeApproved) ?? false;
         return true; 
       }).toList();
     } else if (tag == 2) { // Unpaid
-      fOrders = fOrders.where((p) => !p.financeApproved!).toList();
-      fSales = fSales.where((p) => !p.financeApproved!).toList();
+      fOrders = fOrders.where((p) => !(p.financeApproved ?? false)).toList();
+      fSales = fSales.where((p) => !(p.financeApproved ?? false)).toList();
       fSummaries = fSummaries.where((p) {
-        if (p.summaryType == SummaryType.order) return !p.data.financeApproved;
-        if (p.summaryType == SummaryType.salesOrder) return !p.data.financeApproved;
+        if (p.summaryType == SummaryType.order) return !((p.data is OrderProduct ? (p.data as OrderProduct).financeApproved : p.data.financeApproved) ?? false);
+        if (p.summaryType == SummaryType.salesOrder) return !((p.data is SalesOrder ? (p.data as SalesOrder).financeApproved : p.data.financeApproved) ?? false);
         return true; 
       }).toList();
     }
+
+    // Ensure Pay Now items are always in the first position
+    fOrders.sort(OrderSortUtils.compareOrders);
+    fSales.sort(OrderSortUtils.compareSalesOrders);
+    fSummaries.sort(OrderSortUtils.compareSummaries);
 
     emit(state.copyWith(
       filteredProducts: fProducts,
@@ -249,12 +278,24 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
   }
 
   Future<void> _onPayRequested(SummaryPayRequested event, Emitter<SummaryState> emit) async {
-    // Transaction logic here. We will just emit loading for now and fake success, similar to Dashboard.
-    // If you need the real service, you can inject TransactionServices.
-    emit(state.copyWith(isLoading: true));
-    await Future.delayed(const Duration(seconds: 1));
-    emit(state.copyWith(isLoading: false, successMessage: "Invoice paid successfully"));
-    // Re-fetch data
-    add(SummaryStarted());
+    emit(state.copyWith(isLoading: true, successMessage: "", errorMessage: ""));
+    try {
+      await transactionServices.payProductOrderServices(event.docId, event.prodId, event.totalQty);
+      emit(state.copyWith(isLoading: false, successMessage: "Invoice berhasil dilunasi!"));
+      add(SummaryStarted());
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: "Gagal memproses pembayaran: ${e.toString()}"));
+    }
+  }
+
+  Future<void> _onPaySalesRequested(SummaryPaySalesRequested event, Emitter<SummaryState> emit) async {
+    emit(state.copyWith(isLoading: true, successMessage: "", errorMessage: ""));
+    try {
+      await transactionServices.paySalesOrderServices(event.docId, event.prodId, event.totalQty);
+      emit(state.copyWith(isLoading: false, successMessage: "Invoice penjualan berhasil dilunasi!"));
+      add(SummaryStarted());
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: "Gagal memproses pembayaran: ${e.toString()}"));
+    }
   }
 }

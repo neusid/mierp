@@ -5,7 +5,7 @@ import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
 class CardStock extends StatelessWidget {
-  CardStock({
+  const CardStock({
     super.key,
     required this.idBarang,
     required this.namaBarang,
@@ -17,13 +17,18 @@ class CardStock extends StatelessWidget {
     this.createdOn,
   });
 
-  final idBarang, namaBarang, quantity, unitPrice, lineTotal, type, image;
+  final dynamic idBarang;
+  final dynamic namaBarang;
+  final dynamic quantity;
+  final dynamic unitPrice;
+  final dynamic lineTotal;
+  final dynamic type;
+  final dynamic image;
   final String? createdOn;
-
-  final convertDollar = ConvertDollar();
 
   @override
   Widget build(BuildContext context) {
+    final convertDollar = ConvertDollar();
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -42,28 +47,60 @@ class CardStock extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // LEFT IMAGE (Flush with the left corners)
-            Container(
-              width: 110.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(9.w),
-                  bottomLeft: Radius.circular(9.w),
+            // LEFT IMAGE (Flush with the left corners) with Category Frosted Pill Badge
+            Stack(
+              children: [
+                Container(
+                  width: 100.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(9.w),
+                      bottomLeft: Radius.circular(9.w),
+                    ),
+                    color: const Color(0xFFF8FAFC),
+                    image: DecorationImage(
+                      image: (image == null || image.toString().isEmpty)
+                          ? const AssetImage("assets/images/dummy_item.jpg")
+                          : NetworkImage(image.toString()) as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                color: const Color(0xFFF8FAFC),
-                image: DecorationImage(
-                  image: (image == null || image.toString().isEmpty)
-                      ? const AssetImage("assets/images/dummy_item.jpg")
-                      : NetworkImage(image) as ImageProvider,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                if (type != null && type.toString().trim().isNotEmpty)
+                  Positioned(
+                    top: 8.w,
+                    left: 8.w,
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 84.w),
+                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(6.w),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 0.8.w,
+                        ),
+                      ),
+                      child: Text(
+                        type.toString().trim().toUpperCase(),
+                        style: GoogleFonts.inter(
+                          fontSize: 8.sp,
+                          fontWeight: AppFontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             
             // RIGHT CONTENT
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -76,7 +113,7 @@ class CardStock extends StatelessWidget {
                           Text(
                             namaBarang,
                             style: GoogleFonts.inter(
-                              fontSize: 14.sp,
+                              fontSize: 13.5.sp,
                               fontWeight: AppFontWeight.bold,
                               color: const Color(0xFF1C1C1C),
                             ),
@@ -131,63 +168,38 @@ class CardStock extends StatelessWidget {
                       ),
                     ),
                     
-                    SizedBox(width: 10.w),
+                    SizedBox(width: 8.w),
                     
                     // Right: Pill Badge for Quantity
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3E8FF), // MiERP Purple Light
-                            borderRadius: BorderRadius.circular(9.w),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                quantity.toString(),
-                                style: GoogleFonts.inter(
-                                  fontSize: 11.sp,
-                                  fontWeight: AppFontWeight.bold,
-                                  color: const Color(0xFF7C3AED), // MiERP Purple Deep
-                                  fontFeatures: const [FontFeature.tabularFigures()],
-                                ),
-                              ),
-                              SizedBox(width: 4.w),
-                              Text(
-                                "Qty",
-                                style: GoogleFonts.inter(
-                                  fontSize: 8.5.sp,
-                                  fontWeight: AppFontWeight.semiBold,
-                                  color: const Color(0xFF7C3AED),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 6.h),
-                        // Type / Label under pill
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(9.w),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                          ),
-                          child: Text(
-                            type.toString().toUpperCase(),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3E8FF), // MiERP Purple Light
+                        borderRadius: BorderRadius.circular(8.w),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            quantity.toString(),
                             style: GoogleFonts.inter(
-                              fontSize: 6.5.sp,
+                              fontSize: 11.sp,
                               fontWeight: AppFontWeight.bold,
-                              color: const Color(0xFF64748B),
-                              letterSpacing: 0.5,
+                              color: const Color(0xFF7C3AED), // MiERP Purple Deep
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(width: 3.w),
+                          Text(
+                            "Qty",
+                            style: GoogleFonts.inter(
+                              fontSize: 8.5.sp,
+                              fontWeight: AppFontWeight.semiBold,
+                              color: const Color(0xFF7C3AED),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

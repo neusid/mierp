@@ -8,6 +8,9 @@ import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/data/finance/dashboard_finance_repository.dart';
+import 'package:mierp_apps/data/transaction/services/transaction_services.dart';
+import 'package:mierp_apps/core/di/injection_container.dart';
+import 'package:mierp_apps/core/utils/order_sort_utils.dart';
 
 // --- EVENTS ---
 abstract class DashboardFinanceEvent extends Equatable {
@@ -60,6 +63,15 @@ class DashboardFinancePayProductRequested extends DashboardFinanceEvent {
   final String prodId;
   final int totalQty;
   const DashboardFinancePayProductRequested(this.docId, this.prodId, this.totalQty);
+  @override
+  List<Object?> get props => [docId, prodId, totalQty];
+}
+
+class DashboardFinancePaySalesRequested extends DashboardFinanceEvent {
+  final String docId;
+  final String prodId;
+  final int totalQty;
+  const DashboardFinancePaySalesRequested(this.docId, this.prodId, this.totalQty);
   @override
   List<Object?> get props => [docId, prodId, totalQty];
 }
@@ -159,7 +171,7 @@ class DashboardFinanceState extends Equatable {
 class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceState> {
   final DashboardFinanceRepository financeRepository;
   final UserDataController userDataController; 
-  // final TransactionServices transactionServices; // Normally injected, but for brevity we instantiate if not provided in DI yet.
+  final TransactionServices transactionServices;
   
   StreamSubscription? _productsItemSub;
   StreamSubscription? _settledSub;
@@ -171,13 +183,18 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
   StreamSubscription? _upcomingStockSub;
 
   DashboardFinanceBloc({
-    required this.financeRepository,
-    required this.userDataController,
-  }) : super(const DashboardFinanceState()) {
+    DashboardFinanceRepository? financeRepository,
+    UserDataController? userDataController,
+    TransactionServices? transactionServices,
+  })  : financeRepository = financeRepository ?? sl<DashboardFinanceRepository>(),
+        userDataController = userDataController ?? sl<UserDataController>(),
+        transactionServices = transactionServices ?? sl<TransactionServices>(),
+        super(const DashboardFinanceState()) {
     on<DashboardFinanceStarted>(_onStarted);
     on<DashboardFinanceStatsUpdated>(_onStatsUpdated);
     on<DashboardFinanceTabChanged>(_onTabChanged);
     on<DashboardFinancePayProductRequested>(_onPayRequested);
+    on<DashboardFinancePaySalesRequested>(_onPaySalesRequested);
     on<DashboardFinanceMessageCleared>((event, emit) => emit(state.copyWith(successMessage: "", errorMessage: "")));
   }
 
@@ -196,25 +213,42 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
     final orders = await financeRepository.getAllDataOrder();
     final salesOrders = await financeRepository.getAllDataSalesOrder();
 
-    // Combine for All Summary
+    // Sort: Pay Now priority
+    orders.sort(OrderSortUtils.compareOrders);
+    salesOrders.sort(OrderSortUtils.compareSalesOrders);
+    products.sort((a, b) => OrderSortUtils.compareDatesDesc(a.createdOn, b.createdOn));
+
+    // Combine for All Summary (Finance orders only)
     final combined = <AllSummary>[];
-    combined.addAll(products.map((e) => AllSummary(summaryType: SummaryType.product, data: e, createdOn: e.createdOn)));
-    combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate!)));
+    combined.addAll(orders.map((e) => AllSummary(summaryType: SummaryType.order, data: e, createdOn: e.orderDate ?? '')));
     combined.addAll(salesOrders.map((e) => AllSummary(summaryType: SummaryType.salesOrder, data: e, createdOn: e.purchasedDate)));
-    combined.sort((a, b) => b.createdOn.compareTo(a.createdOn));
+    combined.sort(OrderSortUtils.compareSummaries);
     
     emit(state.copyWith(
       userName: name,
-      listProduct: products..sort((a, b) => b.createdOn.compareTo(a.createdOn)),
-      listOrder: orders..sort((a, b) => b.orderDate!.compareTo(a.orderDate!)),
-      listSalesOrder: salesOrders..sort((a, b) => b.purchasedDate.compareTo(a.purchasedDate)),
+      listProduct: products,
+      listOrder: orders,
+      listSalesOrder: salesOrders,
       listAllSummary: combined,
       isLoading: false,
     ));
 
+    // Backfill ledger mutations
+    try {
+      await financeRepository.syncAndBackfillExistingSettledOrders();
+    } catch (_) {}
+
     // Listen to Streams
     _productsItemSub?.cancel();
-    _productsItemSub = financeRepository.getProductItems().listen((val) => add(DashboardFinanceStatsUpdated(productsItem: val)));
+    _productsItemSub = financeRepository.getNetCashBalanceStream().listen((val) {
+      if (val != 0) {
+        add(DashboardFinanceStatsUpdated(productsItem: val));
+      } else {
+        financeRepository.getProductItems().first.then((pVal) {
+          add(DashboardFinanceStatsUpdated(productsItem: val != 0 ? val : pVal));
+        });
+      }
+    });
 
     _settledSub?.cancel();
     _settledSub = financeRepository.getSettledItems().listen((val) => add(DashboardFinanceStatsUpdated(settled: val)));
@@ -256,11 +290,25 @@ class DashboardFinanceBloc extends Bloc<DashboardFinanceEvent, DashboardFinanceS
   }
 
   Future<void> _onPayRequested(DashboardFinancePayProductRequested event, Emitter<DashboardFinanceState> emit) async {
-    // Note: TransactionServices not fully injected here for brevity, assuming we will handle it later or user will handle it
-    // In real scenario we inject it. But wait, we can just instantiate it since it's just a service class.
-    // Let's omit full logic here or mock it to succeed. The user just wanted BLoC migration.
-    // For now we just emit loading, and fake success/failure because we don't have transactionServices injected yet.
-    // We can inject TransactionServices easily.
+    emit(state.copyWith(isLoading: true, successMessage: "", errorMessage: ""));
+    try {
+      await transactionServices.payProductOrderServices(event.docId, event.prodId, event.totalQty);
+      emit(state.copyWith(isLoading: false, successMessage: "Invoice berhasil dilunasi!"));
+      add(DashboardFinanceStarted());
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: "Gagal memproses pembayaran: ${e.toString()}"));
+    }
+  }
+
+  Future<void> _onPaySalesRequested(DashboardFinancePaySalesRequested event, Emitter<DashboardFinanceState> emit) async {
+    emit(state.copyWith(isLoading: true, successMessage: "", errorMessage: ""));
+    try {
+      await transactionServices.paySalesOrderServices(event.docId, event.prodId, event.totalQty);
+      emit(state.copyWith(isLoading: false, successMessage: "Invoice penjualan berhasil dilunasi!"));
+      add(DashboardFinanceStarted());
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, errorMessage: "Gagal memproses pembayaran: ${e.toString()}"));
+    }
   }
 
   @override

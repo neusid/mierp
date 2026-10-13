@@ -187,7 +187,6 @@ class _InventoryAlertsViewState extends State<InventoryAlertsView> with SingleTi
               lineTotal: data.totalCost,
               imageProduct: data.imageProduct,
               finance: false, 
-              onPayPressed: () {}, 
             ),
           ),
         );

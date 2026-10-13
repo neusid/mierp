@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mierp_apps/core/models/sales_order.dart';
 
 abstract class DetailSalesOrderEvent extends Equatable {
   const DetailSalesOrderEvent();
@@ -35,6 +36,9 @@ class DetailSalesOrderDeleteRequested extends DetailSalesOrderEvent {
 }
 
 class DetailSalesOrderUpdated extends DetailSalesOrderEvent {
-  final salesOrder;
+  final SalesOrder? salesOrder;
   const DetailSalesOrderUpdated(this.salesOrder);
+
+  @override
+  List<Object?> get props => [salesOrder];
 }

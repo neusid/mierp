@@ -13,6 +13,7 @@ import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
+import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
 
 class DetailSalesOrderView extends StatelessWidget {
   final String id;
@@ -193,7 +194,24 @@ class DetailSalesOrderView extends StatelessWidget {
       child: BlocConsumer<DetailSalesOrderBloc, DetailSalesOrderState>(
         listener: (context, state) {
           if (state.status == DetailSalesOrderStatus.success && state.successMessage.isNotEmpty) {
-            CustomTopSnackbar.success(context, state.successMessage);
+            final order = state.salesOrder;
+            if (order != null && state.successMessage.toLowerCase().contains("pay")) {
+              PaymentSuccessView.open(
+                context,
+                invoiceId: order.id ?? id,
+                productName: order.productName,
+                quantity: order.quantity,
+                amount: convertDollar.intToDollar(order.totalPrice),
+                requestedBy: "${order.companyName} (${order.firstName})",
+                paymentType: "Sales Order",
+              ).then((result) {
+                if (context.mounted && result == true) {
+                  context.read<DetailSalesOrderBloc>().add(DetailSalesOrderStarted(id));
+                }
+              });
+            } else {
+              CustomTopSnackbar.success(context, state.successMessage);
+            }
           } else if (state.status == DetailSalesOrderStatus.deleteSuccess) {
             CustomTopSnackbar.success(
               context,
@@ -317,7 +335,7 @@ class DetailSalesOrderView extends StatelessWidget {
                                                   borderRadius: BorderRadius.circular(20.w),
                                                 ),
                                                 child: Text(
-                                                  state.salesOrder!.financeApproved! ? "PAID" : "UNPAID",
+                                                  (state.salesOrder!.financeApproved ?? false) ? "PAID" : "UNPAID",
                                                   style: GoogleFonts.inter(
                                                     fontSize: 9.sp,
                                                     fontWeight: AppFontWeight.bold,
@@ -340,7 +358,7 @@ class DetailSalesOrderView extends StatelessWidget {
                                 title: "Sales Summary",
                                 child: Column(
                                   children: [
-                                    _buildDataRow("Order ID", state.salesOrder!.id!),
+                                    _buildDataRow("Order ID", state.salesOrder!.id ?? id),
                                     _buildDataRow("Created On", state.salesOrder!.purchasedDate),
                                     _buildDataRow("To", state.salesOrder!.companyName),
                                     _buildDataRow("From", "Warehouse"),
@@ -349,13 +367,64 @@ class DetailSalesOrderView extends StatelessWidget {
                                       _buildDataRow("Unit Price", convertDollar.intToDollar(state.salesOrder!.unitPrice)),
                                       _buildDataRow("Subtotal", convertDollar.intToDollar(state.salesOrder!.quantity * state.salesOrder!.unitPrice)),
                                       if (((state.salesOrder!.quantity * state.salesOrder!.unitPrice) - state.salesOrder!.totalPrice) > 0)
-                                        _buildDataRow("Discount", "-${convertDollar.intToDollar((state.salesOrder!.quantity * state.salesOrder!.unitPrice) - state.salesOrder!.totalPrice)} (${state.salesOrder!.discountPercent}%)"),
+                                        _buildDataRow("Discount", "-${convertDollar.intToDollar((state.salesOrder!.quantity * state.salesOrder!.unitPrice) - state.salesOrder!.totalPrice)} (${state.salesOrder!.discountPercent ?? 0}%)"),
                                       Divider(color: const Color(0xFFF1F5F9), height: 24.h, thickness: 1.w),
                                       _buildDataRow("Line Total", convertDollar.intToDollar(state.salesOrder!.totalPrice), isBold: true),
                                   ],
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                      )
+                    else if (state.status == DetailSalesOrderStatus.failure)
+                      Expanded(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(24.w),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.error_outline_rounded, size: 54.w, color: const Color(0xFFEF4444)),
+                                SizedBox(height: 12.h),
+                                Text(
+                                  "Gagal Memuat Detail Sales Order",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16.sp,
+                                    fontWeight: AppFontWeight.bold,
+                                    color: const Color(0xFF0F172A),
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  state.errorMessage.isNotEmpty ? state.errorMessage : "Koneksi bermasalah atau data sales order tidak ditemukan.",
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12.sp,
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    context.read<DetailSalesOrderBloc>().add(DetailSalesOrderStarted(id));
+                                  },
+                                  icon: Icon(Icons.refresh_rounded, size: 18.w, color: Colors.white),
+                                  label: Text(
+                                    "Coba Lagi",
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: AppFontWeight.semiBold,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0F172A),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
+                                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -380,40 +449,27 @@ class DetailSalesOrderView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: state.role == "warehouse"
-                          ? // WAREHOUSE ROLE: Delete Order
-                            GestureDetector(
-                              onTap: () => _showDeleteConfirmation(context, state.salesOrder!.id!),
-                              child: Container(
-                                height: 52.h,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFEF2F2),
-                                  border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
-                                  borderRadius: BorderRadius.circular(10.w),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Delete Sales",
-                                    style: GoogleFonts.inter(
-                                      fontWeight: AppFontWeight.bold,
-                                      fontSize: 16.sp,
-                                      color: const Color(0xFFEF4444),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : // FINANCE ROLE: Pay Invoice
+                      child: (state.role ?? "").toLowerCase() == "finance"
+                          ? // FINANCE ROLE: Pay Invoice
                             GestureDetector(
                               onTap: () {
                                 showPayConfirmationModal(
                                   context: context,
-                                  orderId: state.salesOrder!.id,
-                                  amount: convertDollar.intToDollar(state.salesOrder!.totalPrice),
+                                  orderId: state.salesOrder!.id ?? "",
+                                  productName: state.salesOrder!.productName,
+                                  productCode: state.salesOrder!.productCode,
+                                  imageProduct: state.salesOrder!.imageProduct,
+                                  quantity: state.salesOrder!.quantity,
+                                  unitPrice: state.salesOrder!.unitPrice,
+                                  totalCost: state.salesOrder!.totalPrice,
+                                  discountPercent: state.salesOrder!.discountPercent,
+                                  discountMax: state.salesOrder!.discountMax,
+                                  requestedBy: "${state.salesOrder!.companyName} (${state.salesOrder!.firstName})",
+                                  orderDate: state.salesOrder!.purchasedDate,
                                   onConfirm: () {
                                     context.read<DetailSalesOrderBloc>().add(
                                       DetailSalesOrderPayRequested(
-                                        state.salesOrder!.id!,
+                                        state.salesOrder!.id ?? id,
                                         state.salesOrder!.productId,
                                         state.salesOrder!.quantity,
                                       ),
@@ -445,12 +501,34 @@ class DetailSalesOrderView extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            )
+                          : // WAREHOUSE ROLE: Delete Order
+                            GestureDetector(
+                              onTap: () => _showDeleteConfirmation(context, state.salesOrder!.id ?? id),
+                              child: Container(
+                                height: 52.h,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF2F2),
+                                  border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
+                                  borderRadius: BorderRadius.circular(10.w),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Delete Sales",
+                                    style: GoogleFonts.inter(
+                                      fontWeight: AppFontWeight.bold,
+                                      fontSize: 16.sp,
+                                      color: const Color(0xFFEF4444),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                     ),
                   ),
 
                 // LOADING OVERLAY
-                if (state.status == DetailSalesOrderStatus.loading || state.salesOrder == null)
+                if (state.status == DetailSalesOrderStatus.loading)
                   Container(
                     color: Colors.black.withValues(alpha: 0.3),
                     child: Center(

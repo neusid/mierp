@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,7 @@ import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
-import 'package:mierp_apps/core/widgets/dashboard/blanket_mattress_widget.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboard_finance_bloc.dart';
 
 class FinanceGraphView extends StatelessWidget {
@@ -93,7 +94,7 @@ class FinanceGraphView extends StatelessWidget {
                   _buildCashFlowChart(state),
                   SizedBox(height: 24.h),
 
-                  // 3. SECTION HEADER: FINANCIAL OBLIGATIONS & RECEIVABLES
+                  // 3. SECTION HEADER: LIQUIDITY & SETTLEMENT RATIOS
                   Row(
                     children: [
                       Container(
@@ -103,14 +104,14 @@ class FinanceGraphView extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Icon(
-                          Icons.account_balance_wallet_outlined,
+                          Icons.pie_chart_outline_rounded,
                           size: 16.w,
                           color: const Color(0xFF7C3AED),
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Text(
-                        "Financial Obligations & Receivables",
+                        "Liquidity & Obligation Analysis",
                         style: GoogleFonts.inter(
                           fontSize: 14.sp,
                           fontWeight: AppFontWeight.bold,
@@ -121,85 +122,326 @@ class FinanceGraphView extends StatelessWidget {
                   ),
                   SizedBox(height: 14.h),
 
-                  // 4. CARD 1: PENDING RECEIVABLES (Piutang Customer)
-                  BlanketMattressWidget(
-                    title: "Customer Receivables",
-                    subtitle: "Pending Invoices",
-                    count: pendingReceivables.length,
-                    rightTitle: "Pending Amount",
-                    rightSubtitle: convertDollar.intToDollar(totalReceivablesDue),
-                    progress: state.listSalesOrder.isNotEmpty
-                        ? (pendingReceivables.length / state.listSalesOrder.length).clamp(0.0, 1.0)
-                        : 0.0,
-                    themeColor: const Color(0xFF8B5CF6),
-                    themeBgColor: const Color(0xFFF3E8FF),
-                    headerIcon: Icons.receipt_long_rounded,
-                    buttonText: "Lihat Semua Piutang ➔",
-                    items: pendingReceivables.isNotEmpty
-                        ? pendingReceivables
-                            .take(2)
-                            .map(
-                              (e) => {
-                                "title": e.companyName.isNotEmpty
-                                    ? e.companyName
-                                    : "Order #${(e.id != null && e.id!.length >= 5) ? e.id!.substring(0, 5) : e.id}",
-                                "subtitle":
-                                    "Order #${(e.id != null && e.id!.length >= 5) ? e.id!.substring(0, 5) : e.id} • ${e.productName}",
-                                "badge": convertDollar.intToDollar(e.totalPrice),
-                                "image": e.imageProduct,
-                              },
-                            )
-                            .toList()
-                        : [
-                            {
-                              "title": "Semua Piutang Lunas",
-                              "subtitle": "Tidak ada tagihan tertunggak",
-                              "badge": "Settled",
-                              "image": "",
-                            }
-                          ],
-                    onTapButton: () => context.push("/summary"),
-                  ),
-                  SizedBox(height: 20.h),
+                  // 4. SYMMETRICAL 50/50 RATIO CARDS: RECEIVABLES vs PAYABLES
+                  Row(
+                    children: [
+                      // Card 1: Receivables Due
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.w),
+                            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 10.w,
+                                offset: Offset(0, 4.w),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Receivables",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12.sp,
+                                      fontWeight: AppFontWeight.medium,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF8B5CF6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                convertDollar.intToDollar(totalReceivablesDue),
+                                style: GoogleFonts.inter(
+                                  fontSize: 18.sp,
+                                  fontWeight: AppFontWeight.bold,
+                                  color: const Color(0xFF0F172A),
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                "${pendingReceivables.length} invoices pending",
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.sp,
+                                  fontWeight: AppFontWeight.medium,
+                                  color: const Color(0xFF8B5CF6),
+                                ),
+                              ),
+                              SizedBox(height: 12.h),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4.w),
+                                child: LinearProgressIndicator(
+                                  value: state.listSalesOrder.isNotEmpty
+                                      ? (1.0 - (pendingReceivables.length / state.listSalesOrder.length)).clamp(0.05, 1.0)
+                                      : 0.05,
+                                  minHeight: 5.h,
+                                  backgroundColor: const Color(0xFFF1F5F9),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
 
-                  // 5. CARD 2: PENDING PAYABLES (Hutang Pengadaan / Supplier)
-                  BlanketMattressWidget(
-                    title: "Supplier Payables",
-                    subtitle: "Pending POs",
-                    count: pendingPayables.length,
-                    rightTitle: "Amount Due",
-                    rightSubtitle: convertDollar.intToDollar(totalPayablesDue),
-                    progress: state.listOrder.isNotEmpty
-                        ? (pendingPayables.length / state.listOrder.length).clamp(0.0, 1.0)
-                        : 0.0,
-                    themeColor: const Color(0xFF94A3B8),
-                    themeBgColor: const Color(0xFFF1F5F9),
-                    headerIcon: Icons.shopping_bag_outlined,
-                    buttonText: "Bayar Tagihan Pengadaan ➔",
-                    items: pendingPayables.isNotEmpty
-                        ? pendingPayables
-                            .take(2)
-                            .map(
-                              (e) => {
-                                "title": e.productName.isNotEmpty
-                                    ? e.productName
-                                    : "PO #${(e.id != null && e.id!.length >= 5) ? e.id!.substring(0, 5) : e.id}",
-                                "subtitle":
-                                    "PO #${(e.id != null && e.id!.length >= 5) ? e.id!.substring(0, 5) : e.id} • ${e.quantity} Pcs",
-                                "badge": convertDollar.intToDollar(e.totalCost),
-                                "image": e.imageProduct,
-                              },
-                            )
-                            .toList()
-                        : [
-                            {
-                              "title": "Semua Tagihan Lunas",
-                              "subtitle": "Tidak ada hutang pengadaan pending",
-                              "badge": "Settled",
-                              "image": "",
-                            }
+                      // Card 2: Payables Due
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.w),
+                            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 10.w,
+                                offset: Offset(0, 4.w),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Payables",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12.sp,
+                                      fontWeight: AppFontWeight.medium,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFF59E0B),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                convertDollar.intToDollar(totalPayablesDue),
+                                style: GoogleFonts.inter(
+                                  fontSize: 18.sp,
+                                  fontWeight: AppFontWeight.bold,
+                                  color: const Color(0xFF0F172A),
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                "${pendingPayables.length} POs pending",
+                                style: GoogleFonts.inter(
+                                  fontSize: 11.sp,
+                                  fontWeight: AppFontWeight.medium,
+                                  color: const Color(0xFFD97706),
+                                ),
+                              ),
+                              SizedBox(height: 12.h),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4.w),
+                                child: LinearProgressIndicator(
+                                  value: state.listOrder.isNotEmpty
+                                      ? (1.0 - (pendingPayables.length / state.listOrder.length)).clamp(0.05, 1.0)
+                                      : 0.05,
+                                  minHeight: 5.h,
+                                  backgroundColor: const Color(0xFFF1F5F9),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+
+                  // 5. PROJECTED NET CASH GAP & APPROVAL SHORTCUT CARD
+                  Builder(
+                    builder: (context) {
+                      final bool isSurplus = (totalReceivablesDue - totalPayablesDue) >= 0;
+                      final int netGap = totalReceivablesDue - totalPayablesDue;
+
+                      return Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(18.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.w),
+                          border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 10.w,
+                              offset: Offset(0, 4.w),
+                            ),
                           ],
-                    onTapButton: () => context.push("/summary"),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Tier 1: Header Row (Title & Status Badge - No Ellipsis)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    "Projected Settlement Gap",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13.sp,
+                                      fontWeight: AppFontWeight.semiBold,
+                                      color: const Color(0xFF475569),
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.5.h),
+                                  decoration: BoxDecoration(
+                                    color: isSurplus ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+                                    borderRadius: BorderRadius.circular(20.w),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: (isSurplus ? const Color(0xFF00AA13) : const Color(0xFFED2736)).withValues(alpha: 0.25),
+                                        offset: Offset(0, 2.w),
+                                        blurRadius: 4.w,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isSurplus ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                                        size: 13.w,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        isSurplus ? "Surplus Kas" : "Defisit Kas",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 10.5.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                          letterSpacing: 0.1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10.h),
+
+                            // Tier 2: Large Bold Amount & Subtitle Explanation
+                            Text(
+                              isSurplus
+                                  ? "+${convertDollar.intToDollar(netGap)}"
+                                  : "-${convertDollar.intToDollar(netGap.abs())}",
+                              style: GoogleFonts.inter(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w800,
+                                color: isSurplus
+                                    ? const Color(0xFF00AA13)
+                                    : const Color(0xFFED2736),
+                                letterSpacing: -0.6,
+                              ),
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              "Estimasi selisih kas antara piutang dan hutang jatuh tempo",
+                              style: GoogleFonts.inter(
+                                fontSize: 11.sp,
+                                fontWeight: AppFontWeight.medium,
+                                color: const Color(0xFF64748B),
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+
+                            // Tier 3: Full-Width Solid Button CTA
+                            InkWell(
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                try {
+                                  context.read<MainPageCubit>().changeIndex(1);
+                                } catch (_) {
+                                  context.push("/summary");
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(12.w),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7C3AED),
+                                  borderRadius: BorderRadius.circular(12.w),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF7C3AED).withValues(alpha: 0.28),
+                                      offset: Offset(0, 4.w),
+                                      blurRadius: 10.w,
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.task_alt_rounded,
+                                      size: 16.w,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      "Buka Menu Approvals",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: -0.1,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 15.w,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 36.h),
                 ],

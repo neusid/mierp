@@ -1,4 +1,3 @@
-import 'package:mierp_apps/core/widgets/dashboard/quick_add_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,22 +7,13 @@ import 'package:mierp_apps/core/di/injection_container.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
-import 'package:mierp_apps/core/theme/app_font_weight.dart';
-import 'package:mierp_apps/core/widgets/card_order.dart';
-import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
+import 'package:mierp_apps/core/widgets/dashboard/quick_add_card.dart';
+import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 
 class DashboardWarehouseView extends StatelessWidget {
-  DashboardWarehouseView({super.key});
-
-  final tabs = [
-    {"title": "All Summary", "collection": "all_summary"},
-    {"title": "Order", "collection": "warehouse_order"},
-    {"title": "Sales Order", "collection": "sales_order"},
-    {"title": "Stock", "collection": "products"},
-  ];
+  const DashboardWarehouseView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -198,509 +188,313 @@ class DashboardWarehouseView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 18.h),
+                    // ROW 1: INVENTORY OVERVIEW METRICS (PRODUCT & TOTAL QTY - REMAKE)
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
                       child: Row(
                         children: [
                           Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(16.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.w),
-                                border: Border.all(
-                                  color: const Color(0xFFF1F5F9),
-                                  width: 1.5.w,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.04),
-                                    blurRadius: 8.w,
-                                    offset: Offset(0, 4.h),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 28.w,
-                                        height: 28.w,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF3E8FF),
-                                          borderRadius: BorderRadius.circular(
-                                            8.w,
-                                          ),
-                                          border: Border.all(
-                                            color: const Color(0xFFE9D5FF),
-                                            width: 1.w,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.inventory_2_outlined,
-                                            color: const Color(0xFF7C3AED),
-                                            size: 16.w,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Expanded(
-                                        child: Text(
-                                          state.totalProducts.toString(),
-                                          style: GoogleFonts.inter(
-                                            color: const Color(0xFF334155),
-                                            fontSize: 22.sp,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: -0.5,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  Text(
-                                    "Total Products",
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF64748B),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            child: _buildWarehouseMetricCard(
+                              title: "Product",
+                              subtitle: "All registered products\nin active inventory",
+                              value: state.totalProducts.toString(),
+                              icon: Icons.inventory_2_outlined,
+                              iconColor: const Color(0xFF7C3AED),
+                              squircleBg: const Color(0xFFF5F3FF),
+                              squircleBorder: const Color(0xFFDDD6FE),
                             ),
                           ),
                           SizedBox(width: 12.w),
                           Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(16.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.w),
-                                border: Border.all(
-                                  color: const Color(0xFFF1F5F9),
-                                  width: 1.5.w,
+                            child: _buildWarehouseMetricCard(
+                              title: "Total Qty",
+                              subtitle: "Total combined units\navailable in stock",
+                              value: state.totalQty.toString(),
+                              unit: "items",
+                              icon: Icons.layers_outlined,
+                              iconColor: const Color(0xFF0D9488),
+                              squircleBg: const Color(0xFFF0FDFA),
+                              squircleBorder: const Color(0xFFCCFBF1),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+
+                    // ROW 2: INTERACTIVE ALERT METRICS (LOW STOCK & UPCOMING - REMAKE)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildWarehouseMetricCard(
+                              title: "Low Stock",
+                              subtitle: "All stock items that\nare low inventory",
+                              value: state.totalLowStock.toString(),
+                              unit: "Items",
+                              icon: Icons.warning_amber_rounded,
+                              iconColor: const Color(0xFFEF4444),
+                              squircleBg: const Color(0xFFFEF2F2),
+                              squircleBorder: const Color(0xFFFECDD3),
+                              cardBorderColor: const Color(0xFFFFE4E6),
+                              dividerColor: const Color(0xFFFFF1F2),
+                              pillText: "Now",
+                              pillBgColor: const Color(0xFFFEF2F2),
+                              pillBorderColor: const Color(0xFFFECDD3),
+                              pillColor: const Color(0xFFEF4444),
+                              onTap: () => context.push("/inventory_alerts/0"),
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: _buildWarehouseMetricCard(
+                              title: "Upcoming",
+                              subtitle: "All scheduled items\nfor incoming restock",
+                              value: state.totalUpcomingStock.toString(),
+                              unit: "Items",
+                              icon: Icons.calendar_month_outlined,
+                              iconColor: const Color(0xFF4F46E5),
+                              squircleBg: const Color(0xFFEEF2FF),
+                              squircleBorder: const Color(0xFFC7D2FE),
+                              pillText: "Now",
+                              pillBgColor: const Color(0xFFEEF2FF),
+                              pillBorderColor: const Color(0xFFC7D2FE),
+                              pillColor: const Color(0xFF4F46E5),
+                              onTap: () => context.push("/inventory_alerts/1"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 18.h),
+
+                    // QUICK ACTIONS (NAVIGATION BAR 6 STYLE WITH MIERP GRADIENT)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "Quick Actions",
+                                style: GoogleFonts.inter(
+                                  fontSize: 13.5.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF1E293B),
+                                  letterSpacing: -0.2,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.04),
-                                    blurRadius: 8.w,
-                                    offset: Offset(0, 4.h),
+                              ),
+                              SizedBox(width: 12.w),
+                              const Expanded(
+                                child: Divider(color: Color(0xFFF1F5F9), thickness: 1.2),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 12.h),
+                          QuickAddCard(
+                            title: "Add Product Order",
+                            onTap: () => context.push("/add_product_order"),
+                          ),
+                          SizedBox(height: 10.h),
+                          QuickAddCard(
+                            title: "Add New Unit",
+                            onTap: () => context.push("/add_unit"),
+                          ),
+                          SizedBox(height: 10.h),
+                          QuickAddCard(
+                            title: "Add Sales Order",
+                            onTap: () => context.push("/add_sales_order"),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 18.h),
+                    // INVENTORY ATTENTION / LOW STOCK FEED
+                    Builder(
+                      builder: (context) {
+                        final lowStockItems = state.listProduct
+                            .where((p) => p.quantity <= 10)
+                            .toList();
+                        final int totalLow = lowStockItems.length;
+
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Section Header
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: totalLow > 0
+                                          ? const Color(0xFFD97706)
+                                          : const Color(0xFF10B981),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: (totalLow > 0
+                                                  ? const Color(0xFFD97706)
+                                                  : const Color(0xFF10B981))
+                                              .withValues(alpha: 0.5),
+                                          blurRadius: 4.w,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    "Stok Perlu Perhatian",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14.sp,
+                                      color: const Color(0xFF0F172A),
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 7.w, vertical: 2.h),
+                                    decoration: BoxDecoration(
+                                      color: totalLow > 0
+                                          ? const Color(0xFFFEF3C7)
+                                          : const Color(0xFFD1FAE5),
+                                      borderRadius: BorderRadius.circular(10.w),
+                                    ),
+                                    child: Text(
+                                      "$totalLow Kritis",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: totalLow > 0
+                                            ? const Color(0xFFB45309)
+                                            : const Color(0xFF059669),
+                                      ),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () {
+                                      try {
+                                        context.read<MainPageCubit>().changeIndex(1);
+                                      } catch (_) {
+                                        context.push("/summary");
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          "Lihat Gudang",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12.sp,
+                                            color: const Color(0xFF7C3AED),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(width: 3.w),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          color: const Color(0xFF7C3AED),
+                                          size: 10.w,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                              SizedBox(height: 12.h),
+
+                              // Content Items or Clean Empty State
+                              if (totalLow == 0)
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 26.h, horizontal: 20.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.w),
+                                    border: Border.all(
+                                        color: const Color(0xFFF1F5F9),
+                                        width: 1.5.w),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.02),
+                                        blurRadius: 10.w,
+                                        offset: Offset(0, 4.w),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
                                     children: [
                                       Container(
-                                        width: 28.w,
-                                        height: 28.w,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF3E8FF),
-                                          borderRadius: BorderRadius.circular(
-                                            8.w,
-                                          ),
-                                          border: Border.all(
-                                            color: const Color(0xFFE9D5FF),
-                                            width: 1.w,
-                                          ),
+                                        width: 44.w,
+                                        height: 44.w,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xFFECFDF5),
                                         ),
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.layers_rounded,
-                                            color: const Color(0xFF7C3AED),
-                                            size: 16.w,
-                                          ),
+                                        child: Icon(
+                                          Icons.check_circle_outline_rounded,
+                                          color: const Color(0xFF059669),
+                                          size: 24.w,
                                         ),
                                       ),
-                                      SizedBox(width: 12.w),
-                                      Expanded(
-                                        child: Text(
-                                          state.totalQty.toString(),
-                                          style: GoogleFonts.inter(
-                                            color: const Color(0xFF334155),
-                                            fontSize: 22.sp,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: -0.5,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
+                                      SizedBox(height: 10.h),
+                                      Text(
+                                        "Ketersediaan Stok Aman",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF0F172A),
+                                        ),
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Text(
+                                        "Seluruh unit inventaris berada di atas batas minimum stok.",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11.5.sp,
+                                          color: const Color(0xFF64748B),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 12.h),
-                                  Text(
-                                    "Total Quantity",
-                                    style: GoogleFonts.inter(
-                                      color: const Color(0xFF64748B),
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-
-                    SizedBox(height: 22.h),
-                    QuickAddCard(
-                      title: "Add New Unit",
-                      onTap: () {
-                        context.push("/add_unit");
-                      },
-                    ),
-                    SizedBox(height: 22.h),
-                    QuickAddCard(
-                      title: "Add Sales Order",
-                      onTap: () {
-                        context.push("/add_sales_order");
-                      },
-                    ),
-                    SizedBox(height: 22.h),
-                    QuickAddCard(
-                      title: "Add Product Order",
-                      onTap: () {
-                        context.push("/add_product_order");
-                      },
-                    ),
-                    SizedBox(height: 22.h),
-                    Padding(
-                      padding: EdgeInsetsGeometry.symmetric(horizontal: 14.h),
-                      child: Container(
-                        width: 345.w,
-                        height: 49.h,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 8.h,
-                          horizontal: 22.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.shadowBox,
-                              spreadRadius: -3.w,
-                              offset: Offset(0, 4),
-                              blurRadius: 21.w,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(10.w),
-                        ),                          child: Center(
-                            child: Builder(
-                              builder: (context) {
-                                int selectedIndex = tabs.indexWhere((t) => t["collection"] == state.selectedTab);
-                                if (selectedIndex == -1) selectedIndex = 0;
-                                
-                                double alignmentX = -1.0;
-                                if (selectedIndex == 1) alignmentX = -0.333;
-                                if (selectedIndex == 2) alignmentX = 0.333;
-                                if (selectedIndex == 3) alignmentX = 1.0;
-
-                                return SizedBox(
-                                  width: 310.w,
-                                  height: 33.h,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      AnimatedAlign(
-                                        duration: const Duration(milliseconds: 300),
-                                        curve: Curves.easeOutQuart,
-                                        alignment: Alignment(alignmentX, 0),
-                                        child: Container(
-                                          width: 310.w / 4,
-                                          height: 33.h,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(55.w),
-                                            gradient: AppColors.premiumDarkGradient,
-                                          ),
-                                        ),
-                                      ),
-                                      Row(
-                                        children: tabs.map((e) {
-                                          final isActive = state.selectedTab == e['collection'];
-                                          return Expanded(
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                context.read<DashboardWarehouseBloc>().add(
-                                                  DashboardWarehouseTabChanged(e['collection']!),
-                                                );
-                                              },
-                                              child: Container(
-                                                height: 33.h,
-                                                color: Colors.transparent,
-                                                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                                child: Center(
-                                                  child: FittedBox(
-                                                    fit: BoxFit.scaleDown,
-                                                    child: AnimatedDefaultTextStyle(
-                                                      duration: const Duration(milliseconds: 300),
-                                                      curve: Curves.easeOutQuart,
-                                                      style: GoogleFonts.inter(
-                                                        fontSize: 11.sp,
-                                                        fontWeight: isActive ? AppFontWeight.bold : AppFontWeight.medium,
-                                                        color: isActive ? Colors.white : AppColors.charcoal,
-                                                      ),
-                                                      child: Text(e['title']!),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            ),
-                          ),
-                      ),
-                    ),
-                    SizedBox(height: 22.h),
-                    Padding(
-                      padding: EdgeInsetsGeometry.symmetric(horizontal: 24.h),
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Summary"),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.push("/summary");
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Text("View all"),
-                                      SizedBox(width: 5.w),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: AppColors.charcoal,
-                                        size: 10.w,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 22.h),
-                          Builder(
-                            builder: (context) {
-                              if (state.selectedTab == "all_summary") {
-                                if (state.selectedTab.isNotEmpty) {
-                                  return Container(
-                                    child: Column(
-                                      spacing: 4.h,
-                                      children: [
-                                        ...state.listAllSummary.take(2).map((
-                                          e,
-                                        ) {
-                                          switch (e.summaryType) {
-                                            case SummaryType.product:
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  context.push(
-                                                    "/detail_product/${e.data.id}",
-                                                  );
-                                                },
-                                                child: CardStock(
-                                                  idBarang: e.data.productCode,
-                                                  namaBarang:
-                                                      e.data.productName,
-                                                  quantity: e.data.quantity,
-                                                  unitPrice: e.data.unitPrice,
-                                                  lineTotal:
-                                                      e.data.unitPrice *
-                                                      e.data.quantity,
-                                                  type: e.data.category,
-                                                  image: e.data.imageProduct,
-                                                    createdOn: e.data.createdOn,
-                                                ),
-                                              );
-                                            case SummaryType.order:
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  context.push(
-                                                    "/detail_product_order/${e.data.id}",
-                                                  );
-                                                },
-                                                child: CardOrder(
-                                                  idOrder: e.data!.id,
-                                                  discountPercent: e.data!.discountPercent,
-                                                  discountMax: e.data!.discountMax,
-                                                  idBarang: e.data!.productCode,
-                                                  namaBarang:
-                                                      e.data!.productName,
-                                                  financeApproved:
-                                                      e.data!.financeApproved,
-                                                  createdOn: e.data!.orderDate,
-                                                  nameUser: e.data!.firstName,
-                                                  quantity: e.data!.quantity,
-                                                  unitPrice: e.data!.unitPrice,
-                                                  lineTotal: e.data!.totalCost,
-                                                  imageProduct:
-                                                      e.data!.imageProduct,
-                                                  onPayPressed: () {},
-                                                ),
-                                              );
-                                            case SummaryType.salesOrder:
-                                              return GestureDetector(
-                                                onTap: () async {
-                                                  context.push(
-                                                    "/detail_sales_order/${e.data.id}",
-                                                  );
-                                                },
-                                                child: CardSales(
-                                                  idBarang: e.data.productCode,
-                                                  namaBarang:
-                                                      e.data.productName,
-                                                  financeApproved:
-                                                      e.data.financeApproved,
-                                                  createdOn:
-                                                      e.data.purchasedDate,
-                                                  nameUser: e.data.firstName,
-                                                  quantity: e.data.quantity,
-                                                  unitPrice: e.data.unitPrice,
-                                                  lineTotal: e.data.totalPrice,
-                                                  nameCustomer:
-                                                      e.data.companyName,
-                                                  imageProduct:
-                                                      e.data.imageProduct,
-                                                ),
-                                              );
-                                          }
-                                        }),
-                                        SizedBox(height: 5.w),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return CircularProgressIndicator();
-                                }
-                              } else if (state.selectedTab == "products") {
-                                if (state.selectedTab.isNotEmpty) {
-                                  return Container(
-                                    child: Column(
-                                      spacing: 4.h,
-                                      children: [
-                                        ...state.listProduct
-                                            .take(2)
-                                            .map(
-                                              (product) => GestureDetector(
-                                                onTap: () {
-                                                  context.push(
-                                                    "/detail_product/${product.id}",
-                                                  );
-                                                },
-                                                child: CardStock(
-                                                  idBarang:
-                                                      product.productCode,
-                                                  namaBarang:
-                                                      product.productName,
-                                                  quantity: product.quantity,
-                                                  unitPrice: product.unitPrice,
-                                                  lineTotal:
-                                                      product.unitPrice *
-                                                      product.quantity,
-                                                  type: product.category,
-                                                  image: product.imageProduct,
-                                                    createdOn: product.createdOn,
-                                                ),
-                                              ),
-                                            )
-                                            ,
-                                        SizedBox(height: 5.w),
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return CircularProgressIndicator();
-                                }
-                              } else if (state.selectedTab ==
-                                  "warehouse_order") {
-                                if (state.listOrder.isNotEmpty) {
-                                  return Column(
-                                    spacing: 4.h,
-                                    children: [
-                                      ...state.listOrder.take(2).map((data) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            context.push(
-                                              "/detail_product_order/${data.id}",
-                                            );
-                                          },
-                                          child: CardOrder(
-                                            idOrder: data.id,
-                                            idBarang: data.productCode,
-                                            namaBarang: data.productName,
-                                            financeApproved:
-                                                data.financeApproved,
-                                            createdOn: data.orderDate,
-                                            nameUser: data.firstName,
-                                            quantity: data.quantity,
-                                            unitPrice: data.unitPrice,
-                                            lineTotal: data.totalCost,
-                                            imageProduct: data.imageProduct,
-                                            onPayPressed: () {},
-                                          ),
-                                        );
-                                      }),
-                                      SizedBox(height: 5.w),
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator();
-                                }
-                              } else {
-                                return Column(
-                                  spacing: 4.h,
+                                )
+                              else
+                                Column(
+                                  spacing: 10.w,
                                   children: [
-                                    ...state.listSalesOrder
-                                        .take(2)
-                                        .map(
-                                          (e) => GestureDetector(
-                                            onTap: () async {
-                                              context.push(
-                                                "/detail_sales_order/${e.id}",
-                                              );
-                                            },
-                                            child: CardSales(
-                                              idBarang: e.productCode,
-                                              namaBarang: e.productName,
-                                              financeApproved:
-                                                  e.financeApproved,
-                                              createdOn: e.purchasedDate,
-                                              nameUser: e.firstName,
-                                              quantity: e.quantity,
-                                              unitPrice: e.unitPrice,
-                                              lineTotal: e.totalPrice,
-                                              nameCustomer: e.companyName,
-                                              imageProduct: e.imageProduct,
-                                            ),
-                                          ),
-                                        )
-                                        ,
-                                    SizedBox(height: 5.w),
+                                    ...lowStockItems.take(3).map((product) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context.push(
+                                            "/detail_product/${product.id}",
+                                          );
+                                        },
+                                        child: CardStock(
+                                          idBarang: product.productCode,
+                                          namaBarang: product.productName,
+                                          quantity: product.quantity,
+                                          unitPrice: product.unitPrice,
+                                          lineTotal: product.unitPrice * product.quantity,
+                                          type: product.category,
+                                          image: product.imageProduct,
+                                          createdOn: product.createdOn,
+                                        ),
+                                      );
+                                    }),
                                   ],
-                                );
-                              }
-                            },
+                                ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     SizedBox(height: 4.h),
                   ],
@@ -722,4 +516,189 @@ class DashboardWarehouseView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildWarehouseMetricCard({
+    required String title,
+    required String subtitle,
+    required String value,
+    String? unit,
+    required IconData icon,
+    required Color iconColor,
+    required Color squircleBg,
+    required Color squircleBorder,
+    Color? cardBorderColor,
+    Color? dividerColor,
+    String? pillText,
+    Color? pillBgColor,
+    Color? pillBorderColor,
+    Color? pillColor,
+    VoidCallback? onTap,
+  }) {
+    final cardContent = Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.w),
+        border: Border.all(
+          color: cardBorderColor ?? const Color(0xFFF1F5F9),
+          width: 1.2.w,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+            blurRadius: 12.w,
+            offset: Offset(0, 4.h),
+          ),
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+            blurRadius: 4.w,
+            offset: Offset(0, 1.h),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 1. Header Row (Title + Symmetrical Squircle Icon 32x32)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    fontSize: 14.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF334155),
+                    letterSpacing: -0.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: squircleBg,
+                  borderRadius: BorderRadius.circular(10.w),
+                  border: Border.all(color: squircleBorder, width: 1.w),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: 17.w,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 6.h),
+          // 2. Contextual 2-Line Subtitle
+          Text(
+            subtitle,
+            style: GoogleFonts.inter(
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF94A3B8),
+              height: 1.25,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 8.h),
+          // 3. Subtle Hairline Divider
+          Divider(
+            color: dividerColor ?? const Color(0xFFF1F5F9),
+            height: 1.w,
+            thickness: 1.w,
+          ),
+          SizedBox(height: 10.h),
+          // 4. Bottom Metric Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: value,
+                    style: GoogleFonts.inter(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF334155),
+                      letterSpacing: -0.4,
+                    ),
+                    children: unit != null
+                        ? [
+                            TextSpan(
+                              text: " $unit",
+                              style: GoogleFonts.inter(
+                                fontSize: 11.5.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF64748B),
+                                letterSpacing: 0,
+                              ),
+                            ),
+                          ]
+                        : null,
+                  ),
+                ),
+              ),
+              if (pillText != null)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                  decoration: BoxDecoration(
+                    color: pillBgColor,
+                    borderRadius: BorderRadius.circular(10.w),
+                    border: pillBorderColor != null
+                        ? Border.all(color: pillBorderColor, width: 0.8.w)
+                        : null,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 5.w,
+                        height: 5.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: pillColor,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        pillText,
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5.sp,
+                          fontWeight: FontWeight.w600,
+                          color: pillColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (onTap == null) {
+      return cardContent;
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14.w),
+      child: cardContent,
+    );
+  }
+
 }

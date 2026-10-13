@@ -42,22 +42,32 @@ class SalesOrder {
     required String? docId,
   }) => SalesOrder(
     id: docId,
-    companyName: json["company_name"],
-    financeApproved: json["finance_approved"],
-    financeApprovedDate: json["finance_approved_date"] ?? '',
-    firstName: json["first_name"],
-    paymentStatus: json["payment_status"],
-    productCode: json["product_code"],
-    productId: json["product_id"],
-    productName: json["product_name"],
-    purchasedDate: json["purchased_date"],
-    quantity: json["quantity"],
-    totalPrice: json["total_price"],
-    unitPrice: json["unit_price"],
-    discountPercent: json["discount_percent"],
-    discountMax: json["discount_max"],
-    userId: json["user_id"],
-    imageProduct: json["image_product"],
+    companyName: json["company_name"]?.toString() ?? '',
+    financeApproved: json["finance_approved"] == true,
+    financeApprovedDate: json["finance_approved_date"]?.toString() ?? '',
+    firstName: json["first_name"]?.toString() ?? '',
+    paymentStatus: json["payment_status"] == true,
+    productCode: json["product_code"]?.toString() ?? '',
+    productId: json["product_id"]?.toString() ?? '',
+    productName: json["product_name"]?.toString() ?? '',
+    purchasedDate: json["purchased_date"]?.toString() ?? '',
+    quantity: (json["quantity"] is num)
+        ? (json["quantity"] as num).toInt()
+        : (int.tryParse(json["quantity"]?.toString() ?? '0') ?? 0),
+    totalPrice: (json["total_price"] is num)
+        ? (json["total_price"] as num).toInt()
+        : (int.tryParse(json["total_price"]?.toString() ?? '0') ?? 0),
+    unitPrice: (json["unit_price"] is num)
+        ? (json["unit_price"] as num).toInt()
+        : (int.tryParse(json["unit_price"]?.toString() ?? '0') ?? 0),
+    discountPercent: (json["discount_percent"] is num)
+        ? (json["discount_percent"] as num).toInt()
+        : int.tryParse(json["discount_percent"]?.toString() ?? ''),
+    discountMax: (json["discount_max"] is num)
+        ? (json["discount_max"] as num).toInt()
+        : int.tryParse(json["discount_max"]?.toString() ?? ''),
+    userId: json["user_id"]?.toString() ?? '',
+    imageProduct: json["image_product"]?.toString() ?? '',
   );
 
   Map<String, dynamic> toJson() => {
