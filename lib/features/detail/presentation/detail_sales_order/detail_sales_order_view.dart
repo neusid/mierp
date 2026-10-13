@@ -534,7 +534,7 @@ class DetailSalesOrderView extends StatelessWidget {
                                                       ? "REJECTED"
                                                       : (state.salesOrder!.financeApproved ?? false) ? "PAID" : "UNPAID",
                                                   style: GoogleFonts.inter(
-                                                    fontSize: 9.sp,
+                                                    fontSize: 9.w,
                                                     fontWeight: AppFontWeight.bold,
                                                     color: Colors.white,
                                                     letterSpacing: 0.5,

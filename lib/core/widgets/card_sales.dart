@@ -250,8 +250,8 @@ class CardSales extends StatelessWidget {
                         ),
                         SizedBox(width: 8.w),
 
-                        // Right: Pay Now Button or Status Badge
-                        if (rejected)
+                        // Right: Pay Now Button (Finance) or Status Badge (Warehouse / Status)
+                        if (isFinance && rejected)
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                             decoration: BoxDecoration(
@@ -313,11 +313,19 @@ class CardSales extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                             decoration: BoxDecoration(
-                              color: isApproved ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+                              color: rejected
+                                  ? const Color(0xFFDC2626)
+                                  : isApproved
+                                      ? const Color(0xFF00AA13)
+                                      : const Color(0xFFED2736),
                               borderRadius: BorderRadius.circular(8.w),
                             ),
                             child: Text(
-                              isApproved ? "PAID" : "UNPAID",
+                              rejected
+                                  ? "REJECTED"
+                                  : isApproved
+                                      ? "PAID"
+                                      : "UNPAID",
                               style: GoogleFonts.inter(
                                 fontSize: 9.5.w,
                                 fontWeight: AppFontWeight.bold,
