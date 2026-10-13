@@ -164,13 +164,13 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @override
-  Future<void> rejectProductOrderInvoice(docId, reason, date) async {
+  Future<void> rejectProductOrderInvoice(String docId, String reason, String date) async {
     try {
-      final orderRef = firestore.collection("warehouse_orders").doc(docId.toString());
+      final orderRef = firestore.collection("warehouse_orders").doc(docId);
       await orderRef.update({
         'is_rejected': true,
-        'rejection_reason': reason ?? '',
-        'rejected_date': date.toString(),
+        'rejection_reason': reason,
+        'rejected_date': date,
         'finance_approved': false,
       });
     } catch (e) {
@@ -180,13 +180,13 @@ class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   @override
-  Future<void> rejectSalesOrderInvoice(docId, reason, date) async {
+  Future<void> rejectSalesOrderInvoice(String docId, String reason, String date) async {
     try {
-      final salesRef = firestore.collection("sales_orders").doc(docId.toString());
+      final salesRef = firestore.collection("sales_orders").doc(docId);
       await salesRef.update({
         'is_rejected': true,
-        'rejection_reason': reason ?? '',
-        'rejected_date': date.toString(),
+        'rejection_reason': reason,
+        'rejected_date': date,
         'finance_approved': false,
       });
     } catch (e) {
