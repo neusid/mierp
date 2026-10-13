@@ -130,6 +130,67 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 
+  /// Mengirimkan notifikasi uji coba ke Firestore yang akan ditangkap oleh listener realtime
+  Future<void> sendTestNotification({
+    String? role,
+    String? type,
+    String? title,
+    String? message,
+    String? orderId,
+    String? orderType,
+    String? productName,
+  }) async {
+    try {
+      final target = (role != null && role.isNotEmpty)
+          ? role.trim().toLowerCase()
+          : (state.activeRole.isNotEmpty ? state.activeRole : 'finance');
+
+      final defaultType =
+          target == 'finance' ? 'new_sales_order' : 'order_approved';
+      final defaultTitle = target == 'finance'
+          ? 'Sales Order Baru #SO-TEST'
+          : 'Order Disetujui #SO-TEST';
+      final defaultMessage = target == 'finance'
+          ? 'Pesanan penjualan baru telah dibuat dari Warehouse dan menunggu persetujuan.'
+          : 'Pesanan telah disetujui & diverifikasi oleh Finance.';
+
+      await _notificationRepository.sendNotification(
+        targetRole: target,
+        type: type ?? defaultType,
+        title: title ?? defaultTitle,
+        message: message ?? defaultMessage,
+        orderId:
+            orderId ?? 'TEST-${DateTime.now().millisecondsSinceEpoch % 10000}',
+        orderType: orderType ?? 'sales_order',
+        productName: productName ?? 'Produk Sampel Uji Coba',
+      );
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  /// Menembak notifikasi lokal ke bar notifikasi HP secara langsung untuk uji coba instan
+  Future<void> triggerLocalNotificationTest({
+    String? title,
+    String? body,
+    String? orderId,
+    String? orderType,
+  }) async {
+    try {
+      await _fcmNotificationService.showNotification(
+        title: title ?? '🔔 Uji Coba Status Bar MiERP',
+        body: body ??
+            'Notifikasi FCM Status Bar & Heads-up Banner berhasil diterima!',
+        payload: jsonEncode({
+          'order_id': orderId ?? 'TEST-999',
+          'order_type': orderType ?? 'sales_order',
+        }),
+      );
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
   void clearLatestIncoming() {
     emit(state.copyWith(clearLatestIncoming: true));
   }

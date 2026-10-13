@@ -302,5 +302,157 @@ void main() {
       await cubit.deleteNotification('notif_xyz');
       expect(fakeRepository.lastDeletedId, 'notif_xyz');
     });
+
+    test('New incoming notification arriving after init should trigger FCM showNotification', () async {
+      await cubit.init('finance');
+
+      // 1. Initial emission
+      fakeRepository.emit([]);
+      await pumpEventQueue();
+
+      expect(fakeFcmService.lastShownTitle, isNull);
+
+      // 2. Incoming notification arrives live
+      final newNotif = NotificationModel(
+        id: 'live_notif_1',
+        targetRole: 'finance',
+        type: 'new_sales_order',
+        title: 'Pesanan Penjualan Baru',
+        message: 'Pesanan Macbook Pro siap diproses.',
+        orderId: 'SO-100',
+        orderType: 'sales_order',
+        productName: 'Macbook Pro',
+        isRead: false,
+        createdAt: DateTime.now(),
+      );
+
+      fakeRepository.emit([newNotif]);
+      await pumpEventQueue();
+
+      expect(fakeFcmService.lastShownTitle, 'Pesanan Penjualan Baru');
+      expect(fakeFcmService.lastShownBody, 'Pesanan Macbook Pro siap diproses.');
+    });
+
+    test('sendTestNotification should send notification with default role finance', () async {
+      await cubit.init('finance');
+      await cubit.sendTestNotification();
+
+      expect(fakeRepository.lastSentNotification, isNotNull);
+      expect(fakeRepository.lastSentNotification!['targetRole'], 'finance');
+      expect(fakeRepository.lastSentNotification!['type'], 'new_sales_order');
+    });
+
+    test('sendTestNotification should send notification with custom parameters for warehouse', () async {
+      await cubit.sendTestNotification(
+        role: 'warehouse',
+        type: 'order_approved',
+        title: 'Order Disetujui',
+        message: 'Invoice telah lunas.',
+        orderId: 'SO-888',
+        orderType: 'sales_order',
+        productName: 'Monitor 27',
+      );
+
+      expect(fakeRepository.lastSentNotification, isNotNull);
+      expect(fakeRepository.lastSentNotification!['targetRole'], 'warehouse');
+      expect(fakeRepository.lastSentNotification!['type'], 'order_approved');
+      expect(fakeRepository.lastSentNotification!['title'], 'Order Disetujui');
+      expect(fakeRepository.lastSentNotification!['message'], 'Invoice telah lunas.');
+      expect(fakeRepository.lastSentNotification!['orderId'], 'SO-888');
+      expect(fakeRepository.lastSentNotification!['productName'], 'Monitor 27');
+    });
+
+    test('triggerLocalNotificationTest should call fcm showNotification directly', () async {
+      await cubit.triggerLocalNotificationTest(
+        title: 'Test Status Bar HP',
+        body: 'Notifikasi heads-up langsung',
+        orderId: 'SO-999',
+        orderType: 'sales_order',
+      );
+
+      expect(fakeFcmService.lastShownTitle, 'Test Status Bar HP');
+      expect(fakeFcmService.lastShownBody, 'Notifikasi heads-up langsung');
+    });
+  });
+
+  group('Notification Trigger Pipeline Simulation Tests', () {
+    late FakeNotificationRepository fakeRepo;
+
+    setUp(() {
+      fakeRepo = FakeNotificationRepository();
+    });
+
+    tearDown(() {
+      fakeRepo.dispose();
+    });
+
+    test('Warehouse creates Sales Order -> should trigger notification to Finance', () async {
+      await fakeRepo.sendNotification(
+        targetRole: 'finance',
+        type: 'new_sales_order',
+        title: 'Sales Order Baru',
+        message: 'Sales Order untuk iPhone 15 Pro telah dibuat dan menunggu pembayaran.',
+        orderId: 'SO-101',
+        orderType: 'sales_order',
+        productName: 'iPhone 15 Pro',
+      );
+
+      expect(fakeRepo.lastSentNotification, isNotNull);
+      expect(fakeRepo.lastSentNotification!['targetRole'], 'finance');
+      expect(fakeRepo.lastSentNotification!['type'], 'new_sales_order');
+      expect(fakeRepo.lastSentNotification!['orderId'], 'SO-101');
+      expect(fakeRepo.lastSentNotification!['productName'], 'iPhone 15 Pro');
+    });
+
+    test('Warehouse creates Product Order -> should trigger notification to Finance', () async {
+      await fakeRepo.sendNotification(
+        targetRole: 'finance',
+        type: 'new_product_order',
+        title: 'Product Order Baru',
+        message: 'Product Order untuk Monitor 27" telah dibuat dan menunggu pembayaran.',
+        orderId: 'WO-202',
+        orderType: 'product_order',
+        productName: 'Monitor 27"',
+      );
+
+      expect(fakeRepo.lastSentNotification, isNotNull);
+      expect(fakeRepo.lastSentNotification!['targetRole'], 'finance');
+      expect(fakeRepo.lastSentNotification!['type'], 'new_product_order');
+      expect(fakeRepo.lastSentNotification!['orderId'], 'WO-202');
+    });
+
+    test('Finance approves/pays Sales Order -> should trigger notification to Warehouse', () async {
+      await fakeRepo.sendNotification(
+        targetRole: 'warehouse',
+        type: 'order_approved',
+        title: 'Sales Order Disetujui',
+        message: 'Sales Order SO-101 telah diverifikasi dan dibayar oleh Finance.',
+        orderId: 'SO-101',
+        orderType: 'sales_order',
+        productName: 'iPhone 15 Pro',
+      );
+
+      expect(fakeRepo.lastSentNotification, isNotNull);
+      expect(fakeRepo.lastSentNotification!['targetRole'], 'warehouse');
+      expect(fakeRepo.lastSentNotification!['type'], 'order_approved');
+    });
+
+    test('Finance rejects Sales Order -> should trigger notification to Warehouse with reason', () async {
+      final rejectReason = 'Bukti transfer tidak valid atau belum masuk mutasi bank.';
+      await fakeRepo.sendNotification(
+        targetRole: 'warehouse',
+        type: 'order_rejected',
+        title: 'Sales Order Ditolak',
+        message: 'Sales Order SO-101 ditolak oleh Finance. Alasan: $rejectReason',
+        orderId: 'SO-101',
+        orderType: 'sales_order',
+        productName: 'iPhone 15 Pro',
+      );
+
+      expect(fakeRepo.lastSentNotification, isNotNull);
+      expect(fakeRepo.lastSentNotification!['targetRole'], 'warehouse');
+      expect(fakeRepo.lastSentNotification!['type'], 'order_rejected');
+      expect(fakeRepo.lastSentNotification!['message'], contains(rejectReason));
+    });
   });
 }

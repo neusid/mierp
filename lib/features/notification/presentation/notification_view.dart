@@ -323,7 +323,28 @@ class _NotificationViewState extends State<NotificationView> {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(height: 60.h),
+          SizedBox(height: 20.h),
+          ElevatedButton.icon(
+            onPressed: () => _showTestTriggerSheet(context),
+            icon: Icon(Icons.science_outlined, size: 18.w),
+            label: Text(
+              "Kirim Test Notifikasi",
+              style: GoogleFonts.inter(
+                fontSize: 13.sp,
+                fontWeight: AppFontWeight.semiBold,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1E293B),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.w),
+              ),
+            ),
+          ),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -332,7 +353,8 @@ class _NotificationViewState extends State<NotificationView> {
   Widget _buildAppBar(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 16.h, bottom: 16.h),
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 16.h, bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -377,6 +399,42 @@ class _NotificationViewState extends State<NotificationView> {
             ),
           ),
           const Spacer(),
+          // Test trigger button
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              _showTestTriggerSheet(context);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(20.w),
+                border:
+                    Border.all(color: const Color(0xFFCBD5E1), width: 1.w),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.science_outlined,
+                    size: 14.w,
+                    color: const Color(0xFF475569),
+                  ),
+                  SizedBox(width: 4.w),
+                  Text(
+                    "Test",
+                    style: GoogleFonts.inter(
+                      fontSize: 12.sp,
+                      fontWeight: AppFontWeight.semiBold,
+                      color: const Color(0xFF475569),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
           GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
@@ -400,6 +458,245 @@ class _NotificationViewState extends State<NotificationView> {
           ),
           SizedBox(width: 24.w),
         ],
+      ),
+    );
+  }
+
+  void _showTestTriggerSheet(BuildContext parentContext) {
+    final cubit = parentContext.read<NotificationCubit>();
+    showModalBottomSheet(
+      context: parentContext,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.w)),
+          ),
+          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2.w),
+                ),
+              ),
+              SizedBox(height: 18.h),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(10.w),
+                    ),
+                    child: Icon(
+                      Icons.science_rounded,
+                      color: const Color(0xFF3B82F6),
+                      size: 20.w,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Uji Coba Trigger Notifikasi",
+                          style: GoogleFonts.inter(
+                            fontSize: 16.sp,
+                            fontWeight: AppFontWeight.bold,
+                            color: const Color(0xFF0F172A),
+                          ),
+                        ),
+                        Text(
+                          "Pilih skenario simulasi notifikasi",
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            fontWeight: AppFontWeight.regular,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              _buildTriggerItem(
+                icon: Icons.point_of_sale_rounded,
+                iconColor: const Color(0xFF3B82F6),
+                bgColor: const Color(0xFFEFF6FF),
+                title: "Sales Order Baru (Finance)",
+                description: "Warehouse membuat sales order baru",
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  cubit.sendTestNotification(
+                    role: 'finance',
+                    type: 'new_sales_order',
+                    title: 'Sales Order Baru #SO-8821',
+                    message:
+                        'Pesanan penjualan untuk ASUS ROG Zephyrus siap diproses.',
+                    orderId: 'SO-8821',
+                    orderType: 'sales_order',
+                    productName: 'ASUS ROG Zephyrus',
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              _buildTriggerItem(
+                icon: Icons.inventory_2_outlined,
+                iconColor: const Color(0xFFD97706),
+                bgColor: const Color(0xFFFEF3C7),
+                title: "Product Order Baru (Finance)",
+                description: "Warehouse membuat pesanan produk baru",
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  cubit.sendTestNotification(
+                    role: 'finance',
+                    type: 'new_product_order',
+                    title: 'Product Order Baru #WO-3301',
+                    message:
+                        'Pesanan produk untuk Monitor LG 27 Inch siap diproses.',
+                    orderId: 'WO-3301',
+                    orderType: 'product_order',
+                    productName: 'Monitor LG 27 Inch',
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              _buildTriggerItem(
+                icon: Icons.check_circle_outline_rounded,
+                iconColor: const Color(0xFF16A34A),
+                bgColor: const Color(0xFFF0FDF4),
+                title: "Order Disetujui (Warehouse)",
+                description: "Finance menyetujui & menandai lunas",
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  cubit.sendTestNotification(
+                    role: 'warehouse',
+                    type: 'order_approved',
+                    title: 'Order Disetujui & Lunas #SO-8821',
+                    message:
+                        'Pesanan penjualan telah diverifikasi dan lunas oleh Finance.',
+                    orderId: 'SO-8821',
+                    orderType: 'sales_order',
+                    productName: 'ASUS ROG Zephyrus',
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              _buildTriggerItem(
+                icon: Icons.cancel_outlined,
+                iconColor: const Color(0xFFEF4444),
+                bgColor: const Color(0xFFFEF2F2),
+                title: "Order Ditolak (Warehouse)",
+                description: "Finance menolak order dengan alasan",
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  cubit.sendTestNotification(
+                    role: 'warehouse',
+                    type: 'order_rejected',
+                    title: 'Order Ditolak #SO-8821',
+                    message:
+                        'Pesanan ditolak oleh Finance: Bukti transfer tidak terbaca.',
+                    orderId: 'SO-8821',
+                    orderType: 'sales_order',
+                    productName: 'ASUS ROG Zephyrus',
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              _buildTriggerItem(
+                icon: Icons.notifications_active_rounded,
+                iconColor: const Color(0xFF7C3AED),
+                bgColor: const Color(0xFFF5F3FF),
+                title: "Instant Push Bar HP (Lokal)",
+                description: "Tembak langsung ke status bar HP saat ini juga",
+                onTap: () {
+                  Navigator.pop(bottomSheetContext);
+                  cubit.triggerLocalNotificationTest();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTriggerItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color bgColor,
+    required String title,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(14.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(14.w),
+          border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(10.w),
+              ),
+              child: Center(
+                child: Icon(icon, color: iconColor, size: 18.w),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.inter(
+                      fontSize: 13.sp,
+                      fontWeight: AppFontWeight.semiBold,
+                      color: const Color(0xFF0F172A),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    description,
+                    style: GoogleFonts.inter(
+                      fontSize: 11.sp,
+                      fontWeight: AppFontWeight.regular,
+                      color: const Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: const Color(0xFF94A3B8),
+              size: 18.w,
+            ),
+          ],
+        ),
       ),
     );
   }
