@@ -7,13 +7,17 @@ import 'package:mierp_apps/core/di/injection_container.dart' as di;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:mierp_apps/core/services/fcm_notification_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   await di.init();
+  await di.sl<FcmNotificationService>().init();
   runApp(const MierpApps());
 }
 

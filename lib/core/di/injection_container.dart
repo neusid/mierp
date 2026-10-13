@@ -49,6 +49,7 @@ import 'package:mierp_apps/data/finance/services/detail_product_services.dart';
 import 'package:mierp_apps/domain/transaction/repository/transaction_repository.dart';
 import 'package:mierp_apps/data/transaction/transaction_repository_impl.dart';
 import 'package:mierp_apps/data/transaction/services/transaction_services.dart';
+import 'package:mierp_apps/core/services/fcm_notification_service.dart';
 import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 
@@ -72,10 +73,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DetailProductServices(itemRepository: sl()));
   sl.registerLazySingleton<TransactionRepository>(() => TransactionRepositoryImpl(firestore: sl()));
   sl.registerLazySingleton<TransactionServices>(() => TransactionServices(itemRepository: sl(), itemStore: sl(), transactionRepository: sl()));
+  sl.registerLazySingleton(() => FcmNotificationService());
   sl.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(firestore: sl()));
   sl.registerLazySingleton(() => NotificationCubit(
         notificationRepository: sl(),
         userDataController: sl(),
+        fcmNotificationService: sl(),
       ));
   
   /// --------------------------------------------------------------------------

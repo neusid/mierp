@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
+import 'package:mierp_apps/core/services/fcm_notification_service.dart';
 import 'package:mierp_apps/features/notification/data/models/notification_model.dart';
 import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
@@ -9,6 +11,7 @@ import 'package:mierp_apps/features/notification/presentation/cubit/notification
 class NotificationCubit extends Cubit<NotificationState> {
   final NotificationRepository _notificationRepository;
   final UserDataController _userDataController;
+  final FcmNotificationService _fcmNotificationService;
   StreamSubscription<List<NotificationModel>>? _subscription;
   Set<String> _knownIds = {};
   bool _isFirstEmission = true;
@@ -16,10 +19,13 @@ class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit({
     NotificationRepository? notificationRepository,
     UserDataController? userDataController,
+    FcmNotificationService? fcmNotificationService,
   })  : _notificationRepository =
             notificationRepository ?? sl<NotificationRepository>(),
         _userDataController =
             userDataController ?? sl<UserDataController>(),
+        _fcmNotificationService =
+            fcmNotificationService ?? sl<FcmNotificationService>(),
         super(const NotificationState());
 
   Future<void> init([String? roleOverride]) async {
@@ -38,6 +44,9 @@ class NotificationCubit extends Cubit<NotificationState> {
       final normalizedRole = role.trim().toLowerCase();
       emit(state.copyWith(activeRole: normalizedRole));
 
+      // Subscribe to role topic on FCM for push notification routing
+      await _fcmNotificationService.subscribeToRoleTopic(normalizedRole);
+
       await _subscription?.cancel();
       _isFirstEmission = true;
       _knownIds.clear();
@@ -45,7 +54,7 @@ class NotificationCubit extends Cubit<NotificationState> {
       _subscription = _notificationRepository
           .streamNotifications(normalizedRole)
           .listen(
-        (notifications) {
+        (notifications) async {
           final unreadCount =
               notifications.where((item) => !item.isRead).length;
 
@@ -62,6 +71,18 @@ class NotificationCubit extends Cubit<NotificationState> {
 
           _knownIds = notifications.map((n) => n.id).toSet();
           _isFirstEmission = false;
+
+          // Trigger native notification in the Android status bar / notification tray
+          if (newIncoming != null) {
+            await _fcmNotificationService.showNotification(
+              title: newIncoming.title,
+              body: newIncoming.message,
+              payload: jsonEncode({
+                'order_id': newIncoming.orderId,
+                'order_type': newIncoming.orderType,
+              }),
+            );
+          }
 
           emit(state.copyWith(
             notifications: notifications,

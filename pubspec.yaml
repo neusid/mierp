@@ -62,6 +62,8 @@ dependencies:
   http: any
   path: any
   fl_chart: ^0.70.0
+  firebase_messaging: ^16.7.0
+  flutter_local_notifications: ^22.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

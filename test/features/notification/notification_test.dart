@@ -4,6 +4,7 @@ import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/features/notification/data/models/notification_model.dart';
 import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
+import 'package:mierp_apps/core/services/fcm_notification_service.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 
 // --- FAKE REPOSITORY FOR UNIT TESTING ---
@@ -78,6 +79,32 @@ class FakeUserDataController extends UserDataController {
   }
 }
 
+// --- FAKE FCM NOTIFICATION SERVICE FOR UNIT TESTING ---
+class FakeFcmNotificationService extends FcmNotificationService {
+  String? subscribedRole;
+  String? lastShownTitle;
+  String? lastShownBody;
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Future<void> subscribeToRoleTopic(String role) async {
+    subscribedRole = role;
+  }
+
+  @override
+  Future<void> showNotification({
+    required String title,
+    required String body,
+    String? payload,
+    int? id,
+  }) async {
+    lastShownTitle = title;
+    lastShownBody = body;
+  }
+}
+
 void main() {
   group('NotificationModel & Entity Tests', () {
     test('NotificationModel should serialize to Firestore map correctly', () {
@@ -135,10 +162,12 @@ void main() {
   group('NotificationCubit Unit Tests', () {
     late FakeNotificationRepository fakeRepository;
     late FakeUserDataController fakeUserDataController;
+    late FakeFcmNotificationService fakeFcmService;
     late NotificationCubit cubit;
 
     setUp(() {
       fakeRepository = FakeNotificationRepository();
+      fakeFcmService = FakeFcmNotificationService();
       fakeUserDataController = FakeUserDataController(
         UserModel(
           uid: 'uid_test',
@@ -152,6 +181,7 @@ void main() {
       cubit = NotificationCubit(
         notificationRepository: fakeRepository,
         userDataController: fakeUserDataController,
+        fcmNotificationService: fakeFcmService,
       );
     });
 
