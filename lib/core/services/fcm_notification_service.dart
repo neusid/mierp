@@ -52,6 +52,14 @@ class FcmNotificationService {
       );
       debugPrint("FCM Notification Permission status: ${settings.authorizationStatus}");
 
+      // Log FCM device token for direct testing via Firebase Console
+      try {
+        final token = await _fcm.getToken();
+        debugPrint("🔑 [FCM Token]: $token");
+      } catch (tokenErr) {
+        debugPrint("Could not retrieve FCM token: $tokenErr");
+      }
+
       // 2. Setup Android notification channel
       await _localNotifications
           .resolvePlatformSpecificImplementation<
