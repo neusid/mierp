@@ -185,6 +185,140 @@ class DetailProductOrderView extends StatelessWidget {
     );
   }
 
+  void _showRejectDialog(BuildContext context, String orderId) {
+    final reasonController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
+        ),
+        child: Center(
+          child: Container(
+            width: 320.w,
+            padding: EdgeInsets.all(24.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.w),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFEF2F2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.cancel_outlined, color: const Color(0xFFDC2626), size: 36.w),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  "Tolak Tagihan Invoice?",
+                  style: GoogleFonts.inter(
+                    fontSize: 16.sp,
+                    color: const Color(0xFF0F172A),
+                    fontWeight: AppFontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  "Berikan alasan penolakan agar tim gudang dapat mengetahui kendala tagihan ini.",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 12.sp,
+                    color: const Color(0xFF64748B),
+                    fontWeight: AppFontWeight.regular,
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                TextField(
+                  controller: reasonController,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    hintText: "Contoh: Harga tidak sesuai atau pesanan duplikat",
+                    hintStyle: GoogleFonts.inter(fontSize: 12.sp, color: const Color(0xFF94A3B8)),
+                    filled: true,
+                    fillColor: const Color(0xFFF8FAFC),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.w),
+                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.w),
+                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.w),
+                      borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1.5),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                  ),
+                  style: GoogleFonts.inter(fontSize: 12.sp, color: const Color(0xFF0F172A)),
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(bottomSheetContext),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF1F5F9),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.w)),
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                        ),
+                        child: Text(
+                          "Batal",
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF475569),
+                            fontWeight: AppFontWeight.semiBold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          final reason = reasonController.text.trim();
+                          Navigator.pop(bottomSheetContext);
+                          context.read<DetailProductOrderBloc>().add(
+                            DetailProductOrderRejectRequested(orderId, reason.isNotEmpty ? reason : "Ditolak oleh Finance"),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDC2626),
+                            borderRadius: BorderRadius.circular(12.w),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Tolak",
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                color: Colors.white,
+                                fontWeight: AppFontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -210,6 +344,8 @@ class DetailProductOrderView extends StatelessWidget {
             } else {
               CustomTopSnackbar.success(context, state.successMessage);
             }
+          } else if (state.status == DetailProductOrderStatus.rejectSuccess) {
+            CustomTopSnackbar.success(context, state.successMessage);
           } else if (state.status == DetailProductOrderStatus.deleteSuccess) {
             CustomTopSnackbar.success(
               context,
@@ -276,6 +412,52 @@ class DetailProductOrderView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              // REJECTION BANNER (if rejected)
+                              if (state.orderProduct!.isRejected == true)
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(14.w),
+                                  margin: EdgeInsets.only(bottom: 16.h),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFEF2F2),
+                                    borderRadius: BorderRadius.circular(12.w),
+                                    border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Icon(Icons.cancel_rounded, color: const Color(0xFFDC2626), size: 22.w),
+                                      SizedBox(width: 10.w),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Invoice Ditolak oleh Finance",
+                                              style: GoogleFonts.inter(
+                                                fontSize: 13.sp,
+                                                fontWeight: AppFontWeight.bold,
+                                                color: const Color(0xFF991B1B),
+                                              ),
+                                            ),
+                                            if ((state.orderProduct!.rejectionReason ?? '').isNotEmpty) ...[
+                                              SizedBox(height: 4.h),
+                                              Text(
+                                                "Alasan: ${state.orderProduct!.rejectionReason}",
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: AppFontWeight.medium,
+                                                  color: const Color(0xFFB91C1C),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                               // Product Info Card
                               _buildCardWrapper(
                                 title: "Product Information",
@@ -327,13 +509,17 @@ class DetailProductOrderView extends StatelessWidget {
                                               Container(
                                                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                                                 decoration: BoxDecoration(
-                                                  color: state.orderProduct!.financeApproved!
-                                                      ? const Color(0xFF00AA13) // Gojek Green
-                                                      : const Color(0xFFED2736), // Gojek Red
+                                                  color: state.orderProduct!.isRejected == true
+                                                      ? const Color(0xFFDC2626) // Red 600
+                                                      : state.orderProduct!.financeApproved!
+                                                          ? const Color(0xFF00AA13) // Gojek Green
+                                                          : const Color(0xFFED2736), // Gojek Red
                                                   borderRadius: BorderRadius.circular(20.w),
                                                 ),
                                                 child: Text(
-                                                  (state.orderProduct!.financeApproved ?? false) ? "PAID" : "UNPAID",
+                                                  state.orderProduct!.isRejected == true
+                                                      ? "REJECTED"
+                                                      : (state.orderProduct!.financeApproved ?? false) ? "PAID" : "UNPAID",
                                                   style: GoogleFonts.inter(
                                                     fontSize: 9.sp,
                                                     fontWeight: AppFontWeight.bold,
@@ -429,7 +615,9 @@ class DetailProductOrderView extends StatelessWidget {
                 ),
 
                 // BOTTOM ACTION BAR
-                if (state.orderProduct != null && state.orderProduct!.financeApproved != true)
+                if (state.orderProduct != null &&
+                    state.orderProduct!.financeApproved != true &&
+                    (state.orderProduct!.isRejected != true || (state.role ?? "").toLowerCase() != "finance"))
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -447,57 +635,89 @@ class DetailProductOrderView extends StatelessWidget {
                         ],
                       ),
                       child: (state.role ?? "").toLowerCase() == "finance"
-                          ? // FINANCE ROLE: Pay Invoice
-                            GestureDetector(
-                              onTap: () {
-                                showPayConfirmationModal(
-                                  context: context,
-                                  orderId: state.orderProduct!.id ?? "",
-                                  productName: state.orderProduct!.productName,
-                                  productCode: state.orderProduct!.productCode,
-                                  imageProduct: state.orderProduct!.imageProduct,
-                                  quantity: state.orderProduct!.quantity,
-                                  unitPrice: state.orderProduct!.unitPrice,
-                                  totalCost: state.orderProduct!.totalCost,
-                                  discountPercent: state.orderProduct!.discountPercent,
-                                  discountMax: state.orderProduct!.discountMax,
-                                  requestedBy: state.orderProduct!.firstName,
-                                  orderDate: state.orderProduct!.orderDate,
-                                  onConfirm: () {
-                                    context.read<DetailProductOrderBloc>().add(
-                                      DetailProductOrderPayRequested(
-                                        state.orderProduct!.id ?? id,
-                                        state.orderProduct!.productId,
-                                        state.orderProduct!.quantity,
+                          ? // FINANCE ROLE: Reject & Pay Dual Buttons
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 35,
+                                  child: GestureDetector(
+                                    onTap: () => _showRejectDialog(context, state.orderProduct!.id ?? id),
+                                    child: Container(
+                                      height: 52.h,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFFEF2F2),
+                                        border: Border.all(color: const Color(0xFFFECACA), width: 1.w),
+                                        borderRadius: BorderRadius.circular(10.w),
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Container(
-                                height: 52.h,
-                                decoration: BoxDecoration(
-                                  gradient: AppColors.premiumDarkGradient,
-                                  borderRadius: BorderRadius.circular(10.w),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.premiumDarkSolid.withValues(alpha: 0.25),
-                                      blurRadius: 8.w,
-                                      offset: Offset(0, 4.w),
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Pay Invoice",
-                                    style: GoogleFonts.inter(
-                                      fontWeight: AppFontWeight.bold,
-                                      fontSize: 16.sp,
-                                      color: Colors.white,
+                                      child: Center(
+                                        child: Text(
+                                          "Reject",
+                                          style: GoogleFonts.inter(
+                                            fontWeight: AppFontWeight.bold,
+                                            fontSize: 14.sp,
+                                            color: const Color(0xFFDC2626),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  flex: 65,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showPayConfirmationModal(
+                                        context: context,
+                                        orderId: state.orderProduct!.id ?? "",
+                                        productName: state.orderProduct!.productName,
+                                        productCode: state.orderProduct!.productCode,
+                                        imageProduct: state.orderProduct!.imageProduct,
+                                        quantity: state.orderProduct!.quantity,
+                                        unitPrice: state.orderProduct!.unitPrice,
+                                        totalCost: state.orderProduct!.totalCost,
+                                        discountPercent: state.orderProduct!.discountPercent,
+                                        discountMax: state.orderProduct!.discountMax,
+                                        requestedBy: state.orderProduct!.firstName,
+                                        orderDate: state.orderProduct!.orderDate,
+                                        onConfirm: () {
+                                          context.read<DetailProductOrderBloc>().add(
+                                            DetailProductOrderPayRequested(
+                                              state.orderProduct!.id ?? id,
+                                              state.orderProduct!.productId,
+                                              state.orderProduct!.quantity,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      height: 52.h,
+                                      decoration: BoxDecoration(
+                                        gradient: AppColors.premiumDarkGradient,
+                                        borderRadius: BorderRadius.circular(10.w),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.premiumDarkSolid.withValues(alpha: 0.25),
+                                            blurRadius: 8.w,
+                                            offset: Offset(0, 4.w),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Pay Invoice",
+                                          style: GoogleFonts.inter(
+                                            fontWeight: AppFontWeight.bold,
+                                            fontSize: 15.sp,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             )
                           : // WAREHOUSE ROLE: Delete Order
                             GestureDetector(

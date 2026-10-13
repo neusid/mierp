@@ -53,8 +53,10 @@ class DashboardFinanceRepository {
     return firestore.collection('warehouse_orders').snapshots().map(
           (event) {
         int total = 0;
-        for (var data in event.docs) {
-          if (data['finance_approved'] == false)  total += 1;
+        for (var doc in event.docs) {
+          final data = doc.data();
+          final isRejected = data['is_rejected'] == true;
+          if (data['finance_approved'] == false && !isRejected) total += 1;
         }
         return total;
       },
@@ -89,8 +91,10 @@ class DashboardFinanceRepository {
     return firestore.collection('warehouse_orders').snapshots().map(
       (event) {
         int total = 0;
-        for (var data in event.docs) {
-          if(data['finance_approved'] == false)  total += (data['total_cost'] as int);
+        for (var doc in event.docs) {
+          final data = doc.data();
+          final isRejected = data['is_rejected'] == true;
+          if (data['finance_approved'] == false && !isRejected) total += (data['total_cost'] as int);
         }
         return total;
       },
@@ -101,8 +105,10 @@ class DashboardFinanceRepository {
     return firestore.collection('sales_orders').snapshots().map(
       (event) {
         int total = 0;
-        for (var data in event.docs) {
-          if(data['finance_approved'] == false) total += (data['total_price'] as int);
+        for (var doc in event.docs) {
+          final data = doc.data();
+          final isRejected = data['is_rejected'] == true;
+          if (data['finance_approved'] == false && !isRejected) total += (data['total_price'] as int);
         }
         return total;
       },

@@ -550,10 +550,10 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                     Builder(
                       builder: (context) {
                         final pendingOrders = state.listOrder
-                            .where((e) => e.financeApproved != true)
+                            .where((e) => e.financeApproved != true && e.isRejected != true)
                             .toList();
                         final pendingSales = state.listSalesOrder
-                            .where((e) => e.financeApproved != true)
+                            .where((e) => e.financeApproved != true && e.isRejected != true)
                             .toList();
                         final int totalPending = pendingOrders.length + pendingSales.length;
 
@@ -726,6 +726,8 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                         lineTotal: data.totalCost,
                                         finance: true,
                                         imageProduct: data.imageProduct,
+                                        isRejected: data.isRejected,
+                                        rejectionReason: data.rejectionReason,
                                         onPayPressed: () {
                                           showPayConfirmationModal(
                                             context: context,
@@ -784,6 +786,8 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                         discountPercent: data.discountPercent,
                                         discountMax: data.discountMax,
                                         finance: true,
+                                        isRejected: data.isRejected,
+                                        rejectionReason: data.rejectionReason,
                                         onPayPressed: () {
                                           showPayConfirmationModal(
                                             context: context,

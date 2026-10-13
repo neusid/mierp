@@ -27,6 +27,7 @@ class DetailSalesOrderBloc extends Bloc<DetailSalesOrderEvent, DetailSalesOrderS
     on<DetailSalesOrderStarted>(_onStarted);
     on<DetailSalesOrderPayRequested>(_onPayRequested);
     on<DetailSalesOrderDeleteRequested>(_onDeleteRequested);
+    on<DetailSalesOrderRejectRequested>(_onRejectRequested);
     on<DetailSalesOrderUpdated>(_onUpdated);
 
     _salesOrderListener = () {
@@ -77,6 +78,26 @@ class DetailSalesOrderBloc extends Bloc<DetailSalesOrderEvent, DetailSalesOrderS
         status: DetailSalesOrderStatus.success,
         salesOrder: salesOrder,
         successMessage: "Success pay invoice",
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: DetailSalesOrderStatus.failure,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onRejectRequested(DetailSalesOrderRejectRequested event, Emitter<DetailSalesOrderState> emit) async {
+    emit(state.copyWith(status: DetailSalesOrderStatus.loading));
+    try {
+      await transactionServices.rejectSalesOrderServices(event.docId, event.reason);
+      final salesOrder = await itemRepository.getDetailDataSalesOrder(event.docId);
+      await itemRepository.getBulkDataSalesOrder();
+      
+      emit(state.copyWith(
+        status: DetailSalesOrderStatus.rejectSuccess,
+        salesOrder: salesOrder,
+        successMessage: "Tagihan sales order berhasil ditolak",
       ));
     } catch (e) {
       emit(state.copyWith(

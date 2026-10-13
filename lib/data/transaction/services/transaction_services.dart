@@ -36,4 +36,24 @@ class TransactionServices {
       rethrow;
     }
   }
+
+  Future<void> rejectProductOrderServices(String docId, String reason) async {
+    try {
+      final now = DateTime.now();
+      final dateParse = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+      await transactionRepository.rejectProductOrderInvoice(docId, reason, dateParse);
+    } catch(e) {
+      rethrow;
+    }
+  }
+
+  Future<void> rejectSalesOrderServices(String docId, String reason) async {
+    try {
+      final now = DateTime.now();
+      final dateParse = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+      await transactionRepository.rejectSalesOrderInvoice(docId, reason, dateParse);
+    } catch(e) {
+      rethrow;
+    }
+  }
 }

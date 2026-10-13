@@ -245,20 +245,46 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
 
     // 2. Tag filter
     if (tag == 1) { // Paid
-      fOrders = fOrders.where((p) => p.financeApproved ?? false).toList();
-      fSales = fSales.where((p) => p.financeApproved ?? false).toList();
+      fOrders = fOrders.where((p) => (p.financeApproved ?? false) && p.isRejected != true).toList();
+      fSales = fSales.where((p) => (p.financeApproved ?? false) && p.isRejected != true).toList();
       fSummaries = fSummaries.where((p) {
-        if (p.summaryType == SummaryType.order) return (p.data is OrderProduct ? (p.data as OrderProduct).financeApproved : p.data.financeApproved) ?? false;
-        if (p.summaryType == SummaryType.salesOrder) return (p.data is SalesOrder ? (p.data as SalesOrder).financeApproved : p.data.financeApproved) ?? false;
+        if (p.summaryType == SummaryType.order) {
+          final o = p.data as OrderProduct;
+          return (o.financeApproved ?? false) && o.isRejected != true;
+        }
+        if (p.summaryType == SummaryType.salesOrder) {
+          final s = p.data as SalesOrder;
+          return (s.financeApproved ?? false) && s.isRejected != true;
+        }
         return true; 
       }).toList();
     } else if (tag == 2) { // Unpaid
-      fOrders = fOrders.where((p) => !(p.financeApproved ?? false)).toList();
-      fSales = fSales.where((p) => !(p.financeApproved ?? false)).toList();
+      fOrders = fOrders.where((p) => !(p.financeApproved ?? false) && p.isRejected != true).toList();
+      fSales = fSales.where((p) => !(p.financeApproved ?? false) && p.isRejected != true).toList();
       fSummaries = fSummaries.where((p) {
-        if (p.summaryType == SummaryType.order) return !((p.data is OrderProduct ? (p.data as OrderProduct).financeApproved : p.data.financeApproved) ?? false);
-        if (p.summaryType == SummaryType.salesOrder) return !((p.data is SalesOrder ? (p.data as SalesOrder).financeApproved : p.data.financeApproved) ?? false);
+        if (p.summaryType == SummaryType.order) {
+          final o = p.data as OrderProduct;
+          return !(o.financeApproved ?? false) && o.isRejected != true;
+        }
+        if (p.summaryType == SummaryType.salesOrder) {
+          final s = p.data as SalesOrder;
+          return !(s.financeApproved ?? false) && s.isRejected != true;
+        }
         return true; 
+      }).toList();
+    } else if (tag == 3) { // Rejected
+      fOrders = fOrders.where((p) => p.isRejected == true).toList();
+      fSales = fSales.where((p) => p.isRejected == true).toList();
+      fSummaries = fSummaries.where((p) {
+        if (p.summaryType == SummaryType.order) {
+          final o = p.data as OrderProduct;
+          return o.isRejected == true;
+        }
+        if (p.summaryType == SummaryType.salesOrder) {
+          final s = p.data as SalesOrder;
+          return s.isRejected == true;
+        }
+        return false; 
       }).toList();
     }
 

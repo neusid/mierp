@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
 
-enum DetailSalesOrderStatus { initial, loading, success, failure, deleteSuccess }
+enum DetailSalesOrderStatus { initial, loading, success, failure, deleteSuccess, rejectSuccess }
 
 class DetailSalesOrderState extends Equatable {
   final DetailSalesOrderStatus status;

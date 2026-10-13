@@ -21,6 +21,8 @@ class CardOrder extends StatelessWidget {
     this.discountPercent,
     this.discountMax,
     this.finance,
+    this.isRejected,
+    this.rejectionReason,
     this.onPayPressed,
   });
 
@@ -37,6 +39,8 @@ class CardOrder extends StatelessWidget {
   final dynamic finance;
   final int? discountPercent;
   final int? discountMax;
+  final bool? isRejected;
+  final String? rejectionReason;
 
   final convertDollar = ConvertDollar();
   final VoidCallback? onPayPressed;
@@ -62,9 +66,10 @@ class CardOrder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool rejected = isRejected == true;
     final bool isApproved = financeApproved == true;
     final bool isFinance = finance == true;
-    final bool isPayable = !isApproved && isFinance && onPayPressed != null;
+    final bool isPayable = !rejected && !isApproved && isFinance && onPayPressed != null;
 
     int finalDiscountPercent = discountPercent ?? 0;
     int finalDiscountMax = discountMax ?? 0;
@@ -246,7 +251,24 @@ class CardOrder extends StatelessWidget {
                         SizedBox(width: 8.w),
 
                         // Right: Pay Now Button or Status Badge
-                        if (isPayable)
+                        if (rejected)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDC2626),
+                              borderRadius: BorderRadius.circular(8.w),
+                            ),
+                            child: Text(
+                              "REJECTED",
+                              style: GoogleFonts.inter(
+                                fontSize: 9.5.sp,
+                                fontWeight: AppFontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          )
+                        else if (isPayable)
                           GestureDetector(
                             onTap: onPayPressed,
                             child: Container(

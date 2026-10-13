@@ -16,6 +16,8 @@ class SalesOrder {
   int? discountMax;
   String userId;
   String imageProduct;
+  bool? isRejected;
+  String? rejectionReason;
 
   SalesOrder({
     required this.id,
@@ -35,6 +37,8 @@ class SalesOrder {
     this.discountMax,
     required this.userId,
     required this.imageProduct,
+    this.isRejected,
+    this.rejectionReason,
   });
 
   factory SalesOrder.fromJson(
@@ -44,6 +48,8 @@ class SalesOrder {
     id: docId,
     companyName: json["company_name"]?.toString() ?? '',
     financeApproved: json["finance_approved"] == true,
+    isRejected: json["is_rejected"] == true,
+    rejectionReason: json["rejection_reason"]?.toString(),
     financeApprovedDate: json["finance_approved_date"]?.toString() ?? '',
     firstName: json["first_name"]?.toString() ?? '',
     paymentStatus: json["payment_status"] == true,
@@ -75,6 +81,8 @@ class SalesOrder {
     "company_name": companyName,
     "finance_approved": financeApproved,
     "finance_approved_date": financeApprovedDate,
+    "is_rejected": isRejected == true,
+    "rejection_reason": rejectionReason,
     "first_name": firstName,
     "payment_status": paymentStatus,
     "product_code": productCode,

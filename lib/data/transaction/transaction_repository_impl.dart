@@ -162,4 +162,36 @@ class TransactionRepositoryImpl implements TransactionRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> rejectProductOrderInvoice(docId, reason, date) async {
+    try {
+      final orderRef = firestore.collection("warehouse_orders").doc(docId.toString());
+      await orderRef.update({
+        'is_rejected': true,
+        'rejection_reason': reason ?? '',
+        'rejected_date': date.toString(),
+        'finance_approved': false,
+      });
+    } catch (e) {
+      debugPrint("Found Error in rejectProductOrderInvoice: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> rejectSalesOrderInvoice(docId, reason, date) async {
+    try {
+      final salesRef = firestore.collection("sales_orders").doc(docId.toString());
+      await salesRef.update({
+        'is_rejected': true,
+        'rejection_reason': reason ?? '',
+        'rejected_date': date.toString(),
+        'finance_approved': false,
+      });
+    } catch (e) {
+      debugPrint("Found Error in rejectSalesOrderInvoice: $e");
+      rethrow;
+    }
+  }
 }

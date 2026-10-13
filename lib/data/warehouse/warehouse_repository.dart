@@ -147,8 +147,10 @@ class WarehouseRepository {
     return firestore.collection("warehouse_orders").snapshots().map(
         (snapshot) {
           int total = 0;
-          for (var data in snapshot.docs) {
-            if (data['finance_approved'] == false) {
+          for (var doc in snapshot.docs) {
+            final data = doc.data();
+            final isRejected = data['is_rejected'] == true;
+            if (data['finance_approved'] == false && !isRejected) {
               total += 1;
             }
           }
@@ -169,7 +171,10 @@ class WarehouseRepository {
   Future<List<OrderProduct>> getIncomingStockProducts() async {
     try {
       final snapshot = await firestore.collection("warehouse_orders").where('finance_approved', isEqualTo: false).get();
-      return snapshot.docs.map((doc) => OrderProduct.fromJson(doc.data(), docId: doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => OrderProduct.fromJson(doc.data(), docId: doc.id))
+          .where((order) => order.isRejected != true)
+          .toList();
     } catch (e) {
       debugPrint(e.toString());
       return [];

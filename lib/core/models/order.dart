@@ -14,6 +14,8 @@ class OrderProduct {
   String userId;
   String firstName;
   String imageProduct;
+  bool? isRejected;
+  String? rejectionReason;
 
   OrderProduct({
     required this.id,
@@ -31,6 +33,8 @@ class OrderProduct {
     required this.userId,
     required this.firstName,
     required this.imageProduct,
+    this.isRejected,
+    this.rejectionReason,
   });
 
   factory OrderProduct.fromJson(
@@ -39,6 +43,8 @@ class OrderProduct {
   }) => OrderProduct(
     id: docId,
     financeApproved: json["finance_approved"] == true,
+    isRejected: json["is_rejected"] == true,
+    rejectionReason: json["rejection_reason"]?.toString(),
     financeApprovedDate: () {
       final raw = json["finance_approved_date"];
       if (raw == null) return null;
@@ -77,7 +83,9 @@ class OrderProduct {
   Map<String, dynamic> toJson() => {
     "id": id,
     "finance_approved": financeApproved!,
-    "finance_approved_date": financeApprovedDate!.toIso8601String(),
+    "finance_approved_date": financeApprovedDate?.toIso8601String(),
+    "is_rejected": isRejected == true,
+    "rejection_reason": rejectionReason,
     "order_date": orderDate!,
     "product_id": productId,
     "product_code": productCode,

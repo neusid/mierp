@@ -37,8 +37,16 @@ class DetailProductOrderDeleteRequested extends DetailProductOrderEvent {
   List<Object> get props => [id];
 }
 
+class DetailProductOrderRejectRequested extends DetailProductOrderEvent {
+  final String docId;
+  final String reason;
+  const DetailProductOrderRejectRequested(this.docId, this.reason);
+  @override
+  List<Object> get props => [docId, reason];
+}
+
 // --- STATE ---
-enum DetailProductOrderStatus { initial, loading, success, paySuccess, deleteSuccess, failure }
+enum DetailProductOrderStatus { initial, loading, success, paySuccess, rejectSuccess, deleteSuccess, failure }
 
 class DetailProductOrderState extends Equatable {
   final DetailProductOrderStatus status;
@@ -91,6 +99,7 @@ class DetailProductOrderBloc extends Bloc<DetailProductOrderEvent, DetailProduct
     on<DetailProductOrderStarted>(_onStarted);
     on<DetailProductOrderPayRequested>(_onPayRequested);
     on<DetailProductOrderDeleteRequested>(_onDeleteRequested);
+    on<DetailProductOrderRejectRequested>(_onRejectRequested);
   }
 
   Future<void> _onStarted(DetailProductOrderStarted event, Emitter<DetailProductOrderState> emit) async {
@@ -122,6 +131,21 @@ class DetailProductOrderBloc extends Bloc<DetailProductOrderEvent, DetailProduct
         status: DetailProductOrderStatus.paySuccess, 
         successMessage: "Payment success", 
         orderProduct: orderProduct
+      ));
+    } catch (e) {
+      emit(state.copyWith(status: DetailProductOrderStatus.failure, errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onRejectRequested(DetailProductOrderRejectRequested event, Emitter<DetailProductOrderState> emit) async {
+    emit(state.copyWith(status: DetailProductOrderStatus.loading));
+    try {
+      await transactionServices.rejectProductOrderServices(event.docId, event.reason);
+      final orderProduct = await itemRepository.getDetailDataOrder(event.docId);
+      emit(state.copyWith(
+        status: DetailProductOrderStatus.rejectSuccess,
+        successMessage: "Tagihan invoice berhasil ditolak",
+        orderProduct: orderProduct,
       ));
     } catch (e) {
       emit(state.copyWith(status: DetailProductOrderStatus.failure, errorMessage: e.toString()));

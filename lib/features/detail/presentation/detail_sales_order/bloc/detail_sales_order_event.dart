@@ -35,6 +35,15 @@ class DetailSalesOrderDeleteRequested extends DetailSalesOrderEvent {
   List<Object?> get props => [docId];
 }
 
+class DetailSalesOrderRejectRequested extends DetailSalesOrderEvent {
+  final String docId;
+  final String reason;
+  const DetailSalesOrderRejectRequested(this.docId, this.reason);
+
+  @override
+  List<Object?> get props => [docId, reason];
+}
+
 class DetailSalesOrderUpdated extends DetailSalesOrderEvent {
   final SalesOrder? salesOrder;
   const DetailSalesOrderUpdated(this.salesOrder);

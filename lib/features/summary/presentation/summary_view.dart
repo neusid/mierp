@@ -37,7 +37,7 @@ class _SummaryViewState extends State<SummaryView> {
     {"title": "Order", "collection": "orders"},
     {"title": "Sales Order", "collection": "sales_orders"},
   ];
-  final options = ['All', 'Paid', 'Unpaid'];
+  final options = ['All', 'Paid', 'Unpaid', 'Rejected'];
 
   @override
   Widget build(BuildContext context) {
@@ -247,8 +247,8 @@ class _SummaryViewState extends State<SummaryView> {
                                         elevation: 8,
                                         offset: Offset(0, 40.h),
                                         constraints: BoxConstraints(
-                                          minWidth: 150.w,
-                                          maxWidth: 150.w,
+                                          minWidth: 160.w,
+                                          maxWidth: 160.w,
                                         ),
                                         onSelected: (value) {
                                           context.read<SummaryBloc>().add(SummaryFilterChanged(value));
@@ -480,6 +480,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                   lineTotal: e.data.totalCost,
                                                   imageProduct:
                                                       e.data.imageProduct,
+                                                  isRejected: e.data.isRejected,
+                                                  rejectionReason: e.data.rejectionReason,
                                                   finance: state.role.toLowerCase() == "finance",
                                                   onPayPressed: state.role.toLowerCase() == "finance"
                                                       ? () {
@@ -543,6 +545,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                       e.data.imageProduct,
                                                   discountPercent: e.data.discountPercent,
                                                   discountMax: e.data.discountMax,
+                                                  isRejected: e.data.isRejected,
+                                                  rejectionReason: e.data.rejectionReason,
                                                   finance: state.role.toLowerCase() == "finance",
                                                   onPayPressed: state.role.toLowerCase() == "finance"
                                                       ? () {
@@ -657,6 +661,8 @@ class _SummaryViewState extends State<SummaryView> {
                                             unitPrice: data.unitPrice,
                                             lineTotal: data.totalCost,
                                             imageProduct: data.imageProduct,
+                                            isRejected: data.isRejected,
+                                            rejectionReason: data.rejectionReason,
                                             finance: state.role.toLowerCase() == "finance",
                                             onPayPressed: state.role.toLowerCase() == "finance"
                                                 ? () {
@@ -729,6 +735,8 @@ class _SummaryViewState extends State<SummaryView> {
                                                     data.imageProduct,
                                                 discountPercent: data.discountPercent,
                                                 discountMax: data.discountMax,
+                                                isRejected: data.isRejected,
+                                                rejectionReason: data.rejectionReason,
                                                 finance: state.role.toLowerCase() == "finance",
                                                 onPayPressed: state.role.toLowerCase() == "finance"
                                                     ? () {

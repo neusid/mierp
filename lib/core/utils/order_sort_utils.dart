@@ -44,8 +44,8 @@ class OrderSortUtils {
 
   /// Sorts OrderProduct: Unpaid (Pay Now) items first, then secondary sort by date descending.
   static int compareOrders(OrderProduct a, OrderProduct b) {
-    final aUnpaid = !(a.financeApproved ?? false);
-    final bUnpaid = !(b.financeApproved ?? false);
+    final aUnpaid = !(a.financeApproved ?? false) && a.isRejected != true;
+    final bUnpaid = !(b.financeApproved ?? false) && b.isRejected != true;
     if (aUnpaid != bUnpaid) {
       return aUnpaid ? -1 : 1; // Unpaid comes first
     }
@@ -54,8 +54,8 @@ class OrderSortUtils {
 
   /// Sorts SalesOrder: Unpaid (Pay Now) items first, then secondary sort by date descending.
   static int compareSalesOrders(SalesOrder a, SalesOrder b) {
-    final aUnpaid = !(a.financeApproved ?? false);
-    final bUnpaid = !(b.financeApproved ?? false);
+    final aUnpaid = !(a.financeApproved ?? false) && a.isRejected != true;
+    final bUnpaid = !(b.financeApproved ?? false) && b.isRejected != true;
     if (aUnpaid != bUnpaid) {
       return aUnpaid ? -1 : 1; // Unpaid comes first
     }
@@ -66,17 +66,19 @@ class OrderSortUtils {
   static bool isPayNowSummary(AllSummary item) {
     if (item.summaryType == SummaryType.order) {
       if (item.data is OrderProduct) {
-        return !((item.data as OrderProduct).financeApproved ?? false);
+        final o = item.data as OrderProduct;
+        return !(o.financeApproved ?? false) && o.isRejected != true;
       }
       try {
-        return !(item.data.financeApproved ?? false);
+        return !(item.data.financeApproved ?? false) && item.data.isRejected != true;
       } catch (_) {}
     } else if (item.summaryType == SummaryType.salesOrder) {
       if (item.data is SalesOrder) {
-        return !((item.data as SalesOrder).financeApproved ?? false);
+        final s = item.data as SalesOrder;
+        return !(s.financeApproved ?? false) && s.isRejected != true;
       }
       try {
-        return !(item.data.financeApproved ?? false);
+        return !(item.data.financeApproved ?? false) && item.data.isRejected != true;
       } catch (_) {}
     }
     return false;
