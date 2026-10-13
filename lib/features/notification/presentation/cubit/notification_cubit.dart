@@ -131,7 +131,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   }
 
   /// Mengirimkan notifikasi uji coba ke Firestore yang akan ditangkap oleh listener realtime
-  Future<void> sendTestNotification({
+  Future<bool> sendTestNotification({
     String? role,
     String? type,
     String? title,
@@ -164,8 +164,10 @@ class NotificationCubit extends Cubit<NotificationState> {
         orderType: orderType ?? 'sales_order',
         productName: productName ?? 'Produk Sampel Uji Coba',
       );
+      return true;
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
+      return false;
     }
   }
 

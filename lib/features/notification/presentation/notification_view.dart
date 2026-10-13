@@ -118,15 +118,23 @@ class _NotificationViewState extends State<NotificationView> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state.notifications.isEmpty) {
-                  return _buildEmptyState();
-                }
-
-                return ListView.separated(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-                  itemCount: state.notifications.length,
-                  separatorBuilder: (context, index) => SizedBox(height: 12.h),
-                  itemBuilder: (context, index) {
+                return RefreshIndicator(
+                  onRefresh: () => context.read<NotificationCubit>().init(),
+                  color: const Color(0xFF3B82F6),
+                  child: state.notifications.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(height: 60.h),
+                            _buildEmptyState(),
+                          ],
+                        )
+                      : ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                          itemCount: state.notifications.length,
+                          separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                          itemBuilder: (context, index) {
                     final notif = state.notifications[index];
                     final isRead = notif.isRead;
                     final icon = _getIcon(notif.type);
@@ -281,10 +289,11 @@ class _NotificationViewState extends State<NotificationView> {
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
+        ),
         ],
       ),
     );
@@ -464,6 +473,49 @@ class _NotificationViewState extends State<NotificationView> {
 
   void _showTestTriggerSheet(BuildContext parentContext) {
     final cubit = parentContext.read<NotificationCubit>();
+    final activeRole = cubit.state.activeRole;
+    final displayRole = activeRole.isEmpty ? 'FINANCE' : activeRole.toUpperCase();
+
+    void executeTest(Future<bool> Function() testAction, String roleLabel) async {
+      Navigator.pop(parentContext);
+      final messenger = ScaffoldMessenger.of(parentContext);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 1),
+          content: Text("Mengirim ke Firestore untuk role: $roleLabel..."),
+        ),
+      );
+
+      final ok = await testAction();
+      if (!parentContext.mounted) return;
+
+      messenger.hideCurrentSnackBar();
+      if (ok) {
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFF16A34A),
+            duration: const Duration(seconds: 3),
+            content: Text(
+                "✅ Notifikasi berhasil terkirim ke Firestore (Role: $roleLabel)! Menunggu stream..."),
+          ),
+        );
+      } else {
+        final err = cubit.state.errorMessage ?? "Permission Denied";
+        messenger.showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFFEF4444),
+            duration: const Duration(seconds: 6),
+            content: Text(
+                "❌ Gagal mengirim ke Firestore:\n$err\n\n👉 Pastikan Anda sudah mengklik 'Publish' pada Firestore Rules di Firebase Console!"),
+          ),
+        );
+      }
+    }
+
     showModalBottomSheet(
       context: parentContext,
       isScrollControlled: true,
@@ -516,7 +568,7 @@ class _NotificationViewState extends State<NotificationView> {
                           ),
                         ),
                         Text(
-                          "Pilih skenario simulasi notifikasi",
+                          "Pilih skenario simulasi notifikasi (Role aktif: $displayRole)",
                           style: GoogleFonts.inter(
                             fontSize: 12.sp,
                             fontWeight: AppFontWeight.regular,
@@ -529,23 +581,49 @@ class _NotificationViewState extends State<NotificationView> {
                 ],
               ),
               SizedBox(height: 20.h),
+              // Opsi 1: Kirim ke akun sendiri (Pasti diterima di device ini)
+              _buildTriggerItem(
+                icon: Icons.person_pin_rounded,
+                iconColor: const Color(0xFF2563EB),
+                bgColor: const Color(0xFFDBEAFE),
+                title: "Kirim ke Akun Saya ($displayRole) ⭐",
+                description: "Pasti langsung masuk di HP ini karena sesuai role akun Anda",
+                onTap: () {
+                  final target = activeRole.isNotEmpty ? activeRole : 'finance';
+                  executeTest(
+                    () => cubit.sendTestNotification(
+                      role: target,
+                      type: target == 'finance' ? 'new_sales_order' : 'order_approved',
+                      title: 'Test Notifikasi Akun ($displayRole)',
+                      message: 'Notifikasi uji coba berhasil dikirim dan diterima secara realtime!',
+                      orderId: 'SO-SELF',
+                      orderType: 'sales_order',
+                      productName: 'MiERP Testing Item',
+                    ),
+                    target,
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
               _buildTriggerItem(
                 icon: Icons.point_of_sale_rounded,
                 iconColor: const Color(0xFF3B82F6),
                 bgColor: const Color(0xFFEFF6FF),
-                title: "Sales Order Baru (Finance)",
+                title: "Sales Order Baru (Role Finance)",
                 description: "Warehouse membuat sales order baru",
                 onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  cubit.sendTestNotification(
-                    role: 'finance',
-                    type: 'new_sales_order',
-                    title: 'Sales Order Baru #SO-8821',
-                    message:
-                        'Pesanan penjualan untuk ASUS ROG Zephyrus siap diproses.',
-                    orderId: 'SO-8821',
-                    orderType: 'sales_order',
-                    productName: 'ASUS ROG Zephyrus',
+                  executeTest(
+                    () => cubit.sendTestNotification(
+                      role: 'finance',
+                      type: 'new_sales_order',
+                      title: 'Sales Order Baru #SO-8821',
+                      message:
+                          'Pesanan penjualan untuk ASUS ROG Zephyrus siap diproses.',
+                      orderId: 'SO-8821',
+                      orderType: 'sales_order',
+                      productName: 'ASUS ROG Zephyrus',
+                    ),
+                    'finance',
                   );
                 },
               ),
@@ -554,19 +632,21 @@ class _NotificationViewState extends State<NotificationView> {
                 icon: Icons.inventory_2_outlined,
                 iconColor: const Color(0xFFD97706),
                 bgColor: const Color(0xFFFEF3C7),
-                title: "Product Order Baru (Finance)",
+                title: "Product Order Baru (Role Finance)",
                 description: "Warehouse membuat pesanan produk baru",
                 onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  cubit.sendTestNotification(
-                    role: 'finance',
-                    type: 'new_product_order',
-                    title: 'Product Order Baru #WO-3301',
-                    message:
-                        'Pesanan produk untuk Monitor LG 27 Inch siap diproses.',
-                    orderId: 'WO-3301',
-                    orderType: 'product_order',
-                    productName: 'Monitor LG 27 Inch',
+                  executeTest(
+                    () => cubit.sendTestNotification(
+                      role: 'finance',
+                      type: 'new_product_order',
+                      title: 'Product Order Baru #WO-3301',
+                      message:
+                          'Pesanan produk untuk Monitor LG 27 Inch siap diproses.',
+                      orderId: 'WO-3301',
+                      orderType: 'product_order',
+                      productName: 'Monitor LG 27 Inch',
+                    ),
+                    'finance',
                   );
                 },
               ),
@@ -575,19 +655,21 @@ class _NotificationViewState extends State<NotificationView> {
                 icon: Icons.check_circle_outline_rounded,
                 iconColor: const Color(0xFF16A34A),
                 bgColor: const Color(0xFFF0FDF4),
-                title: "Order Disetujui (Warehouse)",
+                title: "Order Disetujui (Role Warehouse)",
                 description: "Finance menyetujui & menandai lunas",
                 onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  cubit.sendTestNotification(
-                    role: 'warehouse',
-                    type: 'order_approved',
-                    title: 'Order Disetujui & Lunas #SO-8821',
-                    message:
-                        'Pesanan penjualan telah diverifikasi dan lunas oleh Finance.',
-                    orderId: 'SO-8821',
-                    orderType: 'sales_order',
-                    productName: 'ASUS ROG Zephyrus',
+                  executeTest(
+                    () => cubit.sendTestNotification(
+                      role: 'warehouse',
+                      type: 'order_approved',
+                      title: 'Order Disetujui & Lunas #SO-8821',
+                      message:
+                          'Pesanan penjualan telah diverifikasi dan lunas oleh Finance.',
+                      orderId: 'SO-8821',
+                      orderType: 'sales_order',
+                      productName: 'ASUS ROG Zephyrus',
+                    ),
+                    'warehouse',
                   );
                 },
               ),
@@ -596,19 +678,21 @@ class _NotificationViewState extends State<NotificationView> {
                 icon: Icons.cancel_outlined,
                 iconColor: const Color(0xFFEF4444),
                 bgColor: const Color(0xFFFEF2F2),
-                title: "Order Ditolak (Warehouse)",
+                title: "Order Ditolak (Role Warehouse)",
                 description: "Finance menolak order dengan alasan",
                 onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  cubit.sendTestNotification(
-                    role: 'warehouse',
-                    type: 'order_rejected',
-                    title: 'Order Ditolak #SO-8821',
-                    message:
-                        'Pesanan ditolak oleh Finance: Bukti transfer tidak terbaca.',
-                    orderId: 'SO-8821',
-                    orderType: 'sales_order',
-                    productName: 'ASUS ROG Zephyrus',
+                  executeTest(
+                    () => cubit.sendTestNotification(
+                      role: 'warehouse',
+                      type: 'order_rejected',
+                      title: 'Order Ditolak #SO-8821',
+                      message:
+                          'Pesanan ditolak oleh Finance: Bukti transfer tidak terbaca.',
+                      orderId: 'SO-8821',
+                      orderType: 'sales_order',
+                      productName: 'ASUS ROG Zephyrus',
+                    ),
+                    'warehouse',
                   );
                 },
               ),
