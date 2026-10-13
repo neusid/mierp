@@ -6,6 +6,7 @@ import 'package:mierp_apps/data/warehouse/detail/detail_sales_order_repository.d
 import 'package:mierp_apps/domain/item/repositories/item_repository.dart';
 import 'package:mierp_apps/state/item_store.dart';
 
+import 'package:mierp_apps/core/models/sales_order.dart';
 import 'detail_sales_order_event.dart';
 import 'detail_sales_order_state.dart';
 
@@ -91,7 +92,15 @@ class DetailSalesOrderBloc extends Bloc<DetailSalesOrderEvent, DetailSalesOrderS
     emit(state.copyWith(status: DetailSalesOrderStatus.loading));
     try {
       await transactionServices.rejectSalesOrderServices(event.docId, event.reason);
-      final salesOrder = await itemRepository.getDetailDataSalesOrder(event.docId);
+      SalesOrder? salesOrder;
+      try {
+        salesOrder = await itemRepository.getDetailDataSalesOrder(event.docId);
+      } catch (_) {}
+      salesOrder = (salesOrder ?? state.salesOrder)?.copyWith(
+        isRejected: true,
+        rejectionReason: event.reason,
+        financeApproved: false,
+      );
       await itemRepository.getBulkDataSalesOrder();
       
       emit(state.copyWith(

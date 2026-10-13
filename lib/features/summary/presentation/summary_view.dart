@@ -464,7 +464,11 @@ class _SummaryViewState extends State<SummaryView> {
                                                 onTap: () {
                                                   context.push(
                                                     "/detail_product_order/${e.data.id}",
-                                                  );
+                                                  ).then((result) {
+                                                    if (context.mounted && result == true) {
+                                                      context.read<SummaryBloc>().add(SummaryStarted());
+                                                    }
+                                                  });
                                                 },
                                                 child: CardOrder(
                                                   idOrder: e.data.id,
@@ -522,10 +526,14 @@ class _SummaryViewState extends State<SummaryView> {
                                               );
                                             case SummaryType.salesOrder:
                                               return GestureDetector(
-                                                onTap: () async {
+                                                onTap: () {
                                                   context.push(
                                                     "/detail_sales_order/${e.data.id}",
-                                                  );
+                                                  ).then((result) {
+                                                    if (context.mounted && result == true) {
+                                                      context.read<SummaryBloc>().add(SummaryStarted());
+                                                    }
+                                                  });
                                                 },
                                                 child: CardSales(
                                                   idBarang: e.data.productCode,
@@ -646,7 +654,11 @@ class _SummaryViewState extends State<SummaryView> {
                                             if (orderId.isNotEmpty) {
                                               context.push(
                                                 "/detail_product_order/$orderId",
-                                              );
+                                              ).then((result) {
+                                                if (context.mounted && result == true) {
+                                                  context.read<SummaryBloc>().add(SummaryStarted());
+                                                }
+                                              });
                                             }
                                           },
                                           child: CardOrder(
@@ -715,10 +727,14 @@ class _SummaryViewState extends State<SummaryView> {
                                       children: state.filteredSalesOrders
                                           .map(
                                             (data) => GestureDetector(
-                                              onTap: () async {
+                                              onTap: () {
                                                 context.push(
                                                   "/detail_sales_order/${data.id}",
-                                                );
+                                                ).then((result) {
+                                                  if (context.mounted && result == true) {
+                                                    context.read<SummaryBloc>().add(SummaryStarted());
+                                                  }
+                                                });
                                               },
                                               child: CardSales(
                                                 idBarang: data.productCode,

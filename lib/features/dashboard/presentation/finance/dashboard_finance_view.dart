@@ -712,7 +712,11 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                       onTap: () {
                                         context.push(
                                           "/detail_product_order/${data.id}",
-                                        );
+                                        ).then((result) {
+                                          if (mounted && result == true) {
+                                            context.read<DashboardFinanceBloc>().add(DashboardFinanceStarted());
+                                          }
+                                        });
                                       },
                                       child: CardOrder(
                                         idOrder: data.id,
@@ -767,10 +771,14 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                   // Up to 2 pending sales orders
                                   ...pendingSales.take(2).map((data) {
                                     return GestureDetector(
-                                      onTap: () async {
+                                      onTap: () {
                                         context.push(
                                           "/detail_sales_order/${data.id}",
-                                        );
+                                        ).then((result) {
+                                          if (mounted && result == true) {
+                                            context.read<DashboardFinanceBloc>().add(DashboardFinanceStarted());
+                                          }
+                                        });
                                       },
                                       child: CardSales(
                                         idBarang: data.productCode,

@@ -41,6 +41,50 @@ class SalesOrder {
     this.rejectionReason,
   });
 
+  SalesOrder copyWith({
+    String? id,
+    String? companyName,
+    bool? financeApproved,
+    String? financeApprovedDate,
+    String? firstName,
+    bool? paymentStatus,
+    String? productCode,
+    String? productId,
+    String? productName,
+    String? purchasedDate,
+    int? quantity,
+    int? totalPrice,
+    int? unitPrice,
+    int? discountPercent,
+    int? discountMax,
+    String? userId,
+    String? imageProduct,
+    bool? isRejected,
+    String? rejectionReason,
+  }) {
+    return SalesOrder(
+      id: id ?? this.id,
+      companyName: companyName ?? this.companyName,
+      financeApproved: financeApproved ?? this.financeApproved,
+      financeApprovedDate: financeApprovedDate ?? this.financeApprovedDate,
+      firstName: firstName ?? this.firstName,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      productCode: productCode ?? this.productCode,
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      purchasedDate: purchasedDate ?? this.purchasedDate,
+      quantity: quantity ?? this.quantity,
+      totalPrice: totalPrice ?? this.totalPrice,
+      unitPrice: unitPrice ?? this.unitPrice,
+      discountPercent: discountPercent ?? this.discountPercent,
+      discountMax: discountMax ?? this.discountMax,
+      userId: userId ?? this.userId,
+      imageProduct: imageProduct ?? this.imageProduct,
+      isRejected: isRejected ?? this.isRejected,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
+    );
+  }
+
   factory SalesOrder.fromJson(
     Map<String, dynamic> json, {
     required String? docId,

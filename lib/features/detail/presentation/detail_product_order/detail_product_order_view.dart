@@ -345,7 +345,15 @@ class DetailProductOrderView extends StatelessWidget {
               CustomTopSnackbar.success(context, state.successMessage);
             }
           } else if (state.status == DetailProductOrderStatus.rejectSuccess) {
-            CustomTopSnackbar.success(context, state.successMessage);
+            CustomTopSnackbar.success(
+              context,
+              state.successMessage,
+              onDismissed: () {
+                if (context.mounted) {
+                  context.pop(true);
+                }
+              },
+            );
           } else if (state.status == DetailProductOrderStatus.deleteSuccess) {
             CustomTopSnackbar.success(
               context,
@@ -380,7 +388,7 @@ class DetailProductOrderView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           InkWell(
-                            onTap: () => context.pop(),
+                            onTap: () => context.pop(state.orderProduct?.isRejected == true || state.orderProduct?.financeApproved == true),
                             borderRadius: BorderRadius.circular(12.w),
                             child: Container(
                               padding: EdgeInsets.all(8.w),
@@ -617,7 +625,7 @@ class DetailProductOrderView extends StatelessWidget {
                 // BOTTOM ACTION BAR
                 if (state.orderProduct != null &&
                     state.orderProduct!.financeApproved != true &&
-                    (state.orderProduct!.isRejected != true || (state.role ?? "").toLowerCase() != "finance"))
+                    state.orderProduct!.isRejected != true)
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(

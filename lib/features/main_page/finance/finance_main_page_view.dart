@@ -82,13 +82,7 @@ class FinanceMainPageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                iconPath,
-                width: isActive ? 19.w : 22.w,
-                height: isActive ? 19.w : 22.w,
-                colorFilter: ColorFilter.mode(
-                    isActive ? Colors.white : AppColors.grayTitle, BlendMode.srcIn),
-              ),
+              _buildNavIcon(iconPath, isActive),
               if (isActive) ...[
                 SizedBox(width: 5.w),
                 Flexible(
@@ -111,6 +105,34 @@ class FinanceMainPageView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildNavIcon(String iconPath, bool isActive) {
+    final size = isActive ? 19.w : 22.w;
+    final colorFilter = ColorFilter.mode(
+      isActive ? Colors.white : AppColors.grayTitle,
+      BlendMode.srcIn,
+    );
+
+    if (iconPath.contains("task-square")) {
+      const taskSquareSvg = '''<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#484C52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M7.75 12L10.58 14.83L16.25 9.17" stroke="#484C52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>''';
+      return SvgPicture.string(
+        taskSquareSvg,
+        width: size,
+        height: size,
+        colorFilter: colorFilter,
+      );
+    }
+
+    return SvgPicture.asset(
+      iconPath,
+      width: size,
+      height: size,
+      colorFilter: colorFilter,
     );
   }
 }

@@ -141,7 +141,15 @@ class DetailProductOrderBloc extends Bloc<DetailProductOrderEvent, DetailProduct
     emit(state.copyWith(status: DetailProductOrderStatus.loading));
     try {
       await transactionServices.rejectProductOrderServices(event.docId, event.reason);
-      final orderProduct = await itemRepository.getDetailDataOrder(event.docId);
+      OrderProduct? orderProduct;
+      try {
+        orderProduct = await itemRepository.getDetailDataOrder(event.docId);
+      } catch (_) {}
+      orderProduct = (orderProduct ?? state.orderProduct)?.copyWith(
+        isRejected: true,
+        rejectionReason: event.reason,
+        financeApproved: false,
+      );
       emit(state.copyWith(
         status: DetailProductOrderStatus.rejectSuccess,
         successMessage: "Tagihan invoice berhasil ditolak",
