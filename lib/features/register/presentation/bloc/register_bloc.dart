@@ -6,7 +6,7 @@ import 'package:mierp_apps/features/register/domain/usecases/do_register.dart';
 abstract class RegisterEvent extends Equatable {
   const RegisterEvent();
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class RegisterSubmitted extends RegisterEvent {
@@ -15,24 +15,26 @@ class RegisterSubmitted extends RegisterEvent {
   final String firstName;
   final String lastName;
   final String role;
+  final String? companyName;
 
   const RegisterSubmitted({
     required this.email,
     required this.password,
     required this.firstName,
     required this.lastName,
-    required this.role,
+    this.role = 'admin',
+    this.companyName,
   });
 
   @override
-  List<Object> get props => [email, password, firstName, lastName, role];
+  List<Object?> get props => [email, password, firstName, lastName, role, companyName];
 }
 
 // --- STATES ---
 abstract class RegisterState extends Equatable {
   const RegisterState();
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class RegisterInitial extends RegisterState {}
@@ -72,7 +74,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       event.password, 
       event.firstName, 
       event.lastName, 
-      event.role
+      event.role,
+      companyName: event.companyName,
     );
     
     result.fold(

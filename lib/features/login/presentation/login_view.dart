@@ -57,7 +57,9 @@ class _LoginViewState extends State<LoginView> {
           } else if (state is LoginFailure) {
             CustomTopSnackbar.show(context, state.message, isError: true);
           } else if (state is LoginSuccess) {
-            if (state.role == "warehouse") {
+            if (state.role == "admin") {
+              context.go("/admin_main_page");
+            } else if (state.role == "warehouse") {
               context.go("/warehouse_main_page");
             } else {
               context.go("/finance_main_page");

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 
 class AddSalesOrderRepository {
@@ -17,7 +18,9 @@ class AddSalesOrderRepository {
 
   Future<void> addSalesOrderToFireStore(SalesOrder salesOrder) async {
     try {
+      final adminId = await TenantService.getActiveAdminId();
       final docRef = await firestore.collection("sales_orders").add({
+        "admin_id": adminId,
         "company_name": salesOrder.companyName,
         "finance_approved": salesOrder.financeApproved,
         "finance_approved_date": salesOrder.financeApprovedDate,
@@ -34,7 +37,7 @@ class AddSalesOrderRepository {
         "image_product": salesOrder.imageProduct,
       });
 
-      // Best-effort live notification to Finance
+      // Best-effort live notification to Finance & Admin
       try {
         await notificationRepository.sendNotification(
           targetRole: "finance",
@@ -45,6 +48,7 @@ class AddSalesOrderRepository {
           orderId: docRef.id,
           orderType: "sales_order",
           productName: salesOrder.productName,
+          adminId: adminId,
         );
       } catch (notifErr) {
         debugPrint("Notice: Failed to dispatch live notification: $notifErr");

@@ -4,5 +4,5 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class RegisterRepository {
   Future<Either<Failure, UserCredential>> register(
-      String email, String password, String firstName, String lastName, String role);
+      String email, String password, String firstName, String lastName, String role, {String? companyName});
 }

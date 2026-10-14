@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mierp_apps/features/notification/data/models/notification_model.dart';
 
 abstract class NotificationRepository {
-  Stream<List<NotificationModel>> streamNotifications(String role);
+  Stream<List<NotificationModel>> streamNotifications(String role, {String? adminId});
   Future<void> sendNotification({
     required String targetRole,
     required String type,
@@ -12,9 +12,10 @@ abstract class NotificationRepository {
     required String orderId,
     required String orderType,
     required String productName,
+    String? adminId,
   });
   Future<void> markAsRead(String notifId);
-  Future<void> markAllAsRead(String role);
+  Future<void> markAllAsRead(String role, {String? adminId});
   Future<void> deleteNotification(String notifId);
 }
 
@@ -25,17 +26,21 @@ class NotificationRepositoryImpl implements NotificationRepository {
       : firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Stream<List<NotificationModel>> streamNotifications(String role) {
+  Stream<List<NotificationModel>> streamNotifications(String role, {String? adminId}) {
     final normalizedRole = role.trim().toLowerCase();
-    final List<String> targetRoles = normalizedRole.isNotEmpty
-        ? [normalizedRole, 'all']
-        : ['all'];
 
-    return firestore
-        .collection('notifications')
-        .where('target_role', whereIn: targetRoles)
-        .snapshots()
-        .map((snapshot) {
+    Query<Map<String, dynamic>> query = firestore.collection('notifications');
+
+    if (adminId != null && adminId.isNotEmpty) {
+      query = query.where('admin_id', isEqualTo: adminId);
+    }
+
+    if (normalizedRole.isNotEmpty && normalizedRole != 'admin') {
+      final List<String> targetRoles = [normalizedRole, 'all'];
+      query = query.where('target_role', whereIn: targetRoles);
+    }
+
+    return query.snapshots().map((snapshot) {
       final list = snapshot.docs
           .map((doc) => NotificationModel.fromFirestore(doc))
           .toList();
@@ -55,9 +60,11 @@ class NotificationRepositoryImpl implements NotificationRepository {
     required String orderId,
     required String orderType,
     required String productName,
+    String? adminId,
   }) async {
     try {
       await firestore.collection('notifications').add({
+        'admin_id': adminId ?? '',
         'target_role': targetRole.trim().toLowerCase(),
         'type': type,
         'title': title,
@@ -87,18 +94,24 @@ class NotificationRepositoryImpl implements NotificationRepository {
   }
 
   @override
-  Future<void> markAllAsRead(String role) async {
+  Future<void> markAllAsRead(String role, {String? adminId}) async {
     try {
       final normalizedRole = role.trim().toLowerCase();
-      final List<String> targetRoles = normalizedRole.isNotEmpty
-          ? [normalizedRole, 'all']
-          : ['all'];
 
-      final snapshot = await firestore
+      Query<Map<String, dynamic>> query = firestore
           .collection('notifications')
-          .where('target_role', whereIn: targetRoles)
-          .where('is_read', isEqualTo: false)
-          .get();
+          .where('is_read', isEqualTo: false);
+
+      if (adminId != null && adminId.isNotEmpty) {
+        query = query.where('admin_id', isEqualTo: adminId);
+      }
+
+      if (normalizedRole.isNotEmpty && normalizedRole != 'admin') {
+        final List<String> targetRoles = [normalizedRole, 'all'];
+        query = query.where('target_role', whereIn: targetRoles);
+      }
+
+      final snapshot = await query.get();
 
       if (snapshot.docs.isEmpty) return;
 

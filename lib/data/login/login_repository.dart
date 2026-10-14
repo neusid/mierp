@@ -21,16 +21,11 @@ class LoginRepository {
         return null;
       }
       final data = snapDoc.data() as Map<String, dynamic>;
-
-      UserModel userModel = UserModel(
-        uid: uid,
-        email: data['email'],
-        firstName: data['first_name'],
-        lastName: data['last_name'],
-        role: data['role'],
-        allowGoogleLogin: data['allow_google_login']
-      );
-      return userModel;
+      data['uid'] = uid;
+      if ((data['admin_id'] == null || data['admin_id'].toString().isEmpty) && data['role'] == 'admin') {
+        data['admin_id'] = uid;
+      }
+      return UserModel.fromJson(data);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':

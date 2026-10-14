@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/models/product.dart';
 import 'package:mierp_apps/core/models/sales_order.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 
 class DashboardFinanceRepository {
   
@@ -117,11 +118,16 @@ class DashboardFinanceRepository {
 
   Future<List<Product?>> getAllDataStock() async {
     try {
-      final snapshot = await firestore.collection('products').get();
+      final adminId = await TenantService.getActiveAdminId();
+      Query<Map<String, dynamic>> query = firestore.collection('products');
+      if (adminId.isNotEmpty) {
+        query = query.where('admin_id', isEqualTo: adminId);
+      }
+      final snapshot = await query.get();
 
-      return snapshot.docs.map(
-              (doc)=>Product.fromJson(doc.data(), docId: doc.id)
-      ).toList();
+      return snapshot.docs
+          .map((doc) => Product.fromJson(doc.data(), docId: doc.id))
+          .toList();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -130,13 +136,16 @@ class DashboardFinanceRepository {
 
   Future<List<OrderProduct>> getAllDataOrder() async {
     try {
-      final snapshot = await firestore.collection('warehouse_orders').get();
+      final adminId = await TenantService.getActiveAdminId();
+      Query<Map<String, dynamic>> query = firestore.collection('warehouse_orders');
+      if (adminId.isNotEmpty) {
+        query = query.where('admin_id', isEqualTo: adminId);
+      }
+      final snapshot = await query.get();
 
-      return snapshot.docs.map(
-              (doc){
-            return OrderProduct.fromJson(doc.data(), docId: doc.id);
-          }
-      ).toList();
+      return snapshot.docs.map((doc) {
+        return OrderProduct.fromJson(doc.data(), docId: doc.id);
+      }).toList();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -145,14 +154,16 @@ class DashboardFinanceRepository {
 
   Future<List<SalesOrder>> getAllDataSalesOrder() async {
     try {
-      final snapshot = await firestore.collection('sales_orders').get();
+      final adminId = await TenantService.getActiveAdminId();
+      Query<Map<String, dynamic>> query = firestore.collection('sales_orders');
+      if (adminId.isNotEmpty) {
+        query = query.where('admin_id', isEqualTo: adminId);
+      }
+      final snapshot = await query.get();
 
-      return snapshot.docs.map(
-              (doc){
-            debugPrint("ini ${doc.data()}");
-            return SalesOrder.fromJson(doc.data(), docId: doc.id);
-          }
-      ).toList();
+      return snapshot.docs.map((doc) {
+        return SalesOrder.fromJson(doc.data(), docId: doc.id);
+      }).toList();
     } catch (e) {
       debugPrint(e.toString());
     }

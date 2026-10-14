@@ -9,7 +9,7 @@ class DoRegister {
   DoRegister(this.repository);
 
   Future<Either<Failure, UserCredential>> call(
-      String email, String password, String firstName, String lastName, String role) async {
-    return await repository.register(email, password, firstName, lastName, role);
+      String email, String password, String firstName, String lastName, String role, {String? companyName}) async {
+    return await repository.register(email, password, firstName, lastName, role, companyName: companyName);
   }
 }

@@ -26,6 +26,8 @@ class _SplashViewState extends State<SplashView> {
           context.go('/onboarding');
         } else if (state is SplashNavigateToLogin) {
           context.go('/login');
+        } else if (state is SplashNavigateToAdmin) {
+          context.go('/admin_main_page');
         } else if (state is SplashNavigateToWarehouse) {
           context.go('/warehouse_main_page');
         } else if (state is SplashNavigateToFinance) {

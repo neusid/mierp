@@ -34,6 +34,7 @@ class SplashNavigateToOnboarding extends SplashState {}
 class SplashNavigateToLogin extends SplashState {}
 class SplashNavigateToWarehouse extends SplashState {}
 class SplashNavigateToFinance extends SplashState {}
+class SplashNavigateToAdmin extends SplashState {}
 
 // --- BLOC ---
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
@@ -82,11 +83,15 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       try {
         final Map<String, dynamic> dataUserJson = jsonDecode(dataUserRaw);
         final dataUser = UserModel.fromJson(dataUserJson);
-        if (dataUser.role == "warehouse") {
+        if (dataUser.isAdmin) {
+          sl<NotificationCubit>().init("admin");
+          emit(SplashNavigateToAdmin());
+          return;
+        } else if (dataUser.isWarehouse) {
           sl<NotificationCubit>().init("warehouse");
           emit(SplashNavigateToWarehouse());
           return;
-        } else if (dataUser.role == "finance") {
+        } else if (dataUser.isFinance) {
           sl<NotificationCubit>().init("finance");
           emit(SplashNavigateToFinance());
           return;
@@ -102,18 +107,19 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
         final doc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
         if (doc.exists) {
           final data = doc.data() as Map<String, dynamic>;
-          final userModel = UserModel(
-            uid: currentUser.uid,
-            email: data['email'],
-            firstName: data['first_name'],
-            lastName: data['last_name'],
-            role: data['role'],
-            allowGoogleLogin: data['allow_google_login'],
-          );
-          await prefs.setString('user', jsonEncode(userModel));
+          data['uid'] = currentUser.uid;
+          if ((data['admin_id'] == null || data['admin_id'].toString().isEmpty) && data['role'] == 'admin') {
+            data['admin_id'] = currentUser.uid;
+          }
+          final userModel = UserModel.fromJson(data);
+          await prefs.setString('user', jsonEncode(userModel.toJson()));
           await sl<UserDataController>().setDataUser(userModel);
 
-          if (userModel.role == "warehouse") {
+          if (userModel.isAdmin) {
+            sl<NotificationCubit>().init("admin");
+            emit(SplashNavigateToAdmin());
+            return;
+          } else if (userModel.isWarehouse) {
             sl<NotificationCubit>().init("warehouse");
             emit(SplashNavigateToWarehouse());
             return;

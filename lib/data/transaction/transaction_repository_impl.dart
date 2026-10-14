@@ -53,15 +53,17 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
       // Best-effort atomic ledger recording in dedicated collection
       String productName = '';
+      Map<String, dynamic> orderData = {};
       try {
         final dt = DateTime.tryParse(date.toString()) ?? DateTime.now();
         final period = "${dt.year}-${dt.month.toString().padLeft(2, '0')}";
         final orderSnap = await firestore.collection("warehouse_orders").doc(docId.toString()).get();
-        final orderData = orderSnap.data() ?? {};
+        orderData = orderSnap.data() ?? {};
         productName = orderData['product_name']?.toString() ?? '';
         final mutationRef = firestore.collection("financial_mutations").doc("mut_po_$docId");
         await mutationRef.set({
           'id': "mut_po_$docId",
+          'admin_id': orderData['admin_id'] ?? '',
           'reference_id': docId.toString(),
           'reference_type': 'product_order',
           'flow': 'outflow',
@@ -98,6 +100,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           orderId: docId.toString(),
           orderType: "product_order",
           productName: productName,
+          adminId: orderData['admin_id']?.toString(),
         );
       } catch (notifErr) {
         debugPrint("Notice: Failed to dispatch live notification: $notifErr");
@@ -148,15 +151,17 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
       // Best-effort atomic ledger recording in dedicated collection
       String productName = '';
+      Map<String, dynamic> salesData = {};
       try {
         final dt = DateTime.tryParse(date.toString()) ?? DateTime.now();
         final period = "${dt.year}-${dt.month.toString().padLeft(2, '0')}";
         final salesSnap = await firestore.collection("sales_orders").doc(docId.toString()).get();
-        final salesData = salesSnap.data() ?? {};
+        salesData = salesSnap.data() ?? {};
         productName = salesData['product_name']?.toString() ?? '';
         final mutationRef = firestore.collection("financial_mutations").doc("mut_so_$docId");
         await mutationRef.set({
           'id': "mut_so_$docId",
+          'admin_id': salesData['admin_id'] ?? '',
           'reference_id': docId.toString(),
           'reference_type': 'sales_order',
           'flow': 'inflow',
@@ -193,6 +198,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           orderId: docId.toString(),
           orderType: "sales_order",
           productName: productName,
+          adminId: salesData['admin_id']?.toString(),
         );
       } catch (notifErr) {
         debugPrint("Notice: Failed to dispatch live notification: $notifErr");
@@ -227,6 +233,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           orderId: docId,
           orderType: "product_order",
           productName: productName,
+          adminId: orderData['admin_id']?.toString(),
         );
       } catch (notifErr) {
         debugPrint("Notice: Failed to dispatch live notification: $notifErr");
@@ -261,6 +268,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           orderId: docId,
           orderType: "sales_order",
           productName: productName,
+          adminId: salesData['admin_id']?.toString(),
         );
       } catch (notifErr) {
         debugPrint("Notice: Failed to dispatch live notification: $notifErr");

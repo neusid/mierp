@@ -14,6 +14,7 @@ class AppColors {
   static const brightCyan = Color(0xFF01BAFF);
   static const snowWhiteBlue = Color(0xFFF1F4FF);
   static const electricBlue = Color(0xFF5A2EEC);
+  static const primaryColor = premiumDarkSolid;
   static const lavenderMist = Color(0xFFE3D8FF);
   static const vibrantOrange = Color(0xFFFF6200);
   static const softCream = Color(0xFFFFFACF);

@@ -81,7 +81,7 @@ class _InputSelectAuthWidgetState extends State<InputSelectAuthWidget> {
                 fontWeight: AppFontWeight.medium,
                 color: const Color(0xFF0F172A),
               ),
-              items: <String>['warehouse', 'finance']
+              items: <String>['admin', 'warehouse', 'finance']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem(
                   value: value,

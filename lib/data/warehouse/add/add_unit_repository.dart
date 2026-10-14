@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mierp_apps/core/models/product.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 import 'package:path/path.dart' as p;
 
 class AddUnitRepository {
@@ -11,7 +12,9 @@ class AddUnitRepository {
 
   Future<void> addUnitToFirebase(collection, Product data) async {
     try {
+      final adminId = await TenantService.getActiveAdminId();
       await firestore.collection(collection).add({
+        "admin_id": adminId,
         "category": data.category,
         "created_on": data.createdOn,
         "image_product": data.imageProduct,

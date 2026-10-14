@@ -23,15 +23,11 @@ class LoginRepositoryImpl implements LoginRepository {
         return const Left(ValidationFailure('User tidak ditemukan di database.'));
       }
       final data = snapDoc.data() as Map<String, dynamic>;
-
-      UserModel userModel = UserModel(
-        uid: uid,
-        email: data['email'],
-        firstName: data['first_name'],
-        lastName: data['last_name'],
-        role: data['role'],
-        allowGoogleLogin: data['allow_google_login']
-      );
+      data['uid'] = uid;
+      if ((data['admin_id'] == null || data['admin_id'].toString().isEmpty) && data['role'] == 'admin') {
+        data['admin_id'] = uid;
+      }
+      final userModel = UserModel.fromJson(data);
       return Right(userModel);
     } on FirebaseAuthException catch (e) {
       switch (e.code) {

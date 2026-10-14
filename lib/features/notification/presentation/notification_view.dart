@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
+import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/features/notification/data/models/notification_model.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
@@ -479,40 +480,16 @@ class _NotificationViewState extends State<NotificationView> {
 
     void executeTest(Future<bool> Function() testAction, String roleLabel) async {
       Navigator.pop(parentContext);
-      final messenger = ScaffoldMessenger.of(parentContext);
-      messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 1),
-          content: Text("Mengirim ke Firestore untuk role: $roleLabel..."),
-        ),
-      );
 
       final ok = await testAction();
       if (!parentContext.mounted) return;
 
-      messenger.hideCurrentSnackBar();
-      if (ok) {
-        messenger.showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: const Color(0xFF16A34A),
-            duration: const Duration(seconds: 3),
-            content: Text(
-                "✅ Notifikasi berhasil terkirim ke Firestore (Role: $roleLabel)! Menunggu stream..."),
-          ),
-        );
-      } else {
+      if (!ok) {
         final err = cubit.state.errorMessage ?? "Permission Denied";
-        messenger.showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: const Color(0xFFEF4444),
-            duration: const Duration(seconds: 6),
-            content: Text(
-                "❌ Gagal mengirim ke Firestore:\n$err\n\n👉 Pastikan Anda sudah mengklik 'Publish' pada Firestore Rules di Firebase Console!"),
-          ),
+        CustomTopSnackbar.error(
+          parentContext,
+          "Gagal mengirim ke Firestore:\n$err\n\nPastikan Rules sudah di-publish!",
+          title: "Uji Coba Gagal",
         );
       }
     }
@@ -724,25 +701,19 @@ class _NotificationViewState extends State<NotificationView> {
                     if (token != null && token.isNotEmpty) {
                       await Clipboard.setData(ClipboardData(text: token));
                       if (parentContext.mounted) {
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          const SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Color(0xFF0D9488),
-                            duration: Duration(seconds: 4),
-                            content: Text(
-                                "📋 Token FCM berhasil disalin ke clipboard! Tempelkan pada 'Send test message' di Firebase Console."),
-                          ),
+                        CustomTopSnackbar.success(
+                          parentContext,
+                          "Token FCM berhasil disalin ke clipboard! Tempelkan pada 'Send test message' di Firebase Console.",
+                          title: "Token Disalin 📋",
                         );
                       }
                     }
                   } catch (e) {
                     if (parentContext.mounted) {
-                      ScaffoldMessenger.of(parentContext).showSnackBar(
-                        SnackBar(
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: const Color(0xFFEF4444),
-                          content: Text("Gagal mengambil token: $e"),
-                        ),
+                      CustomTopSnackbar.error(
+                        parentContext,
+                        "Gagal mengambil token: $e",
+                        title: "Token Gagal Diambil",
                       );
                     }
                   }

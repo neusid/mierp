@@ -52,6 +52,7 @@ import 'package:mierp_apps/data/transaction/services/transaction_services.dart';
 import 'package:mierp_apps/core/services/fcm_notification_service.dart';
 import 'package:mierp_apps/features/notification/data/repositories/notification_repository.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/features/admin/data/repositories/admin_staff_repository.dart';
 
 final sl = GetIt.instance;
 
@@ -136,6 +137,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DetailSalesOrderRepository());
   sl.registerLazySingleton(() => AddUnitRepository());
   sl.registerLazySingleton(() => AddUnitServices(addUnitRepository: sl()));
+  sl.registerLazySingleton<AdminStaffRepository>(() => AdminStaffRepositoryImpl(firestore: sl()));
   
   /// --------------------------------------------------------------------------
   /// MAIN FEATURE FLOW (Dashboard & Transaksi)

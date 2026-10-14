@@ -21,6 +21,7 @@ import 'package:mierp_apps/features/inventory_alerts/presentation/bloc/inventory
 import 'package:mierp_apps/features/loading/loading_view.dart';
 import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/features/login/presentation/login_view.dart';
+import 'package:mierp_apps/features/admin/presentation/admin_main_page_view.dart';
 import 'package:mierp_apps/features/main_page/finance/finance_main_page_view.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/main_page/warehouse/warehouse_main_page_view.dart';
@@ -120,6 +121,16 @@ final GoRouter appRouter = GoRouter(
           create: (_) => sl<ForgotPasswordBloc>(),
           child: const ForgotPasswordView(),
         ),
+      ),
+    ),
+    GoRoute(
+      path: '/admin_main_page',
+      name: 'admin_main_page',
+      redirect: _loginGuard,
+      pageBuilder: (context, state) => SmoothPageTransitions.fadeScale(
+        key: state.pageKey,
+        name: state.name,
+        child: const AdminMainPageView(),
       ),
     ),
     GoRoute(

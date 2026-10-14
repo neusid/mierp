@@ -10,19 +10,29 @@ class RegisterRepositoryImpl implements RegisterRepository {
 
   @override
   Future<Either<Failure, UserCredential>> register(
-      String email, String password, String firstName, String lastName, String role) async {
+      String email, String password, String firstName, String lastName, String role, {String? companyName}) async {
     try {
       final userCredential = await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       
       final uid = userCredential.user!.uid;
+      // Public self-registration always provisions an Admin workspace owner
+      const normalizedRole = 'admin';
+      final adminId = uid;
 
       await firebaseStore.collection("users").doc(uid).set({
+        'uid': uid,
         'email': email,
         'first_name': firstName,
         'last_name': lastName,
-        'role': role,
-        'allow_google_login': false
+        'role': normalizedRole,
+        'admin_id': adminId,
+        'company_name': (companyName != null && companyName.trim().isNotEmpty)
+            ? companyName.trim()
+            : 'Perusahaan Saya',
+        'is_active': true,
+        'allow_google_login': false,
+        'created_at': FieldValue.serverTimestamp(),
       });
 
       // Sign out immediately after registration to require login

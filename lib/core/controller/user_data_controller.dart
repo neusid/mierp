@@ -20,9 +20,18 @@ class UserDataController {
   Future<void> setDataUser(UserModel userModel) async {
     try {
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-      await sharedPreferences.setString('user', jsonEncode(userModel));
+      await sharedPreferences.setString('user', jsonEncode(userModel.toJson()));
     } catch(e) {
       rethrow;
+    }
+  }
+
+  Future<String> getEffectiveAdminId() async {
+    try {
+      final user = await getDataUser();
+      return user.effectiveAdminId;
+    } catch (_) {
+      return '';
     }
   }
 }

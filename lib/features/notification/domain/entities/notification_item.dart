@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class NotificationItem extends Equatable {
   final String id;
+  final String? adminId;
   final String targetRole; // 'finance', 'warehouse', 'all'
   final String type; // 'new_sales_order', 'new_product_order', 'order_approved', 'order_rejected'
   final String title;
@@ -14,6 +15,7 @@ class NotificationItem extends Equatable {
 
   const NotificationItem({
     required this.id,
+    this.adminId,
     required this.targetRole,
     required this.type,
     required this.title,
@@ -27,6 +29,7 @@ class NotificationItem extends Equatable {
 
   NotificationItem copyWith({
     String? id,
+    String? adminId,
     String? targetRole,
     String? type,
     String? title,
@@ -39,6 +42,7 @@ class NotificationItem extends Equatable {
   }) {
     return NotificationItem(
       id: id ?? this.id,
+      adminId: adminId ?? this.adminId,
       targetRole: targetRole ?? this.targetRole,
       type: type ?? this.type,
       title: title ?? this.title,
@@ -54,6 +58,7 @@ class NotificationItem extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        adminId,
         targetRole,
         type,
         title,

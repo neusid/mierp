@@ -4,6 +4,7 @@ import 'package:mierp_apps/features/notification/domain/entities/notification_it
 class NotificationModel extends NotificationItem {
   const NotificationModel({
     required super.id,
+    super.adminId,
     required super.targetRole,
     required super.type,
     required super.title,
@@ -30,6 +31,7 @@ class NotificationModel extends NotificationItem {
 
     return NotificationModel(
       id: doc.id,
+      adminId: (data['admin_id'] ?? '').toString(),
       targetRole: (data['target_role'] ?? '').toString().toLowerCase(),
       type: (data['type'] ?? '').toString(),
       title: (data['title'] ?? '').toString(),
@@ -44,6 +46,7 @@ class NotificationModel extends NotificationItem {
 
   Map<String, dynamic> toFirestore() {
     return {
+      'admin_id': adminId ?? '',
       'target_role': targetRole.toLowerCase(),
       'type': type,
       'title': title,

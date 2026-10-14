@@ -22,7 +22,7 @@ class FakeNotificationRepository implements NotificationRepository {
   }
 
   @override
-  Stream<List<NotificationModel>> streamNotifications(String role) {
+  Stream<List<NotificationModel>> streamNotifications(String role, {String? adminId}) {
     return _controller.stream;
   }
 
@@ -35,6 +35,7 @@ class FakeNotificationRepository implements NotificationRepository {
     required String orderId,
     required String orderType,
     required String productName,
+    String? adminId,
   }) async {
     lastSentNotification = {
       'targetRole': targetRole,
@@ -44,6 +45,7 @@ class FakeNotificationRepository implements NotificationRepository {
       'orderId': orderId,
       'orderType': orderType,
       'productName': productName,
+      'adminId': adminId,
     };
   }
 
@@ -53,7 +55,7 @@ class FakeNotificationRepository implements NotificationRepository {
   }
 
   @override
-  Future<void> markAllAsRead(String role) async {
+  Future<void> markAllAsRead(String role, {String? adminId}) async {
     lastMarkAllAsReadRole = role;
   }
 

@@ -33,14 +33,14 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(state.copyWith(isLoading: true));
     try {
       String role = roleOverride ?? '';
-      if (role.isEmpty) {
-        try {
-          final user = await _userDataController.getDataUser();
+      String adminId = '';
+      try {
+        final user = await _userDataController.getDataUser();
+        if (role.isEmpty) {
           role = user.role ?? '';
-        } catch (_) {
-          role = '';
         }
-      }
+        adminId = user.effectiveAdminId;
+      } catch (_) {}
 
       final normalizedRole = role.trim().toLowerCase();
       emit(state.copyWith(activeRole: normalizedRole));
@@ -53,7 +53,7 @@ class NotificationCubit extends Cubit<NotificationState> {
       _knownIds.clear();
 
       _subscription = _notificationRepository
-          .streamNotifications(normalizedRole)
+          .streamNotifications(normalizedRole, adminId: adminId)
           .listen(
         (notifications) async {
           final unreadCount =
@@ -117,7 +117,8 @@ class NotificationCubit extends Cubit<NotificationState> {
 
   Future<void> markAllAsRead() async {
     try {
-      await _notificationRepository.markAllAsRead(state.activeRole);
+      final adminId = await _userDataController.getEffectiveAdminId();
+      await _notificationRepository.markAllAsRead(state.activeRole, adminId: adminId);
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
     }
@@ -190,6 +191,8 @@ class NotificationCubit extends Cubit<NotificationState> {
           ? 'Pesanan penjualan untuk $resolvedProductName siap diproses dan menunggu persetujuan.'
           : 'Pesanan untuk $resolvedProductName telah disetujui & diverifikasi oleh Finance.';
 
+      final adminId = await _userDataController.getEffectiveAdminId();
+
       await _notificationRepository.sendNotification(
         targetRole: target,
         type: type ?? defaultType,
@@ -198,6 +201,7 @@ class NotificationCubit extends Cubit<NotificationState> {
         orderId: resolvedOrderId,
         orderType: resolvedOrderType,
         productName: resolvedProductName,
+        adminId: adminId,
       );
       return true;
     } catch (e) {
