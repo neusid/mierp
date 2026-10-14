@@ -328,16 +328,21 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                         // Staff List or Empty State
                         if (filtered.isEmpty)
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 40.h),
+                            padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 24.w),
                             alignment: Alignment.center,
                             child: Column(
                               children: [
-                                Icon(Icons.person_search_rounded,
-                                    size: 56.w, color: const Color(0xFFCBD5E1)),
+                                Icon(
+                                  _searchQuery.isNotEmpty
+                                      ? Icons.person_search_rounded
+                                      : Icons.people_outline_rounded,
+                                  size: 52.w,
+                                  color: const Color(0xFFCBD5E1),
+                                ),
                                 SizedBox(height: 12.h),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? "Tidak ada staf yang cocok dengan '$_searchQuery'"
+                                      ? "Tidak ada staf yang cocok"
                                       : "Belum ada akun staf",
                                   style: GoogleFonts.outfit(
                                     fontSize: 15.sp,
@@ -347,39 +352,14 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 ),
                                 SizedBox(height: 6.h),
                                 Text(
-                                  "Klik tombol 'Tambah Staf' di bawah untuk membuat akun baru",
+                                  _searchQuery.isNotEmpty
+                                      ? "Periksa kembali ejaan nama atau filter yang dipilih"
+                                      : "Gunakan tombol 'Tambah Staf' di pojok kanan bawah untuk membuat akun baru",
                                   style: GoogleFonts.outfit(
                                     fontSize: 12.sp,
                                     color: const Color(0xFF94A3B8),
                                   ),
-                                ),
-                                SizedBox(height: 14.h),
-                                ElevatedButton.icon(
-                                  onPressed: () async {
-                                    final created = await context.push<bool>('/add_staff');
-                                    if (created == true && context.mounted) {
-                                      context.read<AdminStaffCubit>().loadStaffList();
-                                    }
-                                  },
-                                  icon: Icon(Icons.person_add_outlined,
-                                      size: 16.w, color: Colors.white),
-                                  label: Text(
-                                    "Tambah Akun Staf",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF2E1052),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.r),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.w, vertical: 10.h),
-                                    elevation: 0,
-                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
