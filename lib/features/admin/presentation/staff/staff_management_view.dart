@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -227,7 +229,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                     child: ListView(
                       padding: EdgeInsets.all(16.w),
                       children: [
-                        // KPI Metrics Summary Card
+                        // KPI Metrics Summary Card (Interactive Filters)
                         Row(
                           children: [
                             Expanded(
@@ -235,8 +237,11 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Total Staf",
                                 count: staffList.length,
                                 icon: Icons.groups_rounded,
-                                color: const Color(0xFF6366F1),
-                                bg: const Color(0xFFEEF2FF),
+                                iconColor: const Color(0xFF7C3AED),
+                                squircleBg: const Color(0xFFF5F3FF),
+                                squircleBorder: const Color(0xFFDDD6FE),
+                                isSelected: _selectedFilter == 'all',
+                                onTap: () => setState(() => _selectedFilter = 'all'),
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -245,8 +250,12 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Finance",
                                 count: financeCount,
                                 icon: Icons.account_balance_wallet_rounded,
-                                color: const Color(0xFF2563EB),
-                                bg: const Color(0xFFEFF6FF),
+                                iconColor: const Color(0xFF4F46E5),
+                                squircleBg: const Color(0xFFEEF2FF),
+                                squircleBorder: const Color(0xFFC7D2FE),
+                                isSelected: _selectedFilter == 'finance',
+                                onTap: () => setState(() => _selectedFilter =
+                                    (_selectedFilter == 'finance') ? 'all' : 'finance'),
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -255,8 +264,12 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Warehouse",
                                 count: warehouseCount,
                                 icon: Icons.warehouse_rounded,
-                                color: const Color(0xFFD97706),
-                                bg: const Color(0xFFFFFBEB),
+                                iconColor: const Color(0xFF0D9488),
+                                squircleBg: const Color(0xFFF0FDFA),
+                                squircleBorder: const Color(0xFFCCFBF1),
+                                isSelected: _selectedFilter == 'warehouse',
+                                onTap: () => setState(() => _selectedFilter =
+                                    (_selectedFilter == 'warehouse') ? 'all' : 'warehouse'),
                               ),
                             ),
                           ],
@@ -363,44 +376,129 @@ class _StaffManagementViewState extends State<StaffManagementView> {
     required String label,
     required int count,
     required IconData icon,
-    required Color color,
-    required Color bg,
+    required Color iconColor,
+    required Color squircleBg,
+    required Color squircleBorder,
+    required bool isSelected,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(6.w),
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.circular(8.r),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.r),
+            border: Border.all(
+              color: isSelected ? const Color(0xFF7C3AED) : const Color(0xFFF1F5F9),
+              width: isSelected ? 1.5.w : 1.2.w,
             ),
-            child: Icon(icon, color: color, size: 16.w),
+            boxShadow: [
+              BoxShadow(
+                color: isSelected
+                    ? const Color(0xFF7C3AED).withValues(alpha: 0.10)
+                    : const Color(0xFF0F172A).withValues(alpha: 0.04),
+                blurRadius: isSelected ? 12.w : 8.w,
+                offset: Offset(0, 3.h),
+              ),
+              BoxShadow(
+                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+                blurRadius: 3.w,
+                offset: Offset(0, 1.h),
+              ),
+            ],
           ),
-          SizedBox(height: 8.h),
-          Text(
-            "$count",
-            style: GoogleFonts.outfit(
-              fontSize: 20.sp,
-              fontWeight: AppFontWeight.bold,
-              color: const Color(0xFF0F172A),
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Top Row: Squircle icon + Active Pill / Subtle Dot
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 28.w,
+                    height: 28.w,
+                    decoration: BoxDecoration(
+                      color: squircleBg,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: squircleBorder, width: 1.w),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        color: iconColor,
+                        size: 15.w,
+                      ),
+                    ),
+                  ),
+                  if (isSelected)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F3FF),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: const Color(0xFFDDD6FE),
+                          width: 0.8.w,
+                        ),
+                      ),
+                      child: Text(
+                        "Aktif",
+                        style: GoogleFonts.inter(
+                          fontSize: 8.5.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF7C3AED),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      width: 5.w,
+                      height: 5.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFCBD5E1).withValues(alpha: 0.5),
+                      ),
+                    ),
+                ],
+              ),
+              SizedBox(height: 10.h),
+              // Metric Count (Tabular Figures, Slate-800)
+              Text(
+                "$count",
+                style: GoogleFonts.inter(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? const Color(0xFF1E293B) : const Color(0xFF334155),
+                  letterSpacing: -0.5,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+              SizedBox(height: 2.h),
+              // Metric Label (Inter Slate-500)
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 11.sp,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? const Color(0xFF475569) : const Color(0xFF64748B),
+                  letterSpacing: -0.1,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 11.sp,
-              color: const Color(0xFF64748B),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -435,8 +533,8 @@ class _StaffManagementViewState extends State<StaffManagementView> {
 
   Widget _buildStaffCard(UserModel staff) {
     final isFinance = staff.role?.toLowerCase() == 'finance';
-    final roleColor = isFinance ? const Color(0xFF2563EB) : const Color(0xFFD97706);
-    final roleBg = isFinance ? const Color(0xFFEFF6FF) : const Color(0xFFFFFBEB);
+    final roleColor = isFinance ? const Color(0xFF4F46E5) : const Color(0xFF0D9488);
+    final roleBg = isFinance ? const Color(0xFFEEF2FF) : const Color(0xFFF0FDFA);
 
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
