@@ -52,48 +52,32 @@ class DashboardWarehouseView extends StatelessWidget {
                       child: Stack(
                         children: [
                           Positioned(
-                            top: -90.h,
-                            right: -40.w,
-                            child: Container(
-                              width: 200.w,
-                              height: 200.w,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.06),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 90.h,
-                            left: -20.w,
-                            child: Container(
-                              width: 120.w,
-                              height: 120.w,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.06),
-                              ),
-                            ),
-                          ),
-                          Positioned(
                             top: 56.h,
-                            left: 32.w,
-                            right: 28.w,
+                            left: 24.w,
+                            right: 20.w,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                  width: 48.w,
-                                  height: 48.w,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xFFE9D5FF),
+                                  width: 44.w,
+                                  height: 44.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      width: 1.2.w,
+                                    ),
                                   ),
                                   child: Center(
                                     child: Icon(
                                       Icons.person_rounded,
-                                      color: const Color(0xFF7C3AED),
-                                      size: 28.w,
+                                      color: const Color(0xFFE9D5FF),
+                                      size: 24.w,
                                     ),
                                   ),
                                 ),

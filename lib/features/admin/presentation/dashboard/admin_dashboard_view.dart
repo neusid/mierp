@@ -133,43 +133,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                     bottomLeft: Radius.circular(28.w),
                     bottomRight: Radius.circular(28.w),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF2E1052).withValues(alpha: 0.35),
-                      offset: Offset(0, 8.w),
-                      blurRadius: 16.w,
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    // Top-Left Purple Ambient Light Orb
-                    Positioned(
-                      top: -30.h,
-                      left: -20.w,
-                      child: Container(
-                        width: 140.w,
-                        height: 140.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF9333EA).withValues(alpha: 0.16),
-                        ),
-                      ),
-                    ),
-                    // Bottom-Right Deep Indigo Ambient Orb
-                    Positioned(
-                      bottom: -20.h,
-                      right: -20.w,
-                      child: Container(
-                        width: 130.w,
-                        height: 130.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF6366F1).withValues(alpha: 0.12),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
               title: Padding(
@@ -177,54 +140,45 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // 1. AVATAR WITH GLOW RING
+                    // 1. AVATAR SQUIRCLE (KOTAK, NO GLOW)
                     Stack(
                       children: [
                         Container(
-                          width: 48.w,
-                          height: 48.w,
-                          padding: EdgeInsets.all(2.5.w),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFC084FC), Color(0xFF7C3AED)],
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                          ),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFF2E1052),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              width: 1.2.w,
                             ),
-                            child: Center(
-                              child: Icon(
-                                Icons.person_rounded,
-                                color: const Color(0xFFE9D5FF),
-                                size: 26.w,
-                              ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.person_rounded,
+                              color: const Color(0xFFE9D5FF),
+                              size: 24.w,
                             ),
                           ),
                         ),
                         Positioned(
-                          bottom: 1.w,
-                          right: 1.w,
+                          bottom: -2.w,
+                          right: -2.w,
                           child: Container(
-                            width: 12.w,
-                            height: 12.w,
+                            width: 10.w,
+                            height: 10.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: const Color(0xFF10B981),
                               border: Border.all(
                                 color: const Color(0xFF2E1052),
-                                width: 2.w,
+                                width: 1.5.w,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF10B981).withValues(alpha: 0.6),
-                                  blurRadius: 4.w,
-                                ),
-                              ],
                             ),
                           ),
                         ),

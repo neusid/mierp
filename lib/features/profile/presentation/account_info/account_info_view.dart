@@ -83,53 +83,18 @@ class _AccountInfoViewState extends State<AccountInfoView> {
             backgroundColor: const Color(0xFFF8FAFC),
             body: Stack(
               children: [
-                // 1. Premium Dark Header with Ambient Gradient Orbs
+                // 1. Signature Clean Header (Obsidian Black & Violet, No Orbs)
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: 250.h,
+                    height: 240.h,
                     decoration: BoxDecoration(
                       gradient: AppColors.premiumDarkGradient,
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: -30.w,
-                          left: -30.w,
-                          child: Container(
-                            width: 140.w,
-                            height: 140.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  const Color(0xFF9333EA).withValues(alpha: 0.35),
-                                  const Color(0xFF9333EA).withValues(alpha: 0.0),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 20.w,
-                          right: -20.w,
-                          child: Container(
-                            width: 120.w,
-                            height: 120.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  const Color(0xFF6366F1).withValues(alpha: 0.25),
-                                  const Color(0xFF6366F1).withValues(alpha: 0.0),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(32.r),
+                      ),
                     ),
                   ),
                 ),
@@ -137,81 +102,60 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                 // 2. Scrollable Symmetrical Body Content
                 SafeArea(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.only(top: 64.h, bottom: 120.h, left: 20.w, right: 20.w),
+                    padding: EdgeInsets.only(top: 64.h, bottom: 120.h, left: 16.w, right: 16.w),
                     child: Column(
                       children: [
-                        // Main Profile Card (Fully symmetrical with screen padding)
+                        // Main Profile Card (Clean solid surface, no heavy shadow)
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.all(24.w),
+                          padding: EdgeInsets.all(22.w),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(24.w),
-                            border: Border.all(color: const Color(0xFFF1F5F9), width: 1.w),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 24.w,
-                                offset: Offset(0, 8.w),
-                              ),
-                            ],
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Avatar with Center Alignment & Edit Badge
+                              // Avatar Squircle (Kotak, No Glow)
                               Center(
                                 child: Stack(
                                   clipBehavior: Clip.none,
                                   alignment: Alignment.center,
                                   children: [
                                     Container(
-                                      width: 88.w,
-                                      height: 88.w,
+                                      width: 80.w,
+                                      height: 80.w,
                                       decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color(0xFFF3E8FF),
-                                        border: Border.all(color: const Color(0xFFC084FC), width: 2.5.w),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
-                                            blurRadius: 12.w,
-                                            offset: Offset(0, 4.w),
-                                          ),
-                                        ],
+                                        borderRadius: BorderRadius.circular(20.r),
+                                        gradient: AppColors.premiumDarkGradient,
+                                        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
                                         initials,
                                         style: GoogleFonts.inter(
-                                          fontSize: 32.sp,
-                                          fontWeight: AppFontWeight.bold,
-                                          color: const Color(0xFF7C3AED),
-                                          letterSpacing: -1,
+                                          fontSize: 28.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                          letterSpacing: -0.5,
                                         ),
                                       ),
                                     ),
                                     if (_isEditing)
                                       Positioned(
-                                        bottom: 0,
-                                        right: 0,
+                                        bottom: -4.w,
+                                        right: -4.w,
                                         child: Container(
-                                          width: 28.w,
-                                          height: 28.w,
+                                          width: 26.w,
+                                          height: 26.w,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF7C3AED),
-                                            shape: BoxShape.circle,
+                                            color: AppColors.premiumDarkSolid,
+                                            borderRadius: BorderRadius.circular(8.r),
                                             border: Border.all(color: Colors.white, width: 2.w),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.15),
-                                                blurRadius: 6.w,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
                                           ),
                                           child: Center(
-                                            child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 14.w),
+                                            child: Icon(Icons.camera_alt_rounded, color: Colors.white, size: 13.w),
                                           ),
                                         ),
                                       ),

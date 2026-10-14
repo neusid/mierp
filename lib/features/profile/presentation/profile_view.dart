@@ -67,13 +67,6 @@ class ProfileView extends StatelessWidget {
                       borderRadius: BorderRadius.vertical(
                         bottom: Radius.circular(32.r),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.premiumDarkSolid.withValues(alpha: 0.25),
-                          blurRadius: 20.r,
-                          offset: Offset(0, 8.h),
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -129,36 +122,22 @@ class ProfileView extends StatelessWidget {
                         children: [
                           // 3.1. Profile Identity Hero Card
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 20.w),
+                            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
                               border: Border.all(color: const Color(0xFFE2E8F0)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF1E293B).withValues(alpha: 0.05),
-                                  blurRadius: 20.r,
-                                  offset: Offset(0, 6.h),
-                                ),
-                              ],
                             ),
                             child: Column(
                               children: [
-                                // Executive Avatar with Outer Ambient Glow
+                                // Executive Squircle Avatar (Clean, no glow)
                                 Container(
-                                  width: 84.w,
-                                  height: 84.w,
+                                  width: 80.w,
+                                  height: 80.w,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                    borderRadius: BorderRadius.circular(20.r),
                                     gradient: AppColors.premiumDarkGradient,
-                                    border: Border.all(color: Colors.white, width: 3.5.w),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.premiumDarkSolid.withValues(alpha: 0.32),
-                                        blurRadius: 18.r,
-                                        offset: Offset(0, 6.h),
-                                      ),
-                                    ],
+                                    border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
