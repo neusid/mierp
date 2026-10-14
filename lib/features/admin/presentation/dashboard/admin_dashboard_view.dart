@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +9,8 @@ import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/services/tenant_service.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminDashboardView extends StatefulWidget {
@@ -97,213 +100,456 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     final adminName = _currentUser?.firstName?.isNotEmpty == true
         ? _currentUser!.firstName!
         : 'Admin';
+    final isSuperAdmin = _currentUser?.isSuperAdmin ?? false;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _loadDashboardData,
-          child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            children: [
-              // Header Card
-              Container(
-                padding: EdgeInsets.all(18.w),
+      body: RefreshIndicator(
+        onRefresh: _loadDashboardData,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              toolbarHeight: 110.h,
+              collapsedHeight: 110.h,
+              pinned: true,
+              floating: false,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                     colors: [
                       Color(0xFF2E1052),
                       Color(0xFF1E0B36),
                       AppColors.gray,
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(28.w),
+                    bottomRight: Radius.circular(28.w),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF2E1052).withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
+                      offset: Offset(0, 8.w),
+                      blurRadius: 16.w,
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Top-Left Purple Ambient Light Orb
+                    Positioned(
+                      top: -30.h,
+                      left: -20.w,
+                      child: Container(
+                        width: 140.w,
+                        height: 140.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF9333EA).withValues(alpha: 0.16),
+                        ),
+                      ),
+                    ),
+                    // Bottom-Right Deep Indigo Ambient Orb
+                    Positioned(
+                      bottom: -20.h,
+                      right: -20.w,
+                      child: Container(
+                        width: 130.w,
+                        height: 130.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.12),
+                        ),
+                      ),
+                    ),
+                    // Hairline Frosted Glass Bottom Border
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 1.5.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(28.w),
+                            bottomRight: Radius.circular(28.w),
+                          ),
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF9333EA).withValues(alpha: 0.4),
+                              const Color(0xFFC084FC).withValues(alpha: 0.5),
+                              const Color(0xFF818CF8).withValues(alpha: 0.2),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              title: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 1. AVATAR WITH GLOW RING
+                    Stack(
                       children: [
-                        // Company Badge
                         Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 4.h),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(
-                              color: const Color(0xFFC084FC).withValues(alpha: 0.4),
+                          width: 48.w,
+                          height: 48.w,
+                          padding: EdgeInsets.all(2.5.w),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFC084FC), Color(0xFF7C3AED)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
                           ),
-                          child: Row(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFF2E1052),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.shield_rounded,
+                                color: const Color(0xFFE9D5FF),
+                                size: 26.w,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 1.w,
+                          right: 1.w,
+                          child: Container(
+                            width: 12.w,
+                            height: 12.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFF10B981),
+                              border: Border.all(
+                                color: const Color(0xFF2E1052),
+                                width: 2.w,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                                  blurRadius: 4.w,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 12.w),
+                    // 2. USER INFO: ROLE PILL, COMPANY BADGE, GREETING, NAME
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.business_rounded,
-                                  size: 13.w, color: const Color(0xFFC084FC)),
+                              // Role Badge Pill
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.5.h),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF7C3AED).withValues(alpha: 0.22),
+                                  borderRadius: BorderRadius.circular(10.w),
+                                  border: Border.all(
+                                    color: const Color(0xFFA855F7).withValues(alpha: 0.4),
+                                    width: 1.w,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 5.w,
+                                      height: 5.w,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color(0xFFA855F7),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFFA855F7).withValues(alpha: 0.7),
+                                            blurRadius: 3.w,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 5.w),
+                                    Text(
+                                      isSuperAdmin ? "SUPER ADMIN" : "ADMIN",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 9.5.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFFD8B4FE),
+                                        letterSpacing: 0.4,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               SizedBox(width: 6.w),
-                              Text(
-                                companyName.toUpperCase(),
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11.sp,
-                                  fontWeight: AppFontWeight.bold,
-                                  color: const Color(0xFFE9D5FF),
-                                  letterSpacing: 0.5,
+                              // Company Badge
+                              Flexible(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.5.h),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.10),
+                                    borderRadius: BorderRadius.circular(8.w),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.18),
+                                      width: 0.8.w,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.business_rounded,
+                                        size: 10.w,
+                                        color: const Color(0xFFC084FC),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Flexible(
+                                        child: Text(
+                                          companyName.toUpperCase(),
+                                          style: GoogleFonts.inter(
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFFE2E8F0),
+                                            letterSpacing: 0.3,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-
-                        // Bell Notification button
-                        IconButton(
-                          icon: const Icon(Icons.notifications_rounded,
-                              color: Colors.white),
-                          onPressed: () => context.push('/notification'),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 14.h),
-                    Text(
-                      "Selamat Datang, $adminName 👋",
-                      style: GoogleFonts.outfit(
-                        fontSize: 20.sp,
-                        fontWeight: AppFontWeight.bold,
-                        color: Colors.white,
+                          SizedBox(height: 3.h),
+                          Text(
+                            "Welcome Back,",
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 11.5.sp,
+                              color: const Color(0xFFCBD5E1),
+                            ),
+                          ),
+                          Text(
+                            adminName,
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 17.5.sp,
+                              color: Colors.white,
+                              letterSpacing: -0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      "Pusat Komando & Pengawasan MiERP Multi-Tenant",
-                      style: GoogleFonts.outfit(
-                        fontSize: 12.sp,
-                        color: const Color(0xFF94A3B8),
+                    SizedBox(width: 8.w),
+                    // 3. FROSTED SQUIRCLE NOTIFICATION BUTTON WITH UNREAD DOT
+                    InkWell(
+                      onTap: () {
+                        context.push('/notification');
+                      },
+                      borderRadius: BorderRadius.circular(13.w),
+                      child: Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(13.w),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.14),
+                            width: 1.2.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              offset: Offset(0, 2.w),
+                              blurRadius: 4.w,
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Icons.notifications_none_rounded,
+                              color: const Color(0xFFF1F5F9),
+                              size: 22.w,
+                            ),
+                            Positioned(
+                              top: 9.w,
+                              right: 9.w,
+                              child: BlocSelector<NotificationCubit, NotificationState, bool>(
+                                selector: (state) => state.unreadCount > 0,
+                                builder: (context, hasUnread) {
+                                  if (!hasUnread) return const SizedBox.shrink();
+                                  return Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color(0xFFEF4444),
+                                      border: Border.all(
+                                        color: AppColors.gray,
+                                        width: 1.2.w,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0xFFEF4444).withValues(alpha: 0.6),
+                                          blurRadius: 4.w,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-
-              SizedBox(height: 20.h),
-
-              // KPI Section Title
-              Text(
-                "Ringkasan Operasional Terisolasi",
-                style: GoogleFonts.outfit(
-                  fontSize: 15.sp,
-                  fontWeight: AppFontWeight.bold,
-                  color: const Color(0xFF1E293B),
-                ),
-              ),
-              SizedBox(height: 12.h),
-
-              // 2x2 KPI Grid
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildKpiCard(
-                      title: "Staf Dibawahi",
-                      count: "$_staffCount",
-                      subtitle: "Finance & Warehouse",
-                      icon: Icons.groups_rounded,
-                      color: const Color(0xFF6366F1),
-                      bg: const Color(0xFFEEF2FF),
-                      onTap: () => widget.onTabChange(1), // Go to Staff tab
+            ),
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  // KPI Section Title
+                  Text(
+                    "Ringkasan Operasional Terisolasi",
+                    style: GoogleFonts.outfit(
+                      fontSize: 15.sp,
+                      fontWeight: AppFontWeight.bold,
+                      color: const Color(0xFF1E293B),
                     ),
                   ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: _buildKpiCard(
-                      title: "Katalog Produk",
-                      count: "$_productCount",
-                      subtitle: "Total jenis SKU",
-                      icon: Icons.inventory_2_rounded,
-                      color: const Color(0xFF2563EB),
-                      bg: const Color(0xFFEFF6FF),
-                      onTap: () => widget.onTabChange(2), // Go to Warehouse tab
+                  SizedBox(height: 12.h),
+
+                  // 2x2 KPI Grid
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildKpiCard(
+                          title: "Staf Dibawahi",
+                          count: "$_staffCount",
+                          subtitle: "Finance & Warehouse",
+                          icon: Icons.groups_rounded,
+                          color: const Color(0xFF6366F1),
+                          bg: const Color(0xFFEEF2FF),
+                          onTap: () => widget.onTabChange(1), // Go to Staff tab
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildKpiCard(
+                          title: "Katalog Produk",
+                          count: "$_productCount",
+                          subtitle: "Total jenis SKU",
+                          icon: Icons.inventory_2_rounded,
+                          color: const Color(0xFF2563EB),
+                          bg: const Color(0xFFEFF6FF),
+                          onTap: () => widget.onTabChange(2), // Go to Warehouse tab
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildKpiCard(
+                          title: "Transaksi Order",
+                          count: "$_orderCount",
+                          subtitle: "Total Sales Orders",
+                          icon: Icons.receipt_long_rounded,
+                          color: const Color(0xFF059669),
+                          bg: const Color(0xFFECFDF5),
+                          onTap: () => widget.onTabChange(3), // Go to Finance tab
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildKpiCard(
+                          title: "Peringatan Stok",
+                          count: "$_lowStockCount",
+                          subtitle: "Stok menipis (<= 5)",
+                          icon: Icons.warning_amber_rounded,
+                          color: const Color(0xFFDC2626),
+                          bg: const Color(0xFFFEF2F2),
+                          onTap: () => widget.onTabChange(2),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 22.h),
+
+                  // Quick Actions
+                  Text(
+                    "Aksi Cepat Admin",
+                    style: GoogleFonts.outfit(
+                      fontSize: 15.sp,
+                      fontWeight: AppFontWeight.bold,
+                      color: const Color(0xFF1E293B),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 12.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildKpiCard(
-                      title: "Transaksi Order",
-                      count: "$_orderCount",
-                      subtitle: "Total Sales Orders",
-                      icon: Icons.receipt_long_rounded,
-                      color: const Color(0xFF059669),
-                      bg: const Color(0xFFECFDF5),
-                      onTap: () => widget.onTabChange(3), // Go to Finance tab
-                    ),
+                  SizedBox(height: 12.h),
+
+                  _buildQuickActionTile(
+                    icon: Icons.person_add_rounded,
+                    iconColor: const Color(0xFF2563EB),
+                    bgColor: const Color(0xFFEFF6FF),
+                    title: "Tambah Akun Staf Baru",
+                    description: "Buatkan kredensial login Finance atau Warehouse",
+                    onTap: () => widget.onTabChange(1),
                   ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: _buildKpiCard(
-                      title: "Peringatan Stok",
-                      count: "$_lowStockCount",
-                      subtitle: "Stok menipis (<= 5)",
-                      icon: Icons.warning_amber_rounded,
-                      color: const Color(0xFFDC2626),
-                      bg: const Color(0xFFFEF2F2),
-                      onTap: () => widget.onTabChange(2),
-                    ),
+                  SizedBox(height: 10.h),
+                  _buildQuickActionTile(
+                    icon: Icons.warehouse_rounded,
+                    iconColor: const Color(0xFFD97706),
+                    bgColor: const Color(0xFFFFFBEB),
+                    title: "Pantau Stok & Inventaris Gudang",
+                    description: "Buka ringkasan produk, mutasi barang, dan restock",
+                    onTap: () => widget.onTabChange(2),
                   ),
-                ],
+                  SizedBox(height: 10.h),
+                  _buildQuickActionTile(
+                    icon: Icons.pie_chart_rounded,
+                    iconColor: const Color(0xFF059669),
+                    bgColor: const Color(0xFFECFDF5),
+                    title: "Pantau Arus Kas & Keuangan",
+                    description: "Lihat ringkasan neraca kas masuk & pembayaran",
+                    onTap: () => widget.onTabChange(3),
+                  ),
+                ]),
               ),
-
-              SizedBox(height: 22.h),
-
-              // Quick Actions
-              Text(
-                "Aksi Cepat Admin",
-                style: GoogleFonts.outfit(
-                  fontSize: 15.sp,
-                  fontWeight: AppFontWeight.bold,
-                  color: const Color(0xFF1E293B),
-                ),
-              ),
-              SizedBox(height: 12.h),
-
-              _buildQuickActionTile(
-                icon: Icons.person_add_rounded,
-                iconColor: const Color(0xFF2563EB),
-                bgColor: const Color(0xFFEFF6FF),
-                title: "Tambah Akun Staf Baru",
-                description: "Buatkan kredensial login Finance atau Warehouse",
-                onTap: () => widget.onTabChange(1),
-              ),
-              SizedBox(height: 10.h),
-              _buildQuickActionTile(
-                icon: Icons.warehouse_rounded,
-                iconColor: const Color(0xFFD97706),
-                bgColor: const Color(0xFFFFFBEB),
-                title: "Pantau Stok & Inventaris Gudang",
-                description: "Buka ringkasan produk, mutasi barang, dan restock",
-                onTap: () => widget.onTabChange(2),
-              ),
-              SizedBox(height: 10.h),
-              _buildQuickActionTile(
-                icon: Icons.pie_chart_rounded,
-                iconColor: const Color(0xFF059669),
-                bgColor: const Color(0xFFECFDF5),
-                title: "Pantau Arus Kas & Keuangan",
-                description: "Lihat ringkasan neraca kas masuk & pembayaran",
-                onTap: () => widget.onTabChange(3),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
