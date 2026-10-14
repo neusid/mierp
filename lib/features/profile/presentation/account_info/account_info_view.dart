@@ -83,7 +83,7 @@ class _AccountInfoViewState extends State<AccountInfoView> {
             backgroundColor: const Color(0xFFF8FAFC),
             body: Stack(
               children: [
-                // 1. Signature Clean Header (Obsidian Black & Violet, No Orbs)
+                // 1. Signature Clean Header (Obsidian Black & Violet, Flat Bottom)
                 Positioned(
                   top: 0,
                   left: 0,
@@ -92,9 +92,6 @@ class _AccountInfoViewState extends State<AccountInfoView> {
                     height: 240.h,
                     decoration: BoxDecoration(
                       gradient: AppColors.premiumDarkGradient,
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(32.r),
-                      ),
                     ),
                   ),
                 ),
