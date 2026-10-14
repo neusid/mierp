@@ -100,7 +100,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     final adminName = _currentUser?.firstName?.isNotEmpty == true
         ? _currentUser!.firstName!
         : 'Admin';
-    final isSuperAdmin = _currentUser?.isSuperAdmin ?? false;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -258,90 +257,41 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Role Badge Pill
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.5.h),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF7C3AED).withValues(alpha: 0.22),
-                                  borderRadius: BorderRadius.circular(10.w),
-                                  border: Border.all(
-                                    color: const Color(0xFFA855F7).withValues(alpha: 0.4),
-                                    width: 1.w,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 5.w,
-                                      height: 5.w,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color(0xFFA855F7),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color(0xFFA855F7).withValues(alpha: 0.7),
-                                            blurRadius: 3.w,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(width: 5.w),
-                                    Text(
-                                      isSuperAdmin ? "SUPER ADMIN" : "ADMIN",
-                                      style: GoogleFonts.inter(
-                                        fontSize: 9.5.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFFD8B4FE),
-                                        letterSpacing: 0.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                          // Company Badge
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(8.w),
+                              border: Border.all(
+                                color: const Color(0xFFC084FC).withValues(alpha: 0.35),
+                                width: 0.8.w,
                               ),
-                              SizedBox(width: 6.w),
-                              // Company Badge
-                              Flexible(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.5.h),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.10),
-                                    borderRadius: BorderRadius.circular(8.w),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.18),
-                                      width: 0.8.w,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.business_rounded,
+                                  size: 11.w,
+                                  color: const Color(0xFFC084FC),
+                                ),
+                                SizedBox(width: 5.w),
+                                Flexible(
+                                  child: Text(
+                                    companyName.toUpperCase(),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 9.5.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFFE2E8F0),
+                                      letterSpacing: 0.3,
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.business_rounded,
-                                        size: 10.w,
-                                        color: const Color(0xFFC084FC),
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Flexible(
-                                        child: Text(
-                                          companyName.toUpperCase(),
-                                          style: GoogleFonts.inter(
-                                            fontSize: 9.sp,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFFE2E8F0),
-                                            letterSpacing: 0.3,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           SizedBox(height: 3.h),
                           Text(
