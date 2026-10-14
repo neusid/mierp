@@ -8,9 +8,9 @@ import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mierp_apps/features/admin/presentation/cubit/admin_staff_cubit.dart';
 import 'package:mierp_apps/features/admin/presentation/cubit/admin_staff_state.dart';
-import 'package:mierp_apps/features/admin/presentation/widgets/add_staff_modal.dart';
 
 class StaffManagementView extends StatefulWidget {
   final VoidCallback? onBack;
@@ -101,10 +101,12 @@ class _StaffManagementViewState extends State<StaffManagementView> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => AddStaffModal.show(
-              context,
-              context.read<AdminStaffCubit>(),
-            ),
+            onTap: () async {
+              final created = await context.push<bool>('/add_staff');
+              if (created == true && context.mounted) {
+                context.read<AdminStaffCubit>().loadStaffList();
+              }
+            },
             borderRadius: BorderRadius.circular(24.r),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.w),
@@ -353,11 +355,13 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 ),
                                 SizedBox(height: 14.h),
                                 ElevatedButton.icon(
-                                  onPressed: () => AddStaffModal.show(
-                                    context,
-                                    context.read<AdminStaffCubit>(),
-                                  ),
-                                  icon: Icon(Icons.person_add_alt_1_rounded,
+                                  onPressed: () async {
+                                    final created = await context.push<bool>('/add_staff');
+                                    if (created == true && context.mounted) {
+                                      context.read<AdminStaffCubit>().loadStaffList();
+                                    }
+                                  },
+                                  icon: Icon(Icons.person_add_outlined,
                                       size: 16.w, color: Colors.white),
                                   label: Text(
                                     "Tambah Akun Staf",

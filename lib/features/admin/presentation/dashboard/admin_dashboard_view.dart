@@ -498,7 +498,12 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                     iconColor: const Color(0xFF475569),
                     iconBgColor: const Color(0xFFF8FAFC),
                     iconBorderColor: const Color(0xFFE2E8F0),
-                    onTap: () => widget.onTabChange(1),
+                    onTap: () async {
+                      final created = await context.push<bool>('/add_staff');
+                      if (created == true && mounted) {
+                        _loadDashboardData();
+                      }
+                    },
                   ),
                   SizedBox(height: 10.h),
                   QuickAddCard(

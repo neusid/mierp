@@ -22,6 +22,9 @@ import 'package:mierp_apps/features/loading/loading_view.dart';
 import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/features/login/presentation/login_view.dart';
 import 'package:mierp_apps/features/admin/presentation/admin_main_page_view.dart';
+import 'package:mierp_apps/features/admin/presentation/staff/add_staff_view.dart';
+import 'package:mierp_apps/features/admin/presentation/cubit/admin_staff_cubit.dart';
+import 'package:mierp_apps/features/admin/data/repositories/admin_staff_repository.dart';
 import 'package:mierp_apps/features/main_page/finance/finance_main_page_view.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/main_page/warehouse/warehouse_main_page_view.dart';
@@ -294,6 +297,19 @@ final GoRouter appRouter = GoRouter(
           ),
         );
       },
+    ),
+    GoRoute(
+      path: '/add_staff',
+      name: 'add_staff',
+      redirect: _loginGuard,
+      pageBuilder: (context, state) => SmoothPageTransitions.slideHorizontal(
+        key: state.pageKey,
+        name: state.name,
+        child: BlocProvider(
+          create: (_) => AdminStaffCubit(repository: sl<AdminStaffRepository>()),
+          child: const AddStaffView(),
+        ),
+      ),
     ),
   ],
 );
