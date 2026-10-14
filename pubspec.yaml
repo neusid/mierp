@@ -64,7 +64,7 @@ dependencies:
   fl_chart: ^0.70.0
   firebase_messaging: ^16.7.0
   flutter_local_notifications: ^22.3.2
-  pdf: ^3.12.0
+  pdf: ^3.13.1
   csv: ^8.0.0
   share_plus: ^13.3.1
   open_filex: ^4.7.0
