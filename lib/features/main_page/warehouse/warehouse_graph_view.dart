@@ -581,8 +581,12 @@ class WarehouseGraphView extends StatelessWidget {
                 maxY: maxY,
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (_) => const Color(0xFF0F172A),
+                    getTooltipColor: (_) => const Color(0xFF000000),
                     tooltipRoundedRadius: 8.r,
+                    tooltipPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                    tooltipBorder: const BorderSide(color: Color(0xFF334155), width: 1.0),
+                    fitInsideHorizontally: true,
+                    fitInsideVertically: true,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         final isMasuk = spot.barIndex == 0;
@@ -591,10 +595,8 @@ class WarehouseGraphView extends StatelessWidget {
                         return LineTooltipItem(
                           "$tag$valStr\n",
                           GoogleFonts.inter(
-                            color: isMasuk
-                                ? const Color(0xFFC084FC)
-                                : const Color(0xFFCBD5E1),
-                            fontSize: 10.sp,
+                            color: Colors.white,
+                            fontSize: 11.sp,
                             fontWeight: FontWeight.bold,
                           ),
                           children: [
@@ -603,9 +605,9 @@ class WarehouseGraphView extends StatelessWidget {
                                   ? labels[spot.x.toInt()]
                                   : '',
                               style: GoogleFonts.inter(
-                                color: Colors.white70,
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 9.5.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],

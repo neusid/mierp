@@ -807,6 +807,43 @@ class FinanceGraphView extends StatelessWidget {
                 maxX: 6,
                 minY: 0,
                 maxY: maxY,
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (_) => const Color(0xFF000000),
+                    tooltipRoundedRadius: 8.r,
+                    tooltipPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                    tooltipBorder: const BorderSide(color: Color(0xFF334155), width: 1.0),
+                    fitInsideHorizontally: true,
+                    fitInsideVertically: true,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final isMasuk = spot.barIndex == 0;
+                        final String tag = isMasuk ? "Masuk: " : "Keluar: ";
+                        final String valStr = ConvertDollar().intToDollar(spot.y.toInt());
+                        return LineTooltipItem(
+                          "$tag$valStr\n",
+                          GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: spot.x.toInt() < labels.length
+                                  ? labels[spot.x.toInt()]
+                                  : '',
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 9.5.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 lineBarsData: [
                   // Uang Masuk (Violet solid)
                   LineChartBarData(
