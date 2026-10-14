@@ -116,7 +116,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
               floating: false,
               automaticallyImplyLeading: false,
               backgroundColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
               flexibleSpace: Container(
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -165,28 +166,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: const Color(0xFF6366F1).withValues(alpha: 0.12),
-                        ),
-                      ),
-                    ),
-                    // Hairline Frosted Glass Bottom Border
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 1.5.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(28.w),
-                            bottomRight: Radius.circular(28.w),
-                          ),
-                          gradient: LinearGradient(
-                            colors: [
-                              const Color(0xFF9333EA).withValues(alpha: 0.4),
-                              const Color(0xFFC084FC).withValues(alpha: 0.5),
-                              const Color(0xFF818CF8).withValues(alpha: 0.2),
-                            ],
-                          ),
                         ),
                       ),
                     ),
