@@ -100,13 +100,14 @@ class FinanceGraphView extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(6.w),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF3E8FF),
+                          color: const Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
                         ),
                         child: Icon(
                           Icons.pie_chart_outline_rounded,
                           size: 16.w,
-                          color: const Color(0xFF7C3AED),
+                          color: const Color(0xFF475569),
                         ),
                       ),
                       SizedBox(width: 8.w),
@@ -159,7 +160,7 @@ class FinanceGraphView extends StatelessWidget {
                                     width: 8.w,
                                     height: 8.w,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFF8B5CF6),
+                                      color: Color(0xFF475569),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -181,7 +182,7 @@ class FinanceGraphView extends StatelessWidget {
                                 style: GoogleFonts.inter(
                                   fontSize: 11.sp,
                                   fontWeight: AppFontWeight.medium,
-                                  color: const Color(0xFF8B5CF6),
+                                  color: const Color(0xFF64748B),
                                 ),
                               ),
                               SizedBox(height: 12.h),
@@ -193,7 +194,7 @@ class FinanceGraphView extends StatelessWidget {
                                       : 0.05,
                                   minHeight: 5.h,
                                   backgroundColor: const Color(0xFFF1F5F9),
-                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF475569)),
                                 ),
                               ),
                             ],
@@ -236,7 +237,7 @@ class FinanceGraphView extends StatelessWidget {
                                     width: 8.w,
                                     height: 8.w,
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFFF59E0B),
+                                      color: Color(0xFF94A3B8),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -258,7 +259,7 @@ class FinanceGraphView extends StatelessWidget {
                                 style: GoogleFonts.inter(
                                   fontSize: 11.sp,
                                   fontWeight: AppFontWeight.medium,
-                                  color: const Color(0xFFD97706),
+                                  color: const Color(0xFF64748B),
                                 ),
                               ),
                               SizedBox(height: 12.h),
@@ -270,7 +271,7 @@ class FinanceGraphView extends StatelessWidget {
                                       : 0.05,
                                   minHeight: 5.h,
                                   backgroundColor: const Color(0xFFF1F5F9),
-                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF94A3B8)),
                                 ),
                               ),
                             ],
@@ -325,15 +326,12 @@ class FinanceGraphView extends StatelessWidget {
                                 Container(
                                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.5.h),
                                   decoration: BoxDecoration(
-                                    color: isSurplus ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+                                    color: isSurplus ? const Color(0xFFF0FDF4) : const Color(0xFFFEF2F2),
                                     borderRadius: BorderRadius.circular(20.w),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: (isSurplus ? const Color(0xFF00AA13) : const Color(0xFFED2736)).withValues(alpha: 0.25),
-                                        offset: Offset(0, 2.w),
-                                        blurRadius: 4.w,
-                                      ),
-                                    ],
+                                    border: Border.all(
+                                      color: isSurplus ? const Color(0xFFBBF7D0) : const Color(0xFFFECACA),
+                                      width: 1.w,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -341,7 +339,7 @@ class FinanceGraphView extends StatelessWidget {
                                       Icon(
                                         isSurplus ? Icons.trending_up_rounded : Icons.trending_down_rounded,
                                         size: 13.w,
-                                        color: Colors.white,
+                                        color: isSurplus ? const Color(0xFF166534) : const Color(0xFF991B1B),
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
@@ -349,7 +347,7 @@ class FinanceGraphView extends StatelessWidget {
                                         style: GoogleFonts.inter(
                                           fontSize: 10.5.sp,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.white,
+                                          color: isSurplus ? const Color(0xFF166534) : const Color(0xFF991B1B),
                                           letterSpacing: 0.1,
                                         ),
                                       ),
@@ -368,9 +366,7 @@ class FinanceGraphView extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.w800,
-                                color: isSurplus
-                                    ? const Color(0xFF00AA13)
-                                    : const Color(0xFFED2736),
+                                color: const Color(0xFF0F172A),
                                 letterSpacing: -0.6,
                               ),
                             ),
@@ -400,13 +396,13 @@ class FinanceGraphView extends StatelessWidget {
                                 width: double.infinity,
                                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF7C3AED),
+                                  gradient: AppColors.premiumDarkGradient,
                                   borderRadius: BorderRadius.circular(12.w),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF7C3AED).withValues(alpha: 0.28),
-                                      offset: Offset(0, 4.w),
-                                      blurRadius: 10.w,
+                                      color: const Color(0xFF0F172A).withValues(alpha: 0.15),
+                                      offset: Offset(0, 3.h),
+                                      blurRadius: 8.w,
                                     ),
                                   ],
                                 ),
@@ -504,7 +500,7 @@ class FinanceGraphView extends StatelessWidget {
                       width: 5.w,
                       height: 5.w,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFC084FC),
+                        color: Color(0xFFE2E8F0),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -552,7 +548,7 @@ class FinanceGraphView extends StatelessWidget {
                           width: 7.w,
                           height: 7.w,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFC084FC),
+                            color: Color(0xFFE2E8F0),
                             shape: BoxShape.circle,
                           ),
                         ),
