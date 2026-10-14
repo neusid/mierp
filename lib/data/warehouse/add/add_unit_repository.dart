@@ -10,7 +10,7 @@ import 'package:path/path.dart' as p;
 class AddUnitRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<void> addUnitToFirebase(collection, Product data) async {
+  Future<void> addUnitToFirebase(String collection, Product data) async {
     try {
       final adminId = await TenantService.getActiveAdminId();
       await firestore.collection(collection).add({

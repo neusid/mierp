@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mierp_apps/core/controller/user_data_controller.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/models/order.dart';
 import 'package:mierp_apps/core/services/tenant_service.dart';
@@ -19,8 +20,8 @@ class AddProductOrderRepository {
   Future<void> addProductOrderToFireStore(OrderProduct order) async {
     try {
       final adminId = await TenantService.getActiveAdminId();
-      String userId = order.userId ?? '';
-      String firstName = order.firstName ?? '';
+      String userId = order.userId;
+      String firstName = order.firstName;
       try {
         final userModel = await sl<UserDataController>().getDataUser();
         if (userId.isEmpty) userId = userModel.uid ?? '';
