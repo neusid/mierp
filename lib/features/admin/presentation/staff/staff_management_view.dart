@@ -277,26 +277,51 @@ class _StaffManagementViewState extends State<StaffManagementView> {
 
                         // Search Bar
                         Container(
+                          height: 45.h,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 2.h),
+                                color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                                blurRadius: 8.w,
+                              ),
+                            ],
                           ),
                           child: TextField(
                             controller: _searchController,
                             onChanged: (val) => setState(() => _searchQuery = val),
+                            textAlignVertical: TextAlignVertical.center,
+                            style: GoogleFonts.inter(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF0F172A),
+                            ),
                             decoration: InputDecoration(
+                              isDense: true,
                               hintText: "Cari nama atau email staf...",
-                              hintStyle: GoogleFonts.outfit(
+                              hintStyle: GoogleFonts.inter(
                                 fontSize: 13.sp,
+                                fontWeight: FontWeight.normal,
                                 color: const Color(0xFF94A3B8),
                               ),
-                              prefixIcon: Icon(Icons.search_rounded,
-                                  color: const Color(0xFF94A3B8), size: 20.w),
+                              prefixIcon: Icon(
+                                Icons.search_rounded,
+                                color: const Color(0xFF94A3B8),
+                                size: 20.w,
+                              ),
                               suffixIcon: _searchQuery.isNotEmpty
                                   ? IconButton(
-                                      icon: Icon(Icons.clear_rounded,
-                                          size: 18.w, color: Colors.grey),
+                                      icon: Icon(
+                                        Icons.clear_rounded,
+                                        size: 18.w,
+                                        color: const Color(0xFF94A3B8),
+                                      ),
                                       onPressed: () {
                                         _searchController.clear();
                                         setState(() => _searchQuery = '');
@@ -305,7 +330,9 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                   : null,
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 14.w, vertical: 12.h),
+                                horizontal: 14.w,
+                                vertical: 12.h,
+                              ),
                             ),
                           ),
                         ),

@@ -495,9 +495,6 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   QuickAddCard(
                     title: "Add New Staff Account",
                     icon: Icons.person_add_outlined,
-                    iconColor: const Color(0xFF475569),
-                    iconBgColor: const Color(0xFFF8FAFC),
-                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () async {
                       final created = await context.push<bool>('/add_staff');
                       if (created == true && mounted) {
@@ -509,18 +506,12 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   QuickAddCard(
                     title: "Monitor Warehouse Inventory",
                     icon: Icons.inventory_2_outlined,
-                    iconColor: const Color(0xFF475569),
-                    iconBgColor: const Color(0xFFF8FAFC),
-                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () => widget.onTabChange(2),
                   ),
                   SizedBox(height: 10.h),
                   QuickAddCard(
                     title: "Review Financial Transactions",
                     icon: Icons.receipt_long_outlined,
-                    iconColor: const Color(0xFF475569),
-                    iconBgColor: const Color(0xFFF8FAFC),
-                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () => widget.onTabChange(3),
                   ),
                 ]),

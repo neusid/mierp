@@ -30,6 +30,13 @@ class SummaryView extends StatefulWidget {
 class _SummaryViewState extends State<SummaryView> {
   final convertDollar = ConvertDollar();
   Map<String, dynamic>? _lastPaidOrder;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   final tabs = [
     {"title": "All Summary", "collection": "all_summary"},
@@ -46,8 +53,12 @@ class _SummaryViewState extends State<SummaryView> {
       child: BlocConsumer<SummaryBloc, SummaryState>(
         listenWhen: (previous, current) =>
             (previous.successMessage != current.successMessage && current.successMessage.isNotEmpty) ||
-            (previous.errorMessage != current.errorMessage && current.errorMessage.isNotEmpty),
+            (previous.errorMessage != current.errorMessage && current.errorMessage.isNotEmpty) ||
+            previous.keyword != current.keyword,
         listener: (context, state) {
+          if (_searchController.text != state.keyword) {
+            _searchController.text = state.keyword;
+          }
           if (state.errorMessage.isNotEmpty) {
             final errorText = state.errorMessage.startsWith('Exception')
                 ? 'Gagal memuat data ringkasan. Silakan periksa koneksi Anda.'
@@ -177,130 +188,166 @@ class _SummaryViewState extends State<SummaryView> {
                           SizedBox(height: 29.h),
                           SizedBox(
                             width: 344.w,
-                            height: 45.29.h,
+                            height: 45.h,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  width: 303.47.w,
-                                  height: 45.29.h,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20.w),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        offset: Offset(0, 4.w),
-                                        color: Color(0xFFE8E8E8),
-                                        blurRadius: 20.w,
-                                        spreadRadius: 0,
+                                Expanded(
+                                  child: Container(
+                                    height: 45.h,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      border: Border.all(
+                                        color: const Color(0xFFE2E8F0),
+                                        width: 1.w,
                                       ),
-                                    ],
-                                  ),
-                                  child: TextFormField(
-                                    onTapOutside: (event) {
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    },
-                                    controller: TextEditingController(
-                                      text: state.keyword,
-                                    ),
-                                    onChanged: (value) {
-                                      context.read<SummaryBloc>().add(
-                                        SummarySearchChanged(value),
-                                      );
-                                    },
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      hint: Text(
-                                        "Search anything...",
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.normal,
-                                          color: AppColors.grayThin,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          offset: Offset(0, 2.h),
+                                          color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                                          blurRadius: 8.w,
                                         ),
+                                      ],
+                                    ),
+                                    child: TextFormField(
+                                      controller: _searchController,
+                                      onTapOutside: (event) {
+                                        FocusManager.instance.primaryFocus?.unfocus();
+                                      },
+                                      onChanged: (value) {
+                                        context.read<SummaryBloc>().add(
+                                          SummarySearchChanged(value),
+                                        );
+                                      },
+                                      textAlignVertical: TextAlignVertical.center,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF0F172A),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 18.03.w,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        hintText: "Search anything...",
+                                        hintStyle: GoogleFonts.inter(
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.normal,
+                                          color: const Color(0xFF94A3B8),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 14.w,
+                                          vertical: 12.h,
+                                        ),
+                                        prefixIcon: Icon(
+                                          Icons.search_rounded,
+                                          color: const Color(0xFF94A3B8),
+                                          size: 20.w,
+                                        ),
+                                        suffixIcon: state.keyword.isNotEmpty
+                                            ? IconButton(
+                                                icon: Icon(
+                                                  Icons.clear_rounded,
+                                                  size: 18.w,
+                                                  color: const Color(0xFF94A3B8),
+                                                ),
+                                                onPressed: () {
+                                                  _searchController.clear();
+                                                  context.read<SummaryBloc>().add(
+                                                    const SummarySearchChanged(''),
+                                                  );
+                                                },
+                                              )
+                                            : null,
+                                        border: InputBorder.none,
                                       ),
-                                      prefixIcon: Icon(
-                                        Icons.search,
-                                        size: 17.47.w,
-                                      ),
-                                      border: InputBorder.none,
                                     ),
                                   ),
                                 ),
+                                SizedBox(width: 10.w),
                                 Builder(
                                   builder: (context) {
-                                    return Material(
-                                      animateColor: true,
-                                      child: PopupMenuButton<int>(
-                                        enabled: state.selectedTab != "products" && state.selectedTab != "all_summary",
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12.w),
-                                        ),
-                                        color: Colors.white,
-                                        elevation: 8,
-                                        offset: Offset(0, 40.h),
-                                        constraints: BoxConstraints(
-                                          minWidth: 160.w,
-                                          maxWidth: 160.w,
-                                        ),
-                                        onSelected: (value) {
-                                          context.read<SummaryBloc>().add(SummaryFilterChanged(value));
-                                        },
-                                        itemBuilder: (context) {
-                                          return List.generate(options.length, (index) {
-                                            bool isSelected = state.tag == index;
-                                            return PopupMenuItem<int>(
-                                              value: index,
-                                              padding: EdgeInsets.zero,
-                                              height: 45.h,
-                                              child: Container(
-                                                margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 14.w),
-                                                decoration: BoxDecoration(
-                                                  gradient: isSelected ? AppColors.premiumDarkGradient : null,
-                                                  color: isSelected ? null : const Color(0xFFF9FAFB),
-                                                  borderRadius: BorderRadius.circular(10.w),
-                                                  border: isSelected ? null : Border.all(color: const Color(0xFFE5E7EB), width: 1.w),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      options[index],
-                                                      style: GoogleFonts.inter(
-                                                        fontSize: 14.sp,
-                                                        fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
-                                                        color: isSelected ? Colors.white : const Color(0xFF6B7280),
-                                                      ),
-                                                    ),
-                                                    if (isSelected)
-                                                      Icon(Icons.check, color: Colors.white, size: 18.w),
-                                                  ],
-                                                ),
+                                    final bool isFilterEnabled = state.selectedTab != "products" && state.selectedTab != "all_summary";
+                                    final bool hasActiveFilter = isFilterEnabled && state.tag != 0;
+                                    return PopupMenuButton<int>(
+                                      enabled: isFilterEnabled,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                      ),
+                                      color: Colors.white,
+                                      elevation: 8,
+                                      offset: Offset(0, 48.h),
+                                      constraints: BoxConstraints(
+                                        minWidth: 160.w,
+                                        maxWidth: 160.w,
+                                      ),
+                                      onSelected: (value) {
+                                        context.read<SummaryBloc>().add(SummaryFilterChanged(value));
+                                      },
+                                      itemBuilder: (context) {
+                                        return List.generate(options.length, (index) {
+                                          bool isSelected = state.tag == index;
+                                          return PopupMenuItem<int>(
+                                            value: index,
+                                            padding: EdgeInsets.zero,
+                                            height: 45.h,
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 14.w),
+                                              decoration: BoxDecoration(
+                                                gradient: isSelected ? AppColors.premiumDarkGradient : null,
+                                                color: isSelected ? null : const Color(0xFFF9FAFB),
+                                                borderRadius: BorderRadius.circular(10.w),
+                                                border: isSelected ? null : Border.all(color: const Color(0xFFE5E7EB), width: 1.w),
                                               ),
-                                            );
-                                          });
-                                        },
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    options[index],
+                                                    style: GoogleFonts.inter(
+                                                      fontSize: 14.sp,
+                                                      fontWeight: isSelected ? AppFontWeight.bold : AppFontWeight.medium,
+                                                      color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                                                    ),
+                                                  ),
+                                                  if (isSelected)
+                                                    Icon(Icons.check, color: Colors.white, size: 18.w),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                      },
                                         child: Container(
-                                          width: 30.03.w,
-                                          height: 30.03.h,
-                                          padding: EdgeInsets.all(6.w),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5.w),
+                                        width: 45.h,
+                                        height: 45.h,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12.r),
+                                          border: Border.all(
+                                            color: hasActiveFilter
+                                                ? const Color(0xFF7C3AED)
+                                                : const Color(0xFFE2E8F0),
+                                            width: 1.w,
                                           ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              offset: Offset(0, 2.h),
+                                              color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                                              blurRadius: 8.w,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
                                           child: SvgPicture.asset(
                                             "assets/icons/filter.svg",
+                                            width: 18.w,
+                                            height: 18.w,
                                             colorFilter: ColorFilter.mode(
-                                              state.selectedTab != "products" && state.selectedTab != "all_summary"
-                                                  ? AppColors.grayTitle
-                                                  : Colors.grey,
+                                              !isFilterEnabled
+                                                  ? const Color(0xFFCBD5E1)
+                                                  : hasActiveFilter
+                                                      ? const Color(0xFF7C3AED)
+                                                      : const Color(0xFF475569),
                                               BlendMode.srcIn,
                                             ),
                                           ),
