@@ -22,10 +22,16 @@ class ProfileView extends StatelessWidget {
       create: (context) => sl<ProfileBloc>()..add(ProfileStarted()),
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state.status == ProfileStatus.failure && state.errorMessage.isNotEmpty) {
+          if (state.status == ProfileStatus.failure &&
+              state.errorMessage.isNotEmpty) {
             CustomTopSnackbar.show(context, state.errorMessage, isError: true);
-          } else if (state.status == ProfileStatus.success && state.successMessage.isNotEmpty) {
-            CustomTopSnackbar.show(context, state.successMessage, isError: false);
+          } else if (state.status == ProfileStatus.success &&
+              state.successMessage.isNotEmpty) {
+            CustomTopSnackbar.show(
+              context,
+              state.successMessage,
+              isError: false,
+            );
           } else if (state.status == ProfileStatus.logoutSuccess) {
             context.go("/login");
           } else if (state.status == ProfileStatus.deleteSuccess) {
@@ -47,7 +53,9 @@ class ProfileView extends StatelessWidget {
             if (parts.length > 1) {
               initials = (parts[0][0] + parts[1][0]).toUpperCase();
             } else {
-              initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+              initials = parts[0]
+                  .substring(0, parts[0].length >= 2 ? 2 : 1)
+                  .toUpperCase();
             }
           }
 
@@ -72,7 +80,10 @@ class ProfileView extends StatelessWidget {
                 SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -119,11 +130,16 @@ class ProfileView extends StatelessWidget {
                         children: [
                           // 3.1. Profile Identity Hero Card
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 24.h,
+                              horizontal: 20.w,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
                             ),
                             child: Column(
                               children: [
@@ -134,7 +150,10 @@ class ProfileView extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20.r),
                                     gradient: AppColors.premiumDarkGradient,
-                                    border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5.w),
+                                    border: Border.all(
+                                      color: const Color(0xFFE2E8F0),
+                                      width: 1.5.w,
+                                    ),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
@@ -149,7 +168,9 @@ class ProfileView extends StatelessWidget {
                                 ),
                                 SizedBox(height: 14.h),
                                 Text(
-                                  state.name.isEmpty ? "Pengguna MIErp" : state.name,
+                                  state.name.isEmpty
+                                      ? "Pengguna MIErp"
+                                      : state.name,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                     fontSize: 18.sp,
@@ -172,14 +193,21 @@ class ProfileView extends StatelessWidget {
                                 SizedBox(height: 10.h),
                                 // Refined MIErp Signature Purple Pill
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 4.5.h),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14.w,
+                                    vertical: 4.5.h,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.purpleTransparent,
                                     borderRadius: BorderRadius.circular(20.r),
-                                    border: Border.all(color: AppColors.lavenderMist, width: 1.w),
+                                    border: Border.all(
+                                      color: AppColors.lavenderMist,
+                                      width: 1.w,
+                                    ),
                                   ),
                                   child: Text(
-                                    (state.role.isEmpty ? "STAFF" : state.role).toUpperCase(),
+                                    (state.role.isEmpty ? "STAFF" : state.role)
+                                        .toUpperCase(),
                                     style: GoogleFonts.inter(
                                       fontSize: 10.5.sp,
                                       fontWeight: FontWeight.w700,
@@ -199,10 +227,14 @@ class ProfileView extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF1E293B).withValues(alpha: 0.04),
+                                  color: const Color(
+                                    0xFF1E293B,
+                                  ).withValues(alpha: 0.04),
                                   blurRadius: 18.r,
                                   offset: Offset(0, 6.h),
                                 ),
@@ -237,13 +269,13 @@ class ProfileView extends StatelessWidget {
                                   iconColor: AppColors.vividPurple,
                                   onTap: () {
                                     if (state.isVerif) {
-                                      context
-                                          .read<ProfileBloc>()
-                                          .add(ProfileUnlinkGoogleRequested());
+                                      context.read<ProfileBloc>().add(
+                                        ProfileUnlinkGoogleRequested(),
+                                      );
                                     } else {
-                                      context
-                                          .read<ProfileBloc>()
-                                          .add(ProfileLinkGoogleRequested());
+                                      context.read<ProfileBloc>().add(
+                                        ProfileLinkGoogleRequested(),
+                                      );
                                     }
                                   },
                                 ),
@@ -257,12 +289,13 @@ class ProfileView extends StatelessWidget {
                                 _buildProfileMenuItem(
                                   icon: "logout",
                                   title: "Keluar Akun",
-                                  subtitle: "Akhiri sesi login di perangkat ini",
+                                  subtitle:
+                                      "Akhiri sesi login di perangkat ini",
                                   iconBgColor: const Color(0xFFF1F5F9),
                                   iconColor: const Color(0xFF475569),
-                                  onTap: () => context
-                                      .read<ProfileBloc>()
-                                      .add(ProfileLogoutRequested()),
+                                  onTap: () => context.read<ProfileBloc>().add(
+                                    ProfileLogoutRequested(),
+                                  ),
                                 ),
                                 Divider(
                                   height: 1,
@@ -274,10 +307,12 @@ class ProfileView extends StatelessWidget {
                                 _buildProfileMenuItem(
                                   icon: "delete",
                                   title: "Hapus Akun",
-                                  subtitle: "Tutup akun dan akses sistem secara permanen",
+                                  subtitle:
+                                      "Tutup akun dan akses sistem secara permanen",
                                   iconGradient: AppColors.premiumDarkGradient,
                                   iconColor: Colors.white,
-                                  onTap: () => _showConfirmDelete(context, state),
+                                  onTap: () =>
+                                      _showConfirmDelete(context, state),
                                 ),
                               ],
                             ),

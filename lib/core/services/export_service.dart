@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -46,7 +50,7 @@ class ExportService {
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyyMMdd_HHmm').format(now);
-      final fileName = "Laporan_Stok_Warehouse_${dateStr}.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
+      final fileName = "Laporan_Stok_Warehouse_$dateStr.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
 
       if (format == ExportFormat.csv) {
         final rows = <List<dynamic>>[
@@ -149,7 +153,7 @@ class ExportService {
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyyMMdd_HHmm').format(now);
-      final fileName = "Laporan_Warehouse_Orders_${dateStr}.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
+      final fileName = "Laporan_Warehouse_Orders_$dateStr.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
 
       if (format == ExportFormat.csv) {
         final rows = <List<dynamic>>[
@@ -256,7 +260,7 @@ class ExportService {
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyyMMdd_HHmm').format(now);
-      final fileName = "Laporan_Sales_Orders_${dateStr}.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
+      final fileName = "Laporan_Sales_Orders_$dateStr.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
 
       if (format == ExportFormat.csv) {
         final rows = <List<dynamic>>[
@@ -364,7 +368,7 @@ class ExportService {
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyyMMdd_HHmm').format(now);
-      final fileName = "Laporan_Rekapitulasi_MiERP_${dateStr}.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
+      final fileName = "Laporan_Rekapitulasi_MiERP_$dateStr.${format == ExportFormat.pdf ? 'pdf' : 'csv'}";
 
       if (format == ExportFormat.csv) {
         final rows = <List<dynamic>>[
@@ -627,88 +631,255 @@ class ExportService {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
+        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+        decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF10B981).withValues(alpha: 0.12),
-              ),
-              child: const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 30),
-            ),
-            const SizedBox(height: 14),
-            const Text(
-              "Laporan Berhasil Dibuat",
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              fileName,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    icon: const Icon(Icons.visibility_outlined, size: 18, color: Color(0xFF334155)),
-                    label: const Text("Buka Berkas", style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w600)),
-                    onPressed: () async {
-                      Navigator.pop(ctx);
-                      try {
-                        final result = await OpenFilex.open(filePath);
-                        if (result.type != ResultType.done && context.mounted) {
-                          Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MiERP Mobile");
-                        }
-                      } catch (e) {
-                        debugPrint("OpenFilex fallback to Share due to: $e");
-                        if (context.mounted) {
-                          Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MiERP Mobile");
-                        }
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2E1052),
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 0,
-                    ),
-                    icon: const Icon(Icons.share_rounded, size: 18, color: Colors.white),
-                    label: const Text("Bagikan", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MiERP Mobile");
-                    },
-                  ),
-                ),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.14),
+              blurRadius: 28.r,
+              offset: const Offset(0, -6),
             ),
           ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Drag Handle
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.5.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCBD5E1),
+                    borderRadius: BorderRadius.circular(3.r),
+                  ),
+                ),
+              ),
+              SizedBox(height: 18.h),
+
+              // 2. Header Squircle (Obsidian & Ungu signature badge, NO AI slop green)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44.w,
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.premiumDarkGradient,
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.premiumDarkSolid.withValues(alpha: 0.22),
+                          blurRadius: 8.r,
+                          offset: Offset(0, 3.h),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 24.w,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 14.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Laporan Berhasil Dibuat",
+                          style: GoogleFonts.inter(
+                            fontSize: 16.5.sp,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF0F172A),
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          "Berkas laporan telah tersimpan dan siap dibagikan",
+                          style: GoogleFonts.inter(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF64748B),
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+
+              // 3. File Summary Card
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.premiumDarkGradient,
+                        borderRadius: BorderRadius.circular(9.r),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          fileName.endsWith('.pdf')
+                              ? Icons.picture_as_pdf_outlined
+                              : Icons.table_chart_outlined,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            fileName,
+                            style: GoogleFonts.inter(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF0F172A),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            fileName.endsWith('.pdf')
+                                ? "Dokumen PDF Resmi MIErp"
+                                : "Spreadsheet CSV Tabular",
+                            style: GoogleFonts.inter(
+                              fontSize: 11.sp,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+
+              // 4. Action Buttons (Buka Berkas & Bagikan)
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: 46.h,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF8FAFC),
+                          side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(ctx);
+                          try {
+                            final result = await OpenFilex.open(filePath);
+                            if (result.type != ResultType.done && context.mounted) {
+                              Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MIErp Mobile");
+                            }
+                          } catch (e) {
+                            debugPrint("OpenFilex fallback to Share due to: $e");
+                            if (context.mounted) {
+                              Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MIErp Mobile");
+                            }
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.visibility_outlined, size: 16.w, color: const Color(0xFF475569)),
+                            SizedBox(width: 6.w),
+                            Text(
+                              "Buka Berkas",
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF475569),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: 46.h,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.premiumDarkGradient,
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.premiumDarkSolid.withValues(alpha: 0.28),
+                              blurRadius: 10.w,
+                              offset: Offset(0, 3.h),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12.r),
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              Navigator.pop(ctx);
+                              Share.shareXFiles([XFile(filePath)], text: "Laporan $fileName dari MIErp Mobile");
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.share_rounded, size: 16.w, color: Colors.white),
+                                SizedBox(width: 6.w),
+                                Text(
+                                  "Bagikan",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
