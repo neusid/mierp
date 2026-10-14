@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,6 +6,7 @@ import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/widgets/modal_delete_confirmation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mierp_apps/features/admin/presentation/cubit/admin_staff_cubit.dart';
 import 'package:mierp_apps/features/admin/presentation/cubit/admin_staff_state.dart';
@@ -39,45 +38,26 @@ class _StaffManagementViewState extends State<StaffManagementView> {
   }
 
   void _showDeleteConfirmation(UserModel staff) {
-    showDialog(
+    final staffFullName = "${staff.firstName ?? ''} ${staff.lastName ?? ''}".trim();
+    ModalDeleteConfirmation.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: Text(
-          "Hapus Akun Staf?",
-          style: GoogleFonts.outfit(fontWeight: AppFontWeight.bold, fontSize: 18.sp),
-        ),
-        content: Text(
-          "Apakah Anda yakin ingin menghapus akses ${staff.firstName} ${staff.lastName} (${staff.email})?",
-          style: GoogleFonts.outfit(fontSize: 14.sp, color: const Color(0xFF64748B)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              "Batal",
-              style: GoogleFonts.outfit(color: const Color(0xFF64748B)),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
-            ),
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<AdminStaffCubit>().deleteStaff(staff.uid ?? '');
-              CustomTopSnackbar.show(
-                context,
-                "Akses akun ${staff.firstName} telah dicabut.",
-                title: "Staf Dihapus",
-                isError: true,
-              );
-            },
-            child: Text("Hapus", style: GoogleFonts.outfit(color: Colors.white)),
-          ),
-        ],
-      ),
+      title: "Hapus Akun Staf?",
+      message:
+          "Apakah Anda yakin ingin menghapus akun staf ini? Akses staf ke sistem dan seluruh hak akses operasional akan segera dicabut.",
+      confirmText: "Hapus Staf",
+      cancelText: "Batal",
+      accountName: staffFullName.isNotEmpty ? staffFullName : null,
+      accountEmail: staff.email,
+      roleBadge: staff.role,
+      onConfirm: () {
+        context.read<AdminStaffCubit>().deleteStaff(staff.uid ?? '');
+        CustomTopSnackbar.show(
+          context,
+          "Akses akun ${staff.firstName ?? 'Staf'} telah dicabut.",
+          title: "Staf Dihapus",
+          isError: true,
+        );
+      },
     );
   }
 

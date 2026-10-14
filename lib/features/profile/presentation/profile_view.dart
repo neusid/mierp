@@ -9,6 +9,7 @@ import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/widgets/modal_delete_confirmation.dart';
 import 'package:mierp_apps/features/profile/presentation/bloc/profile_bloc.dart';
 
 class ProfileView extends StatelessWidget {
@@ -226,7 +227,7 @@ class ProfileView extends StatelessWidget {
                                   icon: "delete",
                                   label: "Delete Account",
                                   isDestructive: true,
-                                  onTap: () => _showConfirmDelete(context),
+                                  onTap: () => _showConfirmDelete(context, state),
                                 ),
                               ],
                             ),
@@ -324,60 +325,20 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  void _showConfirmDelete(BuildContext context) {
-    showDialog(
+  void _showConfirmDelete(BuildContext context, ProfileState state) {
+    ModalDeleteConfirmation.show(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.w)),
-        title: Text(
-          "Delete Account",
-          style: GoogleFonts.inter(
-            fontSize: 18.sp,
-            fontWeight: AppFontWeight.bold,
-            color: AppColors.grayTitle,
-          ),
-        ),
-        content: Text(
-          "Are you sure you want to delete your account? This action cannot be undone.",
-          style: GoogleFonts.inter(
-            fontSize: 14.sp,
-            color: AppColors.grayThin,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              "Cancel",
-              style: GoogleFonts.inter(
-                color: AppColors.grayThin,
-                fontWeight: AppFontWeight.semiBold,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<ProfileBloc>().add(ProfileDeleteAccountRequested());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.withValues(alpha: 0.1),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.w),
-              ),
-            ),
-            child: Text(
-              "Delete",
-              style: GoogleFonts.inter(
-                color: Colors.red,
-                fontWeight: AppFontWeight.semiBold,
-              ),
-            ),
-          ),
-        ],
-      ),
+      title: "Hapus Akun Anda?",
+      message:
+          "Apakah Anda yakin ingin menghapus akun ini? Seluruh data bisnis, riwayat transaksi, dan akses Anda akan dihapus secara permanen.",
+      confirmText: "Hapus Akun",
+      cancelText: "Batal",
+      accountName: state.name.isNotEmpty ? state.name : null,
+      accountEmail: state.email.isNotEmpty ? state.email : null,
+      roleBadge: state.role.isNotEmpty ? state.role : null,
+      onConfirm: () {
+        context.read<ProfileBloc>().add(ProfileDeleteAccountRequested());
+      },
     );
   }
 }
