@@ -268,7 +268,7 @@ class _AddStaffViewState extends State<AddStaffView> {
                                         Icon(
                                           Icons.autorenew_rounded,
                                           size: 13.w,
-                                          color: const Color(0xFF4F46E5),
+                                          color: AppColors.premiumDarkSolid,
                                         ),
                                         SizedBox(width: 4.w),
                                         Text(
@@ -276,7 +276,7 @@ class _AddStaffViewState extends State<AddStaffView> {
                                           style: GoogleFonts.outfit(
                                             fontSize: 11.5.sp,
                                             fontWeight: AppFontWeight.semiBold,
-                                            color: const Color(0xFF4F46E5),
+                                            color: AppColors.premiumDarkSolid,
                                           ),
                                         ),
                                       ],
@@ -333,7 +333,7 @@ class _AddStaffViewState extends State<AddStaffView> {
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.r),
                                   borderSide: const BorderSide(
-                                    color: Color(0xFF4F46E5),
+                                    color: AppColors.premiumDarkSolid,
                                     width: 1.5,
                                   ),
                                 ),
@@ -489,7 +489,7 @@ class _AddStaffViewState extends State<AddStaffView> {
             label: 'Finance',
             description: 'Kelola order, pembayaran & transaksi',
             icon: Icons.account_balance_wallet_outlined,
-            activeColor: const Color(0xFF4F46E5),
+            activeColor: AppColors.premiumDarkSolid,
           ),
         ),
         SizedBox(width: 12.w),
@@ -499,7 +499,7 @@ class _AddStaffViewState extends State<AddStaffView> {
             label: 'Warehouse',
             description: 'Kelola stok, restock & SKU produk',
             icon: Icons.warehouse_outlined,
-            activeColor: const Color(0xFF0D9488),
+            activeColor: AppColors.premiumDarkSolid,
           ),
         ),
       ],
@@ -609,12 +609,9 @@ class _AddStaffViewState extends State<AddStaffView> {
 
   Widget _buildRoleScopePreview() {
     final isFinance = _selectedRole == 'finance';
-    final accentColor =
-        isFinance ? const Color(0xFF4F46E5) : const Color(0xFF0D9488);
-    final bgColor =
-        isFinance ? const Color(0xFFEEF2FF) : const Color(0xFFF0FDFA);
-    final borderColor =
-        isFinance ? const Color(0xFFC7D2FE) : const Color(0xFFCCFBF1);
+    const accentColor = AppColors.premiumDarkSolid;
+    const bgColor = Color(0xFFF8FAFC);
+    const borderColor = Color(0xFFE2E8F0);
 
     final items = isFinance
         ? [
@@ -735,7 +732,7 @@ class _AddStaffViewState extends State<AddStaffView> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: const BorderSide(
-                color: Color(0xFF4F46E5),
+                color: AppColors.premiumDarkSolid,
                 width: 1.5,
               ),
             ),
