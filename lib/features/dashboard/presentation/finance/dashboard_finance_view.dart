@@ -14,6 +14,8 @@ import 'package:mierp_apps/core/widgets/card_sales.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_pay_confirmation.dart';
 import 'package:mierp_apps/features/payment/presentation/payment_success_view.dart';
+import 'package:mierp_apps/core/services/export_service.dart';
+import 'package:mierp_apps/core/widgets/modal_export_sheet.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
@@ -543,6 +545,48 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                           child: Divider(
                             color: const Color(0xFFE2E8F0),
                             thickness: 1.2.w,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        InkWell(
+                          onTap: () {
+                            ModalExportSheet.show(
+                              context,
+                              reportTitle: "Laporan Finansial & Penjualan",
+                              subtitle: "Ekspor daftar transaksi penjualan & status pelunasan",
+                              onExport: (format) async {
+                                await ExportService.exportSalesOrders(
+                                  salesOrders: state.listSalesOrder,
+                                  companyName: "MiERP Finance",
+                                  format: format,
+                                  context: context,
+                                );
+                              },
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3E8FF),
+                              borderRadius: BorderRadius.circular(8.r),
+                              border: Border.all(color: const Color(0xFFDDD6FE), width: 1.w),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.ios_share_rounded, size: 14.w, color: const Color(0xFF7C3AED)),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  "Export",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF7C3AED),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

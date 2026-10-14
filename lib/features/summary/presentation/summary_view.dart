@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
+import 'package:mierp_apps/core/services/export_service.dart';
+import 'package:mierp_apps/core/widgets/modal_export_sheet.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
@@ -45,6 +47,63 @@ class _SummaryViewState extends State<SummaryView> {
     {"title": "Sales Order", "collection": "sales_orders"},
   ];
   final options = ['All', 'Paid', 'Unpaid', 'Rejected'];
+
+  void _handleSummaryExport(BuildContext context, SummaryState state) {
+    String title;
+    String subtitle;
+    Future<void> Function(ExportFormat) exportFn;
+
+    switch (state.selectedTab) {
+      case "products":
+        title = "Laporan Stok Produk";
+        subtitle = "Ekspor data inventaris & stok barang gudang";
+        exportFn = (format) => ExportService.exportProducts(
+              products: state.filteredProducts,
+              companyName: "MiERP Warehouse",
+              format: format,
+              context: context,
+            );
+        break;
+      case "orders":
+        title = "Laporan Pesanan Gudang";
+        subtitle = "Ekspor data pengadaan barang & status persetujuan";
+        exportFn = (format) => ExportService.exportWarehouseOrders(
+              orders: state.filteredOrders,
+              companyName: "MiERP Warehouse",
+              format: format,
+              context: context,
+            );
+        break;
+      case "sales_orders":
+        title = "Laporan Pesanan Penjualan";
+        subtitle = "Ekspor data transaksi penjualan & status bayar";
+        exportFn = (format) => ExportService.exportSalesOrders(
+              salesOrders: state.filteredSalesOrders,
+              companyName: "MiERP Finance",
+              format: format,
+              context: context,
+            );
+        break;
+      case "all_summary":
+      default:
+        title = "Laporan Rekapitulasi MiERP";
+        subtitle = "Ekspor konsolidasi seluruh aktivitas operasional";
+        exportFn = (format) => ExportService.exportAllSummary(
+              summaries: state.filteredSummaries,
+              companyName: "MiERP Consolidated",
+              format: format,
+              context: context,
+            );
+        break;
+    }
+
+    ModalExportSheet.show(
+      context,
+      reportTitle: title,
+      subtitle: subtitle,
+      onExport: exportFn,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +321,7 @@ class _SummaryViewState extends State<SummaryView> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10.w),
+                                SizedBox(width: 8.w),
                                 Builder(
                                   builder: (context) {
                                     final bool isFilterEnabled = state.selectedTab != "products" && state.selectedTab != "all_summary";
@@ -355,6 +414,40 @@ class _SummaryViewState extends State<SummaryView> {
                                       ),
                                     );
                                   },
+                                ),
+                                SizedBox(width: 8.w),
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () => _handleSummaryExport(context, state),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    child: Container(
+                                      width: 45.h,
+                                      height: 45.h,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: const Color(0xFFE2E8F0),
+                                          width: 1.w,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            offset: Offset(0, 2.h),
+                                            color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                                            blurRadius: 8.w,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.ios_share_rounded,
+                                          size: 19.w,
+                                          color: const Color(0xFF7C3AED),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

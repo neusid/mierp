@@ -10,6 +10,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/widgets/card_stock.dart';
 import 'package:mierp_apps/core/widgets/dashboard/quick_add_card.dart';
+import 'package:mierp_apps/core/services/export_service.dart';
+import 'package:mierp_apps/core/widgets/modal_export_sheet.dart';
 import 'package:mierp_apps/features/main_page/presentation/cubit/main_page_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
@@ -315,6 +317,26 @@ class DashboardWarehouseView extends StatelessWidget {
                           QuickAddCard(
                             title: "Add Sales Order",
                             onTap: () => context.push("/add_sales_order"),
+                          ),
+                          SizedBox(height: 10.h),
+                          QuickAddCard(
+                            title: "Export Laporan Stok Gudang",
+                            icon: Icons.ios_share_rounded,
+                            onTap: () {
+                              ModalExportSheet.show(
+                                context,
+                                reportTitle: "Laporan Stok & Valuasi",
+                                subtitle: "Unduh atau bagikan inventaris & nilai aset gudang",
+                                onExport: (format) async {
+                                  await ExportService.exportProducts(
+                                    products: state.listProduct,
+                                    companyName: "MiERP Warehouse",
+                                    format: format,
+                                    context: context,
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
