@@ -100,6 +100,46 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                     bottomRight: Radius.circular(28.w),
                   ),
                 ),
+                child: Stack(
+                  children: [
+                    // Top-Left Transparent Purple Gradient Circle
+                    Positioned(
+                      top: -30.h,
+                      left: -20.w,
+                      child: Container(
+                        width: 140.w,
+                        height: 140.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFF9333EA).withValues(alpha: 0.22),
+                              const Color(0xFF9333EA).withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Bottom-Right Transparent Indigo Gradient Circle
+                    Positioned(
+                      bottom: -20.h,
+                      right: -20.w,
+                      child: Container(
+                        width: 130.w,
+                        height: 130.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFF6366F1).withValues(alpha: 0.18),
+                              const Color(0xFF6366F1).withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               title: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),

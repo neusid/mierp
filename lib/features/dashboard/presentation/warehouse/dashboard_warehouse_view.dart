@@ -51,6 +51,42 @@ class DashboardWarehouseView extends StatelessWidget {
                       ),
                       child: Stack(
                         children: [
+                          // Top-Right Transparent Purple Gradient Circle
+                          Positioned(
+                            top: -40.h,
+                            right: -30.w,
+                            child: Container(
+                              width: 160.w,
+                              height: 160.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    const Color(0xFF9333EA).withValues(alpha: 0.22),
+                                    const Color(0xFF9333EA).withValues(alpha: 0.0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Bottom-Left Transparent Indigo Gradient Circle
+                          Positioned(
+                            bottom: -30.h,
+                            left: -20.w,
+                            child: Container(
+                              width: 140.w,
+                              height: 140.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: RadialGradient(
+                                  colors: [
+                                    const Color(0xFF6366F1).withValues(alpha: 0.18),
+                                    const Color(0xFF6366F1).withValues(alpha: 0.0),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                           Positioned(
                             top: 56.h,
                             left: 24.w,
