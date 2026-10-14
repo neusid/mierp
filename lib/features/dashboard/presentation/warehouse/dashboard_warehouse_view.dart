@@ -21,6 +21,11 @@ class DashboardWarehouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    final formattedDate = '${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
+
     return BlocProvider(
       create: (context) =>
           sl<DashboardWarehouseBloc>()..add(DashboardWarehouseStarted()),
@@ -54,12 +59,12 @@ class DashboardWarehouseView extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  // 1. AVATAR SQUIRCLE (KOTAK, TINGGI IDENTIK DENGAN PT MIERP & NAMA USER)
+                                  // 1. AVATAR SQUIRCLE DIBESARKAN HINGGA TINGGINYA SERUPA DENGAN BLOK PROFIL
                                   AspectRatio(
                                     aspectRatio: 1.0,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.r),
+                                        borderRadius: BorderRadius.circular(16.r),
                                         gradient: const LinearGradient(
                                           colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                                           begin: Alignment.topLeft,
@@ -74,7 +79,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                         child: Icon(
                                           Icons.person_rounded,
                                           color: const Color(0xFFE9D5FF),
-                                          size: 20.w,
+                                          size: 32.w,
                                         ),
                                       ),
                                     ),
@@ -86,28 +91,43 @@ class DashboardWarehouseView extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          "PT MIERP",
+                                          "Gudang Pusat",
                                           style: GoogleFonts.inter(
-                                            fontSize: 11.sp,
+                                            fontSize: 10.sp,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFFC084FC),
                                             letterSpacing: 0.5,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 2.h),
+                                        Text(
+                                          "Good Morning,",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFFE0E7FF),
+                                          ),
                                         ),
                                         Text(
                                           state.userName.isNotEmpty
                                               ? state.userName
-                                              : "Warehouse Staff",
+                                              : "Admin",
                                           style: GoogleFonts.inter(
-                                            fontSize: 16.5.sp,
+                                            fontSize: 18.sp,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
-                                            letterSpacing: -0.3,
-                                            height: 1.1,
+                                            letterSpacing: -0.4,
                                           ),
                                           overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 2.h),
+                                        Text(
+                                          formattedDate,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 10.5.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color(0xFFE0E7FF),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -119,32 +139,36 @@ class DashboardWarehouseView extends StatelessWidget {
                                         context.push('/notification');
                                       },
                                       child: Container(
-                                        width: 38.w,
-                                        height: 38.w,
+                                        width: 42.w,
+                                        height: 42.w,
                                         decoration: BoxDecoration(
                                           color: Colors.white.withValues(
-                                            alpha: 0.12,
+                                            alpha: 0.08,
                                           ),
-                                          borderRadius: BorderRadius.circular(12.w),
+                                          borderRadius: BorderRadius.circular(13.w),
+                                          border: Border.all(
+                                            color: Colors.white.withValues(alpha: 0.14),
+                                            width: 1.2.w,
+                                          ),
                                         ),
                                         child: Stack(
                                           alignment: Alignment.center,
                                           children: [
                                             Icon(
                                               Icons.notifications_none_rounded,
-                                              color: Colors.white,
-                                              size: 20.w,
+                                              color: const Color(0xFFF1F5F9),
+                                              size: 22.w,
                                             ),
                                             Positioned(
-                                              top: 8.w,
-                                              right: 8.w,
+                                              top: 9.w,
+                                              right: 9.w,
                                               child: BlocSelector<NotificationCubit, NotificationState, bool>(
                                                 selector: (state) => state.unreadCount > 0,
                                                 builder: (context, hasUnread) {
                                                   if (!hasUnread) return const SizedBox.shrink();
                                                   return Container(
-                                                    width: 7.w,
-                                                    height: 7.w,
+                                                    width: 8.w,
+                                                    height: 8.w,
                                                     decoration: const BoxDecoration(
                                                       shape: BoxShape.circle,
                                                       color: Color(0xFFEF4444),

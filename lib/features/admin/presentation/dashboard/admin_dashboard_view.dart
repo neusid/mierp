@@ -141,12 +141,12 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // 1. AVATAR SQUIRCLE (KOTAK, TINGGI IDENTIK DENGAN PT MIERP & NAMA USER)
+                      // 1. AVATAR SQUIRCLE DIBESARKAN HINGGA TINGGINYA SERUPA DENGAN BLOK PROFIL
                       AspectRatio(
                         aspectRatio: 1.0,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
+                            borderRadius: BorderRadius.circular(16.r),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                               begin: Alignment.topLeft,
@@ -161,37 +161,70 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                             child: Icon(
                               Icons.person_rounded,
                               color: const Color(0xFFE9D5FF),
-                              size: 20.w,
+                              size: 32.w,
                             ),
                           ),
                         ),
                       ),
                       SizedBox(width: 12.w),
-                      // 2. USER INFO: ATAS PT MIERP, BAWAH NAMA USER
+                      // 2. USER INFO: COMPANY BADGE (PT MIERP), GREETING, NAMA USER
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              companyName.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFC084FC),
-                                letterSpacing: 0.5,
+                            // Company Badge
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.10),
+                                borderRadius: BorderRadius.circular(8.w),
+                                border: Border.all(
+                                  color: const Color(0xFFC084FC).withValues(alpha: 0.35),
+                                  width: 0.8.w,
+                                ),
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.business_rounded,
+                                    size: 11.w,
+                                    color: const Color(0xFFC084FC),
+                                  ),
+                                  SizedBox(width: 5.w),
+                                  Flexible(
+                                    child: Text(
+                                      companyName.toUpperCase(),
+                                      style: GoogleFonts.inter(
+                                        fontSize: 9.5.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFFE2E8F0),
+                                        letterSpacing: 0.3,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              "Welcome Back,",
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 11.5.sp,
+                                color: const Color(0xFFCBD5E1),
+                              ),
                             ),
                             Text(
                               adminName,
                               style: GoogleFonts.inter(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 16.5.sp,
+                                fontSize: 17.5.sp,
                                 color: Colors.white,
                                 letterSpacing: -0.3,
-                                height: 1.1,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -206,16 +239,16 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           onTap: () {
                             context.push('/notification');
                           },
-                          borderRadius: BorderRadius.circular(12.w),
+                          borderRadius: BorderRadius.circular(13.w),
                           child: Container(
-                            width: 38.w,
-                            height: 38.w,
+                            width: 42.w,
+                            height: 42.w,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12.w),
+                              color: Colors.white.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(13.w),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.16),
-                                width: 1.w,
+                                color: Colors.white.withValues(alpha: 0.14),
+                                width: 1.2.w,
                               ),
                             ),
                             child: Stack(
@@ -223,19 +256,19 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                               children: [
                                 Icon(
                                   Icons.notifications_none_rounded,
-                                  color: Colors.white,
-                                  size: 20.w,
+                                  color: const Color(0xFFF1F5F9),
+                                  size: 22.w,
                                 ),
                                 Positioned(
-                                  top: 8.w,
-                                  right: 8.w,
+                                  top: 9.w,
+                                  right: 9.w,
                                   child: BlocSelector<NotificationCubit, NotificationState, bool>(
                                     selector: (state) => state.unreadCount > 0,
                                     builder: (context, hasUnread) {
                                       if (!hasUnread) return const SizedBox.shrink();
                                       return Container(
-                                        width: 7.w,
-                                        height: 7.w,
+                                        width: 8.w,
+                                        height: 8.w,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Color(0xFFEF4444),
