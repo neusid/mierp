@@ -14,9 +14,13 @@ class AddProductOrderBloc extends Bloc<AddProductOrderEvent, AddProductOrderStat
   }
 
   Future<void> _onLoadProducts(AddProductOrderLoadProducts event, Emitter<AddProductOrderState> emit) async {
+    emit(state.copyWith(status: AddProductOrderStatus.loading));
     try {
       final products = await warehouseR.getBulkDataStock("products");
-      emit(state.copyWith(listProduct: products));
+      emit(state.copyWith(
+        status: AddProductOrderStatus.initial,
+        listProduct: products,
+      ));
     } catch (e) {
       emit(state.copyWith(
         status: AddProductOrderStatus.failure,

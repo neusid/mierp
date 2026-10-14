@@ -28,9 +28,13 @@ class TenantService {
   }
 
   /// Automatically attaches legacy records without an `admin_id` to the specified [adminId].
-  /// This fulfills the approved backward compatibility requirement.
-  static Future<void> migrateLegacyDataToAdmin(String adminId) async {
+  /// Restricted strictly to the default Master Admin account (`admin@mierp.com`).
+  static Future<void> migrateLegacyDataToAdmin(String adminId, {String? adminEmail}) async {
     if (adminId.isEmpty) return;
+    if (adminEmail != null && adminEmail.toLowerCase().trim() != 'admin@mierp.com') {
+      debugPrint("TenantService: Skipping legacy migration for non-master admin '$adminEmail'");
+      return;
+    }
 
     final collections = [
       'products',

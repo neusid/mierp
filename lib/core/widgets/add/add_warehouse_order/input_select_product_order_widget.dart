@@ -11,6 +11,7 @@ class InputSelectProductOrderWidget extends StatefulWidget {
   final Product? value;
   final Function(Product?) onChanged;
   final double? width;
+  final bool isLoading;
 
   const InputSelectProductOrderWidget({
     super.key,
@@ -22,6 +23,7 @@ class InputSelectProductOrderWidget extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.width,
+    this.isLoading = false,
   });
 
   @override
@@ -103,41 +105,55 @@ class _InputSelectProductOrderWidgetState
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.w),
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: widget.products.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.products[index];
-                        final isSelected = widget.value?.id == item?.id;
-                        return InkWell(
-                          onTap: () {
-                            widget.onChanged(item);
-                            _closeDropdown();
-                          },
-                          child: Container(
-                            color: isSelected ? AppColors.purpleTransparent : Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item?.productName ?? "",
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13.sp,
-                                      fontWeight: isSelected ? AppFontWeight.semiBold : AppFontWeight.regular,
-                                      color: isSelected ? AppColors.vividPurple : const Color(0xFF0F172A),
-                                    ),
+                    child: widget.products.isEmpty
+                        ? Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                            alignment: Alignment.center,
+                            child: Text(
+                              widget.isLoading ? "Memuat produk..." : "Belum ada produk terdaftar",
+                              style: GoogleFonts.inter(
+                                fontSize: 13.sp,
+                                fontWeight: AppFontWeight.medium,
+                                color: const Color(0xFF94A3B8),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: widget.products.length,
+                            itemBuilder: (context, index) {
+                              final item = widget.products[index];
+                              final isSelected = widget.value?.id == item?.id;
+                              return InkWell(
+                                onTap: () {
+                                  widget.onChanged(item);
+                                  _closeDropdown();
+                                },
+                                child: Container(
+                                  color: isSelected ? AppColors.purpleTransparent : Colors.white,
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          item?.productName ?? "",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 13.sp,
+                                            fontWeight: isSelected ? AppFontWeight.semiBold : AppFontWeight.regular,
+                                            color: isSelected ? AppColors.vividPurple : const Color(0xFF0F172A),
+                                          ),
+                                        ),
+                                      ),
+                                      if (isSelected)
+                                        Icon(Icons.check_rounded, color: AppColors.vividPurple, size: 16.w),
+                                    ],
                                   ),
                                 ),
-                                if (isSelected)
-                                  Icon(Icons.check_rounded, color: AppColors.vividPurple, size: 16.w),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ),
@@ -211,7 +227,13 @@ class _InputSelectProductOrderWidgetState
                   children: [
                     Expanded(
                       child: Text(
-                        widget.value?.productName ?? "-- Select --",
+                        widget.isLoading
+                            ? "Memuat produk..."
+                            : (widget.value != null
+                                ? widget.value!.productName
+                                : (widget.products.isEmpty
+                                    ? "-- Belum Ada Produk --"
+                                    : (widget.placeholder?.toString() ?? "-- Select --"))),
                         style: GoogleFonts.inter(
                           fontSize: 13.sp,
                           fontWeight: AppFontWeight.regular,

@@ -19,11 +19,19 @@ class AddProductOrderRepository {
   Future<void> addProductOrderToFireStore(OrderProduct order) async {
     try {
       final adminId = await TenantService.getActiveAdminId();
+      String userId = order.userId ?? '';
+      String firstName = order.firstName ?? '';
+      try {
+        final userModel = await sl<UserDataController>().getDataUser();
+        if (userId.isEmpty) userId = userModel.uid ?? '';
+        if (firstName.isEmpty) firstName = userModel.firstName ?? '';
+      } catch (_) {}
+
       final docRef = await firestore.collection("warehouse_orders").add({
         "admin_id": adminId,
         "finance_approved": order.financeApproved,
         "finance_approved_date": order.financeApprovedDate,
-        "first_name": order.firstName,
+        "first_name": firstName,
         "order_date": order.orderDate,
         "product_code": order.productCode,
         "product_id": order.productId,
@@ -31,7 +39,7 @@ class AddProductOrderRepository {
         "quantity": order.quantity,
         "total_cost": order.totalCost,
         "unit_price": order.unitPrice,
-        "user_id": order.userId,
+        "user_id": userId,
         "image_product": order.imageProduct,
       });
 

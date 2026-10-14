@@ -47,8 +47,8 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
       final adminId = await TenantService.getActiveAdminId();
       if (adminId.isNotEmpty) {
-        // Run migration check in background
-        TenantService.migrateLegacyDataToAdmin(adminId);
+        // Run migration check in background (restricted strictly to default Master Admin)
+        TenantService.migrateLegacyDataToAdmin(adminId, adminEmail: _currentUser?.email);
 
         // Fetch counts scoped by admin_id
         final staffSnap = await FirebaseFirestore.instance

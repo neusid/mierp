@@ -25,18 +25,34 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json, {required String docId}) => Product(
     id: docId,
-    category: json["category"],
-    createdOn: json["created_on"],
-    imageProduct: json['image_product'] == null ||
-  json['image_product'] == 'null'
-  ? ''
-    : json['image_product'],
-    productName: json["product_name"],
-    productCode: json["product_code"],
-    quantity: json["quantity"],
-    unitPrice: json["unit_price"],
-    discountPercent: json["discount_percent"],
-    discountMax: json["discount_max"],
+    category: json["category"]?.toString() ?? 'general',
+    createdOn: () {
+      final raw = json["created_on"];
+      if (raw == null) return '';
+      if (raw.runtimeType.toString().contains("Timestamp")) {
+        try {
+          return (raw as dynamic).toDate().toString();
+        } catch (_) {}
+      }
+      return raw.toString();
+    }(),
+    imageProduct: (json['image_product'] == null || json['image_product'] == 'null')
+        ? ''
+        : json['image_product'].toString(),
+    productName: json["product_name"]?.toString() ?? '',
+    productCode: json["product_code"]?.toString() ?? '',
+    quantity: (json["quantity"] is num)
+        ? (json["quantity"] as num).toInt()
+        : (int.tryParse(json["quantity"]?.toString() ?? '0') ?? 0),
+    unitPrice: (json["unit_price"] is num)
+        ? (json["unit_price"] as num).toInt()
+        : (int.tryParse(json["unit_price"]?.toString() ?? '0') ?? 0),
+    discountPercent: (json["discount_percent"] is num)
+        ? (json["discount_percent"] as num).toInt()
+        : int.tryParse(json["discount_percent"]?.toString() ?? ''),
+    discountMax: (json["discount_max"] is num)
+        ? (json["discount_max"] as num).toInt()
+        : int.tryParse(json["discount_max"]?.toString() ?? ''),
   );
 
   Map<String, dynamic> toJson() => {

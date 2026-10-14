@@ -189,6 +189,7 @@ class _AddProductOrderViewState extends State<AddProductOrderView> {
                                 products: state.listProduct,
                                 value: selectedProduct,
                                 width: double.infinity,
+                                isLoading: state.status == AddProductOrderStatus.loading,
                                 onChanged: (val) {
                                   if (val != null) {
                                     setState(() {

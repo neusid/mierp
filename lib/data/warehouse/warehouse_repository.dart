@@ -17,11 +17,17 @@ class WarehouseRepository {
       }
       final snapshot = await query.get();
 
-      return snapshot.docs
-          .map((doc) => Product.fromJson(doc.data(), docId: doc.id))
-          .toList();
+      final list = <Product>[];
+      for (final doc in snapshot.docs) {
+        try {
+          list.add(Product.fromJson(doc.data(), docId: doc.id));
+        } catch (err) {
+          debugPrint("WarehouseRepository: Error parsing product doc ${doc.id}: $err");
+        }
+      }
+      return list;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("WarehouseRepository: getBulkDataStock error: $e");
     }
     return [];
   }
@@ -35,11 +41,17 @@ class WarehouseRepository {
       }
       final snapshot = await query.get();
 
-      return snapshot.docs.map((doc) {
-        return OrderProduct.fromJson(doc.data(), docId: doc.id);
-      }).toList();
+      final list = <OrderProduct>[];
+      for (final doc in snapshot.docs) {
+        try {
+          list.add(OrderProduct.fromJson(doc.data(), docId: doc.id));
+        } catch (err) {
+          debugPrint("WarehouseRepository: Error parsing order doc ${doc.id}: $err");
+        }
+      }
+      return list;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("WarehouseRepository: getBulkDataOrder error: $e");
     }
     return [];
   }
@@ -53,11 +65,17 @@ class WarehouseRepository {
       }
       final snapshot = await query.get();
 
-      return snapshot.docs.map((doc) {
-        return SalesOrder.fromJson(doc.data(), docId: doc.id);
-      }).toList();
+      final list = <SalesOrder>[];
+      for (final doc in snapshot.docs) {
+        try {
+          list.add(SalesOrder.fromJson(doc.data(), docId: doc.id));
+        } catch (err) {
+          debugPrint("WarehouseRepository: Error parsing sales order doc ${doc.id}: $err");
+        }
+      }
+      return list;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("WarehouseRepository: getBulkDataSalesOrder error: $e");
     }
     return [];
   }
@@ -149,8 +167,13 @@ class WarehouseRepository {
     }
     return query.snapshots().map((snapshot) {
       int total = 0;
-      for (var data in snapshot.docs) {
-        total += (data['quantity']) as int;
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final raw = data['quantity'];
+        final qty = (raw is num)
+            ? raw.toInt()
+            : (int.tryParse(raw?.toString() ?? '0') ?? 0);
+        total += qty;
       }
       return total;
     });
@@ -163,8 +186,13 @@ class WarehouseRepository {
     }
     return query.snapshots().map((snapshot) {
       int total = 0;
-      for (var data in snapshot.docs) {
-        if (data['quantity'] <= 5) {
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final raw = data['quantity'];
+        final qty = (raw is num)
+            ? raw.toInt()
+            : (int.tryParse(raw?.toString() ?? '0') ?? 0);
+        if (qty <= 5) {
           total += 1;
         }
       }

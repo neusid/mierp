@@ -22,6 +22,8 @@ class AddUnitRepository {
         "product_code": data.productCode,
         "quantity": data.quantity,
         "unit_price": data.unitPrice,
+        "discount_percent": data.discountPercent,
+        "discount_max": data.discountMax,
       });
     } catch (e) {
       throw Exception(e);

@@ -9,6 +9,7 @@ import 'package:mierp_apps/core/models/sales_order.dart';
 import 'package:mierp_apps/core/models/summary_type.dart';
 import 'package:mierp_apps/data/warehouse/warehouse_repository.dart';
 import 'package:mierp_apps/core/utils/order_sort_utils.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 
 // --- EVENTS ---
 abstract class DashboardWarehouseEvent extends Equatable {
@@ -170,24 +171,26 @@ class DashboardWarehouseBloc extends Bloc<DashboardWarehouseEvent, DashboardWare
       isLoading: false,
     ));
 
-    // Listen to Streams
+    // Listen to Streams (scoped by active tenant adminId)
+    final adminId = await TenantService.getActiveAdminId();
+
     _totalProductsSub?.cancel();
-    _totalProductsSub = warehouseRepository.streamTotalProducts().listen((total) {
+    _totalProductsSub = warehouseRepository.streamTotalProducts(adminId: adminId).listen((total) {
       add(DashboardWarehouseStatsUpdated(totalProducts: total));
     });
 
     _totalQtySub?.cancel();
-    _totalQtySub = warehouseRepository.streamGetQtyProduct().listen((total) {
+    _totalQtySub = warehouseRepository.streamGetQtyProduct(adminId: adminId).listen((total) {
       add(DashboardWarehouseStatsUpdated(totalQty: total));
     });
 
     _lowStockSub?.cancel();
-    _lowStockSub = warehouseRepository.streamGetLowStock().listen((total) {
+    _lowStockSub = warehouseRepository.streamGetLowStock(adminId: adminId).listen((total) {
       add(DashboardWarehouseStatsUpdated(totalLowStock: total));
     });
 
     _upcomingStockSub?.cancel();
-    _upcomingStockSub = warehouseRepository.streamGetUpcomingStock().listen((total) {
+    _upcomingStockSub = warehouseRepository.streamGetUpcomingStock(adminId: adminId).listen((total) {
       add(DashboardWarehouseStatsUpdated(totalUpcomingStock: total));
     });
   }
