@@ -85,6 +85,49 @@ class _StaffManagementViewState extends State<StaffManagementView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
+      floatingActionButton: Container(
+        height: 46.h,
+        decoration: BoxDecoration(
+          gradient: AppColors.premiumDarkGradient,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF2E1052).withValues(alpha: 0.35),
+              blurRadius: 10.w,
+              offset: Offset(0, 4.h),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => AddStaffModal.show(
+              context,
+              context.read<AdminStaffCubit>(),
+            ),
+            borderRadius: BorderRadius.circular(24.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.w),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person_add_alt_1_rounded, color: Colors.white, size: 18.w),
+                  SizedBox(width: 8.w),
+                  Text(
+                    "Tambah Staf",
+                    style: GoogleFonts.inter(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -136,36 +179,6 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: AppColors.premiumDarkGradient,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: ElevatedButton.icon(
-                      onPressed: () => AddStaffModal.show(
-                        context,
-                        context.read<AdminStaffCubit>(),
-                      ),
-                      icon: Icon(Icons.add_rounded, size: 18.w, color: Colors.white),
-                      label: Text(
-                        "Tambah",
-                        style: GoogleFonts.outfit(
-                          fontSize: 13.sp,
-                          fontWeight: AppFontWeight.semiBold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        elevation: 0,
-                      ),
                     ),
                   ),
                 ],
@@ -227,7 +240,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                   return RefreshIndicator(
                     onRefresh: () => context.read<AdminStaffCubit>().loadStaffList(),
                     child: ListView(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.fromLTRB(16.w, 16.w, 16.w, 80.h),
                       children: [
                         // KPI Metrics Summary Card (Informational)
                         Row(
@@ -332,10 +345,36 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 ),
                                 SizedBox(height: 6.h),
                                 Text(
-                                  "Klik tombol '+ Tambah' di atas untuk membuat akun staf",
+                                  "Klik tombol 'Tambah Staf' di bawah untuk membuat akun baru",
                                   style: GoogleFonts.outfit(
                                     fontSize: 12.sp,
                                     color: const Color(0xFF94A3B8),
+                                  ),
+                                ),
+                                SizedBox(height: 14.h),
+                                ElevatedButton.icon(
+                                  onPressed: () => AddStaffModal.show(
+                                    context,
+                                    context.read<AdminStaffCubit>(),
+                                  ),
+                                  icon: Icon(Icons.person_add_alt_1_rounded,
+                                      size: 16.w, color: Colors.white),
+                                  label: Text(
+                                    "Tambah Akun Staf",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2E1052),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w, vertical: 10.h),
+                                    elevation: 0,
                                   ),
                                 ),
                               ],
