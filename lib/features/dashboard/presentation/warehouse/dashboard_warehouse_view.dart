@@ -21,11 +21,6 @@ class DashboardWarehouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-    final formattedDate = '${days[now.weekday - 1]}, ${now.day} ${months[now.month - 1]} ${now.year}';
-
     return BlocProvider(
       create: (context) =>
           sl<DashboardWarehouseBloc>()..add(DashboardWarehouseStarted()),
@@ -55,128 +50,116 @@ class DashboardWarehouseView extends StatelessWidget {
                             top: 56.h,
                             left: 24.w,
                             right: 20.w,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 44.w,
-                                  height: 44.w,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.2),
-                                      width: 1.2.w,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // 1. AVATAR SQUIRCLE (KOTAK, TINGGI IDENTIK DENGAN PT MIERP & NAMA USER)
+                                  AspectRatio(
+                                    aspectRatio: 1.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.r),
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(alpha: 0.22),
+                                          width: 1.2.w,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.person_rounded,
+                                          color: const Color(0xFFE9D5FF),
+                                          size: 20.w,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.person_rounded,
-                                      color: const Color(0xFFE9D5FF),
-                                      size: 24.w,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 16.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Gudang Pusat",
-                                        style: GoogleFonts.inter(
-                                          fontSize: 10.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white70,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                      SizedBox(height: 2.h),
-                                      Text(
-                                        "Good Morning,",
-                                        style: GoogleFonts.inter(
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color(0xFFE0E7FF),
-                                        ),
-                                      ),
-                                      Text(
-                                        state.userName.isNotEmpty
-                                            ? state.userName
-                                            : "Admin",
-                                        style: GoogleFonts.inter(
-                                          fontSize: 20.sp,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                          letterSpacing: -0.5,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 2.h),
-                                      Text(
-                                        formattedDate,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 11.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color(0xFFE0E7FF),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.push('/notification');
-                                  },
-                                  child: Container(
-                                    width: 40.w,
-                                    height: 40.w,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12.w),
-                                    ),
-                                    child: Stack(
-                                      alignment: Alignment.center,
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Icon(
-                                          Icons.notifications_none_rounded,
-                                          color: Colors.white,
-                                          size: 24.w,
-                                        ),
-                                        Positioned(
-                                          top: 10.w,
-                                          right: 10.w,
-                                          child: BlocSelector<NotificationCubit, NotificationState, bool>(
-                                            selector: (state) => state.unreadCount > 0,
-                                            builder: (context, hasUnread) {
-                                              if (!hasUnread) return const SizedBox.shrink();
-                                              return Container(
-                                                width: 8.w,
-                                                height: 8.w,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: const Color(0xFFEF4444),
-                                                  border: Border.all(
-                                                    color: const Color(0xFF4F46E5),
-                                                    width: 1.5.w,
-                                                  ),
-                                                ),
-                                              );
-                                            },
+                                        Text(
+                                          "PT MIERP",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFFC084FC),
+                                            letterSpacing: 0.5,
                                           ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          state.userName.isNotEmpty
+                                              ? state.userName
+                                              : "Warehouse Staff",
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16.5.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: -0.3,
+                                            height: 1.1,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 8.w),
+                                  Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        context.push('/notification');
+                                      },
+                                      child: Container(
+                                        width: 38.w,
+                                        height: 38.w,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.12,
+                                          ),
+                                          borderRadius: BorderRadius.circular(12.w),
+                                        ),
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.notifications_none_rounded,
+                                              color: Colors.white,
+                                              size: 20.w,
+                                            ),
+                                            Positioned(
+                                              top: 8.w,
+                                              right: 8.w,
+                                              child: BlocSelector<NotificationCubit, NotificationState, bool>(
+                                                selector: (state) => state.unreadCount > 0,
+                                                builder: (context, hasUnread) {
+                                                  if (!hasUnread) return const SizedBox.shrink();
+                                                  return Container(
+                                                    width: 7.w,
+                                                    height: 7.w,
+                                                    decoration: const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Color(0xFFEF4444),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

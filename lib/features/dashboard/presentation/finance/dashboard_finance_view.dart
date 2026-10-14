@@ -103,24 +103,23 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
               ),
               title: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // 1. AVATAR SQUIRCLE (KOTAK, NO GLOW)
-                    Stack(
-                      children: [
-                        Container(
-                          width: 44.w,
-                          height: 44.w,
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // 1. AVATAR SQUIRCLE (KOTAK, TINGGI IDENTIK DENGAN PT MIERP & NAMA USER)
+                      AspectRatio(
+                        aspectRatio: 1.0,
+                        child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(10.r),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white.withValues(alpha: 0.22),
                               width: 1.2.w,
                             ),
                           ),
@@ -128,165 +127,96 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                             child: Icon(
                               Icons.person_rounded,
                               color: const Color(0xFFE9D5FF),
-                              size: 24.w,
+                              size: 20.w,
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: -2.w,
-                          right: -2.w,
-                          child: Container(
-                            width: 10.w,
-                            height: 10.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFF10B981),
-                              border: Border.all(
-                                color: const Color(0xFF2E1052),
-                                width: 1.5.w,
+                      ),
+                      SizedBox(width: 12.w),
+                      // 2. USER INFO: ATAS PT MIERP, BAWAH NAMA USER
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "PT MIERP",
+                              style: GoogleFonts.inter(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFC084FC),
+                                letterSpacing: 0.5,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
+                            Text(
+                              state.userName.isNotEmpty ? state.userName : "Finance Officer",
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.5.sp,
+                                color: Colors.white,
+                                letterSpacing: -0.3,
+                                height: 1.1,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    SizedBox(width: 12.w),
-                    // 2. USER INFO: ROLE PILL, GREETING, NAME
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Role Badge Pill "FINANCE DEPT"
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.5.h),
+                      ),
+                      SizedBox(width: 8.w),
+                      // 3. FROSTED SQUIRCLE NOTIFICATION BUTTON
+                      Center(
+                        child: InkWell(
+                          onTap: () {
+                            context.push('/notification');
+                          },
+                          borderRadius: BorderRadius.circular(12.w),
+                          child: Container(
+                            width: 38.w,
+                            height: 38.w,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF7C3AED).withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(10.w),
+                              color: Colors.white.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(12.w),
                               border: Border.all(
-                                color: const Color(0xFFA855F7).withValues(alpha: 0.35),
+                                color: Colors.white.withValues(alpha: 0.16),
                                 width: 1.w,
                               ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                            child: Stack(
+                              alignment: Alignment.center,
                               children: [
-                                Container(
-                                  width: 5.w,
-                                  height: 5.w,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color(0xFFA855F7),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFFA855F7).withValues(alpha: 0.6),
-                                        blurRadius: 3.w,
-                                      ),
-                                    ],
-                                  ),
+                                Icon(
+                                  Icons.notifications_none_rounded,
+                                  color: Colors.white,
+                                  size: 20.w,
                                 ),
-                                SizedBox(width: 5.w),
-                                Text(
-                                  "FINANCE DEPT",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 9.5.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFFD8B4FE),
-                                    letterSpacing: 0.4,
+                                Positioned(
+                                  top: 8.w,
+                                  right: 8.w,
+                                  child: BlocSelector<NotificationCubit, NotificationState, bool>(
+                                    selector: (state) => state.unreadCount > 0,
+                                    builder: (context, hasUnread) {
+                                      if (!hasUnread) return const SizedBox.shrink();
+                                      return Container(
+                                        width: 7.w,
+                                        height: 7.w,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xFFEF4444),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 3.h),
-                          Text(
-                            "Good Morning,",
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 11.5.sp,
-                              color: const Color(0xFFCBD5E1),
-                            ),
-                          ),
-                          Text(
-                            state.userName.isNotEmpty ? state.userName : "Finance Officer",
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 17.5.sp,
-                              color: Colors.white,
-                              letterSpacing: -0.3,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    // 3. FROSTED SQUIRCLE NOTIFICATION BUTTON WITH UNREAD DOT
-                    InkWell(
-                      onTap: () {
-                        context.push('/notification');
-                      },
-                      borderRadius: BorderRadius.circular(13.w),
-                      child: Container(
-                        width: 44.w,
-                        height: 44.w,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(13.w),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.14),
-                            width: 1.2.w,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.25),
-                              offset: Offset(0, 2.w),
-                              blurRadius: 4.w,
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(
-                              Icons.notifications_none_rounded,
-                              color: const Color(0xFFF1F5F9),
-                              size: 22.w,
-                            ),
-                            Positioned(
-                              top: 9.w,
-                              right: 9.w,
-                              child: BlocSelector<NotificationCubit, NotificationState, bool>(
-                                selector: (state) => state.unreadCount > 0,
-                                builder: (context, hasUnread) {
-                                  if (!hasUnread) return const SizedBox.shrink();
-                                  return Container(
-                                    width: 8.w,
-                                    height: 8.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: const Color(0xFFEF4444),
-                                      border: Border.all(
-                                        color: AppColors.gray,
-                                        width: 1.2.w,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0xFFEF4444).withValues(alpha: 0.6),
-                                          blurRadius: 4.w,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
