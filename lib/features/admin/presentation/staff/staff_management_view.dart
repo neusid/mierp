@@ -229,7 +229,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                     child: ListView(
                       padding: EdgeInsets.all(16.w),
                       children: [
-                        // KPI Metrics Summary Card (Interactive Filters)
+                        // KPI Metrics Summary Card (Informational)
                         Row(
                           children: [
                             Expanded(
@@ -237,11 +237,6 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Total Staf",
                                 count: staffList.length,
                                 icon: Icons.groups_rounded,
-                                iconColor: const Color(0xFF7C3AED),
-                                squircleBg: const Color(0xFFF5F3FF),
-                                squircleBorder: const Color(0xFFDDD6FE),
-                                isSelected: _selectedFilter == 'all',
-                                onTap: () => setState(() => _selectedFilter = 'all'),
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -250,12 +245,6 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Finance",
                                 count: financeCount,
                                 icon: Icons.account_balance_wallet_rounded,
-                                iconColor: const Color(0xFF4F46E5),
-                                squircleBg: const Color(0xFFEEF2FF),
-                                squircleBorder: const Color(0xFFC7D2FE),
-                                isSelected: _selectedFilter == 'finance',
-                                onTap: () => setState(() => _selectedFilter =
-                                    (_selectedFilter == 'finance') ? 'all' : 'finance'),
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -264,12 +253,6 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                                 label: "Warehouse",
                                 count: warehouseCount,
                                 icon: Icons.warehouse_rounded,
-                                iconColor: const Color(0xFF0D9488),
-                                squircleBg: const Color(0xFFF0FDFA),
-                                squircleBorder: const Color(0xFFCCFBF1),
-                                isSelected: _selectedFilter == 'warehouse',
-                                onTap: () => setState(() => _selectedFilter =
-                                    (_selectedFilter == 'warehouse') ? 'all' : 'warehouse'),
                               ),
                             ),
                           ],
@@ -376,129 +359,76 @@ class _StaffManagementViewState extends State<StaffManagementView> {
     required String label,
     required int count,
     required IconData icon,
-    required Color iconColor,
-    required Color squircleBg,
-    required Color squircleBorder,
-    required bool isSelected,
-    required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact();
-          onTap();
-        },
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(
-              color: isSelected ? const Color(0xFF7C3AED) : const Color(0xFFF1F5F9),
-              width: isSelected ? 1.5.w : 1.2.w,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected
-                    ? const Color(0xFF7C3AED).withValues(alpha: 0.10)
-                    : const Color(0xFF0F172A).withValues(alpha: 0.04),
-                blurRadius: isSelected ? 12.w : 8.w,
-                offset: Offset(0, 3.h),
-              ),
-              BoxShadow(
-                color: const Color(0xFF0F172A).withValues(alpha: 0.02),
-                blurRadius: 3.w,
-                offset: Offset(0, 1.h),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Top Row: Squircle icon + Active Pill / Subtle Dot
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 28.w,
-                    height: 28.w,
-                    decoration: BoxDecoration(
-                      color: squircleBg,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: squircleBorder, width: 1.w),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        icon,
-                        color: iconColor,
-                        size: 15.w,
-                      ),
-                    ),
-                  ),
-                  if (isSelected)
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5F3FF),
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: const Color(0xFFDDD6FE),
-                          width: 0.8.w,
-                        ),
-                      ),
-                      child: Text(
-                        "Aktif",
-                        style: GoogleFonts.inter(
-                          fontSize: 8.5.sp,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF7C3AED),
-                        ),
-                      ),
-                    )
-                  else
-                    Container(
-                      width: 5.w,
-                      height: 5.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFCBD5E1).withValues(alpha: 0.5),
-                      ),
-                    ),
-                ],
-              ),
-              SizedBox(height: 10.h),
-              // Metric Count (Tabular Figures, Slate-800)
-              Text(
-                "$count",
-                style: GoogleFonts.inter(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: isSelected ? const Color(0xFF1E293B) : const Color(0xFF334155),
-                  letterSpacing: -0.5,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
-              ),
-              SizedBox(height: 2.h),
-              // Metric Label (Inter Slate-500)
-              Text(
-                label,
-                style: GoogleFonts.inter(
-                  fontSize: 11.sp,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? const Color(0xFF475569) : const Color(0xFF64748B),
-                  letterSpacing: -0.1,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+        border: Border.all(
+          color: const Color(0xFFE2E8F0),
+          width: 1.w,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+            blurRadius: 8.w,
+            offset: Offset(0, 2.h),
+          ),
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.01),
+            blurRadius: 3.w,
+            offset: Offset(0, 1.h),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Symmetrical Squircle Icon (Unified Corporate Slate)
+          Container(
+            width: 32.w,
+            height: 32.w,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(9.r),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
+            ),
+            child: Center(
+              child: Icon(
+                icon,
+                color: const Color(0xFF475569),
+                size: 17.w,
+              ),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          // Metric Count (Tabular Figures, Slate-800)
+          Text(
+            "$count",
+            style: GoogleFonts.inter(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1E293B),
+              letterSpacing: -0.5,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          SizedBox(height: 2.h),
+          // Metric Label (Slate-500)
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 11.5.sp,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF64748B),
+              letterSpacing: -0.1,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
