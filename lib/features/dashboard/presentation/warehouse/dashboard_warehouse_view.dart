@@ -50,39 +50,52 @@ class DashboardWarehouseView extends StatelessWidget {
                         ),
                       ),
                       child: Stack(
+                        clipBehavior: Clip.hardEdge,
                         children: [
-                          // Top-Right Transparent Purple Gradient Circle
+                          // Top-Right Geometric Transparent Gradient Circle
                           Positioned(
-                            top: -40.h,
+                            top: -60.h,
                             right: -30.w,
                             child: Container(
-                              width: 160.w,
-                              height: 160.w,
+                              width: 170.w,
+                              height: 170.w,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: RadialGradient(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                   colors: [
-                                    const Color(0xFF9333EA).withValues(alpha: 0.22),
-                                    const Color(0xFF9333EA).withValues(alpha: 0.0),
+                                    Colors.white.withValues(alpha: 0.08),
+                                    Colors.white.withValues(alpha: 0.02),
                                   ],
+                                ),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.06),
+                                  width: 1.w,
                                 ),
                               ),
                             ),
                           ),
-                          // Bottom-Left Transparent Indigo Gradient Circle
+                          // Bottom-Left Geometric Transparent Gradient Circle
                           Positioned(
-                            bottom: -30.h,
+                            bottom: -40.h,
                             left: -20.w,
                             child: Container(
-                              width: 140.w,
-                              height: 140.w,
+                              width: 120.w,
+                              height: 120.w,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: RadialGradient(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                   colors: [
-                                    const Color(0xFF6366F1).withValues(alpha: 0.18),
-                                    const Color(0xFF6366F1).withValues(alpha: 0.0),
+                                    Colors.white.withValues(alpha: 0.07),
+                                    Colors.white.withValues(alpha: 0.01),
                                   ],
+                                ),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.05),
+                                  width: 1.w,
                                 ),
                               ),
                             ),

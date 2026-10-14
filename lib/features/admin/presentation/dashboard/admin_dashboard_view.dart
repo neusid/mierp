@@ -135,39 +135,52 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   ),
                 ),
                 child: Stack(
+                  clipBehavior: Clip.hardEdge,
                   children: [
-                    // Top-Left Transparent Purple Gradient Circle
+                    // Top-Right Geometric Transparent Gradient Circle
                     Positioned(
-                      top: -30.h,
-                      left: -20.w,
+                      top: -60.h,
+                      right: -30.w,
                       child: Container(
-                        width: 140.w,
-                        height: 140.w,
+                        width: 170.w,
+                        height: 170.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: RadialGradient(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                             colors: [
-                              const Color(0xFF9333EA).withValues(alpha: 0.22),
-                              const Color(0xFF9333EA).withValues(alpha: 0.0),
+                              Colors.white.withValues(alpha: 0.08),
+                              Colors.white.withValues(alpha: 0.02),
                             ],
+                          ),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.06),
+                            width: 1.w,
                           ),
                         ),
                       ),
                     ),
-                    // Bottom-Right Transparent Indigo Gradient Circle
+                    // Bottom-Left Geometric Transparent Gradient Circle
                     Positioned(
-                      bottom: -20.h,
-                      right: -20.w,
+                      bottom: -40.h,
+                      left: -20.w,
                       child: Container(
-                        width: 130.w,
-                        height: 130.w,
+                        width: 120.w,
+                        height: 120.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: RadialGradient(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                             colors: [
-                              const Color(0xFF6366F1).withValues(alpha: 0.18),
-                              const Color(0xFF6366F1).withValues(alpha: 0.0),
+                              Colors.white.withValues(alpha: 0.07),
+                              Colors.white.withValues(alpha: 0.01),
                             ],
+                          ),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            width: 1.w,
                           ),
                         ),
                       ),
