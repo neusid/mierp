@@ -827,43 +827,64 @@ class _SummaryViewState extends State<SummaryView> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // If you want to use the JPG version, comment the SvgPicture below and uncomment this Image widget:
-          // Image.asset(
-          //   'assets/images/folder_empty.jpg',
-          //   width: 220.w,
-          //   fit: BoxFit.contain,
-          // ),
-          SvgPicture.asset('assets/images/folder_empty.svg', width: 220.w),
-          SizedBox(height: 24.h),
-          Text(
-            "Belum Ada Data Tersedia",
-            style: GoogleFonts.inter(
-              fontSize: 20.sp,
-              fontWeight: AppFontWeight.bold,
-              color: const Color(0xFF0F172A),
-              letterSpacing: -0.5,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 60.h, horizontal: 24.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 72.w,
+              height: 72.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(
+                  color: const Color(0xFFE2E8F0),
+                  width: 1.2.w,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                    blurRadius: 10.w,
+                    offset: Offset(0, 3.h),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.inbox_outlined,
+                  size: 34.w,
+                  color: const Color(0xFF94A3B8),
+                ),
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 10.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40.w),
-            child: Text(
-              "Data transaksi atau produk belum tercatat di sistem saat ini.",
+            SizedBox(height: 18.h),
+            Text(
+              "Belum Ada Data Tersedia",
               style: GoogleFonts.inter(
-                fontSize: 13.5.sp,
-                fontWeight: AppFontWeight.medium,
-                color: const Color(0xFF64748B),
-                height: 1.5,
+                fontSize: 17.sp,
+                fontWeight: AppFontWeight.bold,
+                color: const Color(0xFF1E293B),
+                letterSpacing: -0.3,
               ),
               textAlign: TextAlign.center,
             ),
-          ),
-          SizedBox(height: 60.h),
-        ],
+            SizedBox(height: 6.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Text(
+                "Data transaksi atau produk belum tercatat di sistem saat ini.",
+                style: GoogleFonts.inter(
+                  fontSize: 12.5.sp,
+                  fontWeight: AppFontWeight.medium,
+                  color: const Color(0xFF94A3B8),
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
