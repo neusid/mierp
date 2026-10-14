@@ -73,11 +73,11 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(0, "Dashboard", Icons.dashboard_rounded),
-                _buildNavItem(1, "Staf", Icons.groups_rounded),
-                _buildNavItem(2, "Gudang", Icons.inventory_2_rounded),
-                _buildNavItem(3, "Finansial", Icons.pie_chart_rounded),
-                _buildNavItem(4, "Profil", Icons.person_rounded),
+                _buildNavItem(0, "Dashboard", Icons.grid_view_rounded, Icons.grid_view_outlined),
+                _buildNavItem(1, "Staf", Icons.people_rounded, Icons.people_outline_rounded),
+                _buildNavItem(2, "Gudang", Icons.inventory_2_rounded, Icons.inventory_2_outlined),
+                _buildNavItem(3, "Finansial", Icons.analytics_rounded, Icons.analytics_outlined),
+                _buildNavItem(4, "Profil", Icons.person_rounded, Icons.person_outline_rounded),
               ],
             ),
           ),
@@ -86,7 +86,7 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
     );
   }
 
-  Widget _buildNavItem(int index, String label, IconData icon) {
+  Widget _buildNavItem(int index, String label, IconData activeIcon, IconData inactiveIcon) {
     final isActive = _currentIndex == index;
 
     return Material(
@@ -111,7 +111,7 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
-                icon,
+                isActive ? activeIcon : inactiveIcon,
                 size: isActive ? 18.w : 22.w,
                 color: isActive ? Colors.white : AppColors.grayTitle,
               ),

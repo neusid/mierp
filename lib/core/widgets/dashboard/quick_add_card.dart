@@ -8,6 +8,9 @@ class QuickAddCard extends StatelessWidget {
   final VoidCallback onTap;
   final IconData icon;
   final Gradient? gradient;
+  final Color? iconColor;
+  final Color? iconBgColor;
+  final Color? iconBorderColor;
 
   const QuickAddCard({
     super.key,
@@ -15,6 +18,9 @@ class QuickAddCard extends StatelessWidget {
     required this.onTap,
     this.icon = Icons.add_rounded,
     this.gradient,
+    this.iconColor,
+    this.iconBgColor,
+    this.iconBorderColor,
   });
 
   @override
@@ -68,20 +74,28 @@ class QuickAddCard extends StatelessWidget {
                   height: 33.h,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
-                    gradient: gradient ?? AppColors.premiumDarkGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF2E1052).withValues(alpha: 0.28),
-                        blurRadius: 8.w,
-                        offset: Offset(0, 3.h),
-                      ),
-                    ],
+                    gradient: (iconBgColor == null && iconBorderColor == null)
+                        ? (gradient ?? AppColors.premiumDarkGradient)
+                        : null,
+                    color: iconBgColor,
+                    border: iconBorderColor != null
+                        ? Border.all(color: iconBorderColor!, width: 1.w)
+                        : null,
+                    boxShadow: (iconBgColor == null && iconBorderColor == null)
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF2E1052).withValues(alpha: 0.28),
+                              blurRadius: 8.w,
+                              offset: Offset(0, 3.h),
+                            ),
+                          ]
+                        : null,
                   ),
                   child: Center(
                     child: Icon(
                       icon,
-                      color: Colors.white,
-                      size: 20.w,
+                      color: iconColor ?? Colors.white,
+                      size: 18.w,
                     ),
                   ),
                 ),

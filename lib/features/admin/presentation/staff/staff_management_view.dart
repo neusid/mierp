@@ -111,7 +111,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.person_add_alt_1_rounded, color: Colors.white, size: 18.w),
+                  Icon(Icons.person_add_outlined, color: Colors.white, size: 18.w),
                   SizedBox(width: 8.w),
                   Text(
                     "Tambah Staf",
@@ -249,7 +249,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                               child: _buildMetricTile(
                                 label: "Total Staf",
                                 count: staffList.length,
-                                icon: Icons.groups_rounded,
+                                icon: Icons.people_outline_rounded,
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -257,7 +257,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                               child: _buildMetricTile(
                                 label: "Finance",
                                 count: financeCount,
-                                icon: Icons.account_balance_wallet_rounded,
+                                icon: Icons.account_balance_wallet_outlined,
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -265,7 +265,7 @@ class _StaffManagementViewState extends State<StaffManagementView> {
                               child: _buildMetricTile(
                                 label: "Warehouse",
                                 count: warehouseCount,
-                                icon: Icons.warehouse_rounded,
+                                icon: Icons.warehouse_outlined,
                               ),
                             ),
                           ],

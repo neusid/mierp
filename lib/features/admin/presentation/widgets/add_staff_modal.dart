@@ -115,14 +115,19 @@ class _AddStaffModalState extends State<AddStaffModal> {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10.w),
+                    width: 40.w,
+                    height: 40.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEFF6FF),
+                      color: const Color(0xFFF8FAFC),
                       borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: const Color(0xFFE2E8F0), width: 1.w),
                     ),
-                    child: const Icon(
-                      Icons.person_add_alt_1_rounded,
-                      color: Color(0xFF2563EB),
+                    child: Center(
+                      child: Icon(
+                        Icons.person_add_outlined,
+                        color: const Color(0xFF475569),
+                        size: 20.w,
+                      ),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -167,8 +172,8 @@ class _AddStaffModalState extends State<AddStaffModal> {
                     child: _buildRoleChip(
                       role: 'finance',
                       label: 'Finance',
-                      icon: Icons.account_balance_wallet_rounded,
-                      activeColor: const Color(0xFF2563EB),
+                      icon: Icons.account_balance_wallet_outlined,
+                      activeColor: const Color(0xFF4F46E5),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -176,8 +181,8 @@ class _AddStaffModalState extends State<AddStaffModal> {
                     child: _buildRoleChip(
                       role: 'warehouse',
                       label: 'Warehouse',
-                      icon: Icons.warehouse_rounded,
-                      activeColor: const Color(0xFFD97706),
+                      icon: Icons.warehouse_outlined,
+                      activeColor: const Color(0xFF0D9488),
                     ),
                   ),
                 ],
@@ -236,8 +241,8 @@ class _AddStaffModalState extends State<AddStaffModal> {
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
-                        ? Icons.visibility_off_rounded
-                        : Icons.visibility_rounded,
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                     color: const Color(0xFF94A3B8),
                     size: 20.w,
                   ),
@@ -312,11 +317,11 @@ class _AddStaffModalState extends State<AddStaffModal> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.08) : Colors.grey.shade50,
+          color: isSelected ? activeColor.withValues(alpha: 0.08) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isSelected ? activeColor : Colors.grey.shade300,
-            width: isSelected ? 1.8 : 1.0,
+            color: isSelected ? activeColor : const Color(0xFFE2E8F0),
+            width: isSelected ? 1.5.w : 1.w,
           ),
         ),
         child: Row(

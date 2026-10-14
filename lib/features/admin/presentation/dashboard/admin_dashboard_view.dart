@@ -401,7 +401,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   ),
                   SizedBox(height: 12.h),
 
-                  // 2x2 KPI Grid (Warehouse Remake Aesthetic)
+                  // 2x2 KPI Grid (Unified Corporate Slate)
                   Row(
                     children: [
                       Expanded(
@@ -410,14 +410,10 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Seluruh staf aktif\nFinance & Warehouse",
                           count: "$_staffCount",
                           unit: "Staf",
-                          icon: Icons.groups_outlined,
-                          iconColor: const Color(0xFF6366F1),
-                          squircleBg: const Color(0xFFEEF2FF),
-                          squircleBorder: const Color(0xFFC7D2FE),
-                          pillText: "Active",
-                          pillBgColor: const Color(0xFFEEF2FF),
-                          pillBorderColor: const Color(0xFFC7D2FE),
-                          pillColor: const Color(0xFF6366F1),
+                          icon: Icons.people_outline_rounded,
+                          iconColor: const Color(0xFF475569),
+                          squircleBg: const Color(0xFFF8FAFC),
+                          squircleBorder: const Color(0xFFE2E8F0),
                           onTap: () => widget.onTabChange(1), // Go to Staff tab
                         ),
                       ),
@@ -429,9 +425,9 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           count: "$_productCount",
                           unit: "SKU",
                           icon: Icons.inventory_2_outlined,
-                          iconColor: const Color(0xFF7C3AED),
-                          squircleBg: const Color(0xFFF5F3FF),
-                          squircleBorder: const Color(0xFFDDD6FE),
+                          iconColor: const Color(0xFF475569),
+                          squircleBg: const Color(0xFFF8FAFC),
+                          squircleBorder: const Color(0xFFE2E8F0),
                           onTap: () => widget.onTabChange(2), // Go to Warehouse tab
                         ),
                       ),
@@ -447,9 +443,9 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           count: "$_orderCount",
                           unit: "Orders",
                           icon: Icons.receipt_long_outlined,
-                          iconColor: const Color(0xFF0D9488),
-                          squircleBg: const Color(0xFFF0FDFA),
-                          squircleBorder: const Color(0xFFCCFBF1),
+                          iconColor: const Color(0xFF475569),
+                          squircleBg: const Color(0xFFF8FAFC),
+                          squircleBorder: const Color(0xFFE2E8F0),
                           onTap: () => widget.onTabChange(3), // Go to Finance tab
                         ),
                       ),
@@ -460,16 +456,14 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Stok menipis\nperlu restock (<= 5)",
                           count: "$_lowStockCount",
                           unit: "Items",
-                          icon: Icons.warning_amber_rounded,
-                          iconColor: const Color(0xFFEF4444),
-                          squircleBg: const Color(0xFFFEF2F2),
-                          squircleBorder: const Color(0xFFFECDD3),
-                          cardBorderColor: _lowStockCount > 0 ? const Color(0xFFFFE4E6) : null,
-                          dividerColor: _lowStockCount > 0 ? const Color(0xFFFFF1F2) : null,
+                          icon: Icons.notifications_none_rounded,
+                          iconColor: const Color(0xFF475569),
+                          squircleBg: const Color(0xFFF8FAFC),
+                          squircleBorder: const Color(0xFFE2E8F0),
                           pillText: _lowStockCount > 0 ? "Alert" : "Safe",
-                          pillBgColor: _lowStockCount > 0 ? const Color(0xFFFEF2F2) : const Color(0xFFF0FDF4),
-                          pillBorderColor: _lowStockCount > 0 ? const Color(0xFFFECDD3) : const Color(0xFFBBF7D0),
-                          pillColor: _lowStockCount > 0 ? const Color(0xFFEF4444) : const Color(0xFF16A34A),
+                          pillBgColor: _lowStockCount > 0 ? const Color(0xFFFEF2F2) : const Color(0xFFF8FAFC),
+                          pillBorderColor: _lowStockCount > 0 ? const Color(0xFFFECDD3) : const Color(0xFFE2E8F0),
+                          pillColor: _lowStockCount > 0 ? const Color(0xFFEF4444) : const Color(0xFF64748B),
                           onTap: () => widget.onTabChange(2),
                         ),
                       ),
@@ -478,7 +472,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
                   SizedBox(height: 22.h),
 
-                  // Quick Actions (Warehouse QuickAddCard Style with MiERP Gradient)
+                  // Quick Actions (Corporate Slate Outlined Aesthetic)
                   Row(
                     children: [
                       Text(
@@ -500,19 +494,28 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
                   QuickAddCard(
                     title: "Add New Staff Account",
-                    icon: Icons.person_add_rounded,
+                    icon: Icons.person_add_outlined,
+                    iconColor: const Color(0xFF475569),
+                    iconBgColor: const Color(0xFFF8FAFC),
+                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () => widget.onTabChange(1),
                   ),
                   SizedBox(height: 10.h),
                   QuickAddCard(
                     title: "Monitor Warehouse Inventory",
-                    icon: Icons.inventory_2_rounded,
+                    icon: Icons.inventory_2_outlined,
+                    iconColor: const Color(0xFF475569),
+                    iconBgColor: const Color(0xFFF8FAFC),
+                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () => widget.onTabChange(2),
                   ),
                   SizedBox(height: 10.h),
                   QuickAddCard(
                     title: "Review Financial Transactions",
-                    icon: Icons.receipt_long_rounded,
+                    icon: Icons.receipt_long_outlined,
+                    iconColor: const Color(0xFF475569),
+                    iconBgColor: const Color(0xFFF8FAFC),
+                    iconBorderColor: const Color(0xFFE2E8F0),
                     onTap: () => widget.onTabChange(3),
                   ),
                 ]),
