@@ -219,7 +219,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                             ),
                             child: Center(
                               child: Icon(
-                                Icons.shield_rounded,
+                                Icons.person_rounded,
                                 color: const Color(0xFFE9D5FF),
                                 size: 26.w,
                               ),
