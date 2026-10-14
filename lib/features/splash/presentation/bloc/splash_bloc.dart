@@ -12,6 +12,7 @@ import 'package:mierp_apps/core/session/bloc/auth_event.dart';
 import 'package:mierp_apps/core/session/bloc/auth_state.dart';
 import 'package:mierp_apps/features/onboarding/presentation/onboarding_service.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 
 // --- EVENTS ---
 abstract class SplashEvent extends Equatable {
@@ -55,6 +56,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     final prefs = await SharedPreferences.getInstance();
     final isFirst = await onboardingService.isFirstLaunch();
     
+    // Safely verify or seed master Admin account in background
+    TenantService.ensureDefaultAdminAccount();
+
     await Future.delayed(const Duration(seconds: 2));
 
     if (isFirst) {

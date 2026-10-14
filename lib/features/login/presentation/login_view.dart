@@ -8,6 +8,7 @@ import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/auth/input_auth_widget.dart';
 import 'package:mierp_apps/features/login/presentation/bloc/login_bloc.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
+import 'package:mierp_apps/core/services/tenant_service.dart';
 import '../../../core/theme/app_colors.dart';
 
 class LoginView extends StatefulWidget {
@@ -19,13 +20,14 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final formKey = GlobalKey<FormState>();
-  final TextEditingController emailC = TextEditingController(text: "finance@mierp.com");
+  final TextEditingController emailC = TextEditingController(text: "admin@mierp.com");
   final TextEditingController passwordC = TextEditingController(text: "password123");
   bool saveCredential = false;
 
   @override
   void initState() {
     super.initState();
+    TenantService.ensureDefaultAdminAccount();
     context.read<LoginBloc>().add(LoginLoadCredential());
   }
 
@@ -48,7 +50,7 @@ class _LoginViewState extends State<LoginView> {
         child: BlocConsumer<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginInitial) {
-            if (state.saveCredential) {
+            if (state.saveCredential && state.savedEmail.isNotEmpty) {
               setState(() {
                 saveCredential = true;
                 emailC.text = state.savedEmail;
