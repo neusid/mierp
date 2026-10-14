@@ -4,7 +4,7 @@ import 'package:mierp_apps/features/notification/data/models/notification_model.
 
 void main() {
   group('Multi-Tenant UserModel Tests', () {
-    test('Admin user should have isAdmin == true and effectiveAdminId == uid', () {
+    test('Admin user should have isAdmin == true, isSuperAdmin == false and effectiveAdminId == uid', () {
       final adminUser = UserModel(
         uid: 'admin_123',
         email: 'ceo@company.com',
@@ -16,9 +16,42 @@ void main() {
       );
 
       expect(adminUser.isAdmin, isTrue);
+      expect(adminUser.isSuperAdmin, isFalse);
       expect(adminUser.isFinance, isFalse);
       expect(adminUser.isWarehouse, isFalse);
       expect(adminUser.effectiveAdminId, equals('admin_123'));
+    });
+
+    test('Super Admin user should have isAdmin == true, isSuperAdmin == true and effectiveAdminId == uid', () {
+      final superAdminUser = UserModel(
+        uid: 'superadmin_999',
+        email: 'superadmin@mierp.com',
+        firstName: 'Super',
+        lastName: 'Admin',
+        role: 'superadmin',
+        companyName: 'PT MiERP Indonesia',
+        allowGoogleLogin: false,
+      );
+
+      expect(superAdminUser.isAdmin, isTrue);
+      expect(superAdminUser.isSuperAdmin, isTrue);
+      expect(superAdminUser.isFinance, isFalse);
+      expect(superAdminUser.isWarehouse, isFalse);
+      expect(superAdminUser.effectiveAdminId, equals('superadmin_999'));
+
+      final superAdminUnderscore = UserModel(
+        uid: 'superadmin_888',
+        email: 'superadmin_alt@mierp.com',
+        firstName: 'Executive',
+        lastName: 'Lead',
+        role: 'super_admin',
+        companyName: 'PT MiERP Indonesia',
+        allowGoogleLogin: false,
+      );
+
+      expect(superAdminUnderscore.isAdmin, isTrue);
+      expect(superAdminUnderscore.isSuperAdmin, isTrue);
+      expect(superAdminUnderscore.effectiveAdminId, equals('superadmin_888'));
     });
 
     test('Finance staff should have isFinance == true and effectiveAdminId == adminId', () {

@@ -39,7 +39,7 @@ class AdminStaffRepositoryImpl implements AdminStaffRepository {
             data['uid'] = doc.id;
             return UserModel.fromJson(data);
           })
-          .where((u) => u.role != 'admin')
+          .where((u) => !u.isAdmin)
           .toList();
 
       return list;

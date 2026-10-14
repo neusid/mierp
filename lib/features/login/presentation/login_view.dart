@@ -20,7 +20,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final formKey = GlobalKey<FormState>();
-  final TextEditingController emailC = TextEditingController(text: "admin@mierp.com");
+  final TextEditingController emailC = TextEditingController(text: "superadmin@mierp.com");
   final TextEditingController passwordC = TextEditingController(text: "password123");
   bool saveCredential = false;
 
@@ -59,9 +59,10 @@ class _LoginViewState extends State<LoginView> {
           } else if (state is LoginFailure) {
             CustomTopSnackbar.show(context, state.message, isError: true);
           } else if (state is LoginSuccess) {
-            if (state.role == "admin") {
+            final role = state.role.toLowerCase();
+            if (role == "admin" || role == "superadmin" || role == "super_admin") {
               context.go("/admin_main_page");
-            } else if (state.role == "warehouse") {
+            } else if (role == "warehouse") {
               context.go("/warehouse_main_page");
             } else {
               context.go("/finance_main_page");

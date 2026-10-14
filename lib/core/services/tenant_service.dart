@@ -66,27 +66,50 @@ class TenantService {
     }
   }
 
-  /// Ensures that a default master Admin account exists in Firebase Auth & Firestore.
-  /// If it does not exist yet, it safely seeds it via an isolated secondary FirebaseApp.
+  /// Ensures that default Super Admin and Admin accounts exist in Firebase Auth & Firestore.
+  /// If they do not exist yet, they are safely seeded via an isolated secondary FirebaseApp.
   static Future<void> ensureDefaultAdminAccount() async {
-    const adminEmail = 'admin@mierp.com';
-    const adminPassword = 'password123';
-    const companyName = 'PT MiERP Indonesia';
+    await _provisionAccount(
+      email: 'superadmin@mierp.com',
+      password: 'password123',
+      firstName: 'Super',
+      lastName: 'Admin',
+      role: 'superadmin',
+      companyName: 'PT MiERP Indonesia',
+    );
 
+    await _provisionAccount(
+      email: 'admin@mierp.com',
+      password: 'password123',
+      firstName: 'Master',
+      lastName: 'Admin',
+      role: 'admin',
+      companyName: 'PT MiERP Indonesia',
+    );
+  }
+
+  static Future<void> _provisionAccount({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String role,
+    required String companyName,
+  }) async {
     FirebaseApp? tempApp;
     try {
       final userQuery = await _firestore
           .collection('users')
-          .where('email', isEqualTo: adminEmail)
+          .where('email', isEqualTo: email)
           .limit(1)
           .get();
 
       if (userQuery.docs.isNotEmpty) {
         final doc = userQuery.docs.first;
         final data = doc.data();
-        if (data['role'] != 'admin' || (data['admin_id'] == null || data['admin_id'].toString().isEmpty)) {
+        if (data['role'] != role || (data['admin_id'] == null || data['admin_id'].toString().isEmpty)) {
           await doc.reference.update({
-            'role': 'admin',
+            'role': role,
             'admin_id': doc.id,
             'company_name': companyName,
             'is_active': true,
@@ -96,7 +119,7 @@ class TenantService {
       }
 
       // Safe creation using isolated secondary FirebaseApp instance
-      final appName = 'DefaultAdminProvisioner_${DateTime.now().millisecondsSinceEpoch}';
+      final appName = 'AdminProvisioner_${role}_${DateTime.now().millisecondsSinceEpoch}';
       tempApp = await Firebase.initializeApp(
         name: appName,
         options: Firebase.app().options,
@@ -106,17 +129,17 @@ class TenantService {
       UserCredential? cred;
       try {
         cred = await tempAuth.createUserWithEmailAndPassword(
-          email: adminEmail,
-          password: adminPassword,
+          email: email,
+          password: password,
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
           cred = await tempAuth.signInWithEmailAndPassword(
-            email: adminEmail,
-            password: adminPassword,
+            email: email,
+            password: password,
           );
         } else {
-          debugPrint("Notice: Failed to create default admin auth: $e");
+          debugPrint("Notice: Failed to create $role auth: $e");
         }
       }
 
@@ -124,20 +147,20 @@ class TenantService {
         final uid = cred!.user!.uid;
         await _firestore.collection('users').doc(uid).set({
           'uid': uid,
-          'email': adminEmail,
-          'first_name': 'Super',
-          'last_name': 'Admin',
-          'role': 'admin',
+          'email': email,
+          'first_name': firstName,
+          'last_name': lastName,
+          'role': role,
           'admin_id': uid,
           'company_name': companyName,
           'is_active': true,
           'allow_google_login': false,
           'created_at': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-        debugPrint("TenantService: Successfully verified/seeded default Admin: $adminEmail");
+        debugPrint("TenantService: Successfully verified/seeded default $role: $email");
       }
     } catch (e) {
-      debugPrint("Notice: ensureDefaultAdminAccount error: $e");
+      debugPrint("Notice: _provisionAccount error for $email: $e");
     } finally {
       if (tempApp != null) {
         try {

@@ -19,7 +19,13 @@ class UserModel {
     required this.allowGoogleLogin,
   });
 
-  bool get isAdmin => role?.trim().toLowerCase() == 'admin';
+  bool get isAdmin =>
+      role?.trim().toLowerCase() == 'admin' ||
+      role?.trim().toLowerCase() == 'superadmin' ||
+      role?.trim().toLowerCase() == 'super_admin';
+  bool get isSuperAdmin =>
+      role?.trim().toLowerCase() == 'superadmin' ||
+      role?.trim().toLowerCase() == 'super_admin';
   bool get isFinance => role?.trim().toLowerCase() == 'finance';
   bool get isWarehouse => role?.trim().toLowerCase() == 'warehouse';
 

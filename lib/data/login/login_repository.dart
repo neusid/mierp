@@ -22,7 +22,10 @@ class LoginRepository {
       }
       final data = snapDoc.data() as Map<String, dynamic>;
       data['uid'] = uid;
-      if ((data['admin_id'] == null || data['admin_id'].toString().isEmpty) && data['role'] == 'admin') {
+      final roleStr = data['role']?.toString().toLowerCase() ?? '';
+      final isExecutiveAdmin =
+          roleStr == 'admin' || roleStr == 'superadmin' || roleStr == 'super_admin';
+      if ((data['admin_id'] == null || data['admin_id'].toString().isEmpty) && isExecutiveAdmin) {
         data['admin_id'] = uid;
       }
       return UserModel.fromJson(data);

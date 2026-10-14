@@ -70,7 +70,10 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
         if (mounted) {
           setState(() {
-            _staffCount = staffSnap.docs.where((d) => d.data()['role'] != 'admin').length;
+            _staffCount = staffSnap.docs.where((d) {
+              final r = d.data()['role']?.toString().toLowerCase();
+              return r != 'admin' && r != 'superadmin' && r != 'super_admin';
+            }).length;
             _productCount = productSnap.docs.length;
             _lowStockCount = lowStock;
             _orderCount = orderSnap.docs.length;
