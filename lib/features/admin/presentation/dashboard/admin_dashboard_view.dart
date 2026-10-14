@@ -11,6 +11,7 @@ import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:mierp_apps/features/notification/presentation/cubit/notification_state.dart';
+import 'package:mierp_apps/core/widgets/dashboard/quick_add_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminDashboardView extends StatefulWidget {
@@ -477,41 +478,41 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
                   SizedBox(height: 22.h),
 
-                  // Quick Actions
-                  Text(
-                    "Aksi Cepat Admin",
-                    style: GoogleFonts.outfit(
-                      fontSize: 15.sp,
-                      fontWeight: AppFontWeight.bold,
-                      color: const Color(0xFF1E293B),
-                    ),
+                  // Quick Actions (Warehouse QuickAddCard Style with MiERP Gradient)
+                  Row(
+                    children: [
+                      Text(
+                        "Quick Actions",
+                        style: GoogleFonts.inter(
+                          fontSize: 13.5.sp,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1E293B),
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      const Expanded(
+                        child: Divider(color: Color(0xFFF1F5F9), thickness: 1.2),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 12.h),
 
-                  _buildQuickActionTile(
+                  QuickAddCard(
+                    title: "Add New Staff Account",
                     icon: Icons.person_add_rounded,
-                    iconColor: const Color(0xFF2563EB),
-                    bgColor: const Color(0xFFEFF6FF),
-                    title: "Tambah Akun Staf Baru",
-                    description: "Buatkan kredensial login Finance atau Warehouse",
                     onTap: () => widget.onTabChange(1),
                   ),
                   SizedBox(height: 10.h),
-                  _buildQuickActionTile(
-                    icon: Icons.warehouse_rounded,
-                    iconColor: const Color(0xFFD97706),
-                    bgColor: const Color(0xFFFFFBEB),
-                    title: "Pantau Stok & Inventaris Gudang",
-                    description: "Buka ringkasan produk, mutasi barang, dan restock",
+                  QuickAddCard(
+                    title: "Monitor Warehouse Inventory",
+                    icon: Icons.inventory_2_rounded,
                     onTap: () => widget.onTabChange(2),
                   ),
                   SizedBox(height: 10.h),
-                  _buildQuickActionTile(
-                    icon: Icons.pie_chart_rounded,
-                    iconColor: const Color(0xFF059669),
-                    bgColor: const Color(0xFFECFDF5),
-                    title: "Pantau Arus Kas & Keuangan",
-                    description: "Lihat ringkasan neraca kas masuk & pembayaran",
+                  QuickAddCard(
+                    title: "Review Financial Transactions",
+                    icon: Icons.receipt_long_rounded,
                     onTap: () => widget.onTabChange(3),
                   ),
                 ]),
@@ -719,63 +720,5 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
     );
   }
 
-  Widget _buildQuickActionTile({
-    required IconData icon,
-    required Color iconColor,
-    required Color bgColor,
-    required String title,
-    required String description,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: Container(
-        padding: EdgeInsets.all(14.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(10.w),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Icon(icon, color: iconColor, size: 22.w),
-            ),
-            SizedBox(width: 14.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 14.sp,
-                      fontWeight: AppFontWeight.semiBold,
-                      color: const Color(0xFF1E293B),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    description,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12.sp,
-                      color: const Color(0xFF64748B),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded,
-                color: const Color(0xFF94A3B8), size: 22.w),
-          ],
-        ),
-      ),
-    );
-  }
+
 }
