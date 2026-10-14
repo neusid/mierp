@@ -1,13 +1,12 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
-import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/core/widgets/custom_top_snackbar.dart';
 import 'package:mierp_apps/core/widgets/modal_delete_confirmation.dart';
 import 'package:mierp_apps/features/profile/presentation/bloc/profile_bloc.dart';
@@ -46,25 +45,35 @@ class ProfileView extends StatelessWidget {
           if (state.name.isNotEmpty) {
             final parts = state.name.trim().split(RegExp(r'\s+'));
             if (parts.length > 1) {
-              initials = parts[0][0].toUpperCase() + parts[1][0].toUpperCase();
+              initials = (parts[0][0] + parts[1][0]).toUpperCase();
             } else {
               initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
             }
           }
 
           return Scaffold(
-            backgroundColor: AppColors.softWhite,
+            backgroundColor: const Color(0xFFF8FAFC),
             body: Stack(
               children: [
-                // 1. Premium Dark Header
+                // 1. Signature Executive Header (Obsidian Black & Violet)
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: 250.h,
+                    height: 240.h,
                     decoration: BoxDecoration(
                       gradient: AppColors.premiumDarkGradient,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(32.r),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.premiumDarkSolid.withValues(alpha: 0.25),
+                          blurRadius: 20.r,
+                          offset: Offset(0, 8.h),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -73,107 +82,133 @@ class ProfileView extends StatelessWidget {
                 SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
                           onTap: onBack,
-                          borderRadius: BorderRadius.circular(12.w),
+                          borderRadius: BorderRadius.circular(12.r),
                           child: Container(
                             padding: EdgeInsets.all(8.w),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12.w),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
-                            child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 24.w),
+                            child: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                              size: 20.w,
+                            ),
                           ),
                         ),
                         Text(
-                          "Profile",
+                          "Profil Pengguna",
                           style: GoogleFonts.inter(
-                            fontSize: 18.sp,
-                            fontWeight: AppFontWeight.semiBold,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
                             letterSpacing: -0.3,
                           ),
                         ),
-                        SizedBox(width: 40.w), // Symmetrical balance
+                        SizedBox(width: 38.w), // Visual balance
                       ],
                     ),
                   ),
                 ),
 
-                // 3. Content
+                // 3. Scrollable Profile Content
                 SafeArea(
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.only(top: 80.h, bottom: 40.h),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(16.w, 70.h, 16.w, 32.h),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Avatar & Info Card
+                          // 3.1. Profile Identity Hero Card
                           Container(
-                            width: 335.w,
-                            padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 20.w),
+                            padding: EdgeInsets.symmetric(vertical: 26.h, horizontal: 20.w),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(24.w),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 24.w,
-                                  offset: Offset(0, 8.w),
+                                  color: const Color(0xFF1E293B).withValues(alpha: 0.05),
+                                  blurRadius: 20.r,
+                                  offset: Offset(0, 6.h),
                                 ),
                               ],
                             ),
                             child: Column(
                               children: [
-                                // Dynamic Avatar
+                                // Executive Avatar with Outer Ambient Glow
                                 Container(
-                                  width: 88.w,
-                                  height: 88.w,
+                                  width: 84.w,
+                                  height: 84.w,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: AppColors.purpleTransparent,
-                                    border: Border.all(color: AppColors.lavenderMist, width: 2.w),
+                                    gradient: AppColors.premiumDarkGradient,
+                                    border: Border.all(color: Colors.white, width: 3.5.w),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.premiumDarkSolid.withValues(alpha: 0.32),
+                                        blurRadius: 18.r,
+                                        offset: Offset(0, 6.h),
+                                      ),
+                                    ],
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
                                     initials,
                                     style: GoogleFonts.inter(
-                                      fontSize: 32.sp,
-                                      fontWeight: AppFontWeight.bold,
-                                      color: AppColors.vividPurple,
-                                      letterSpacing: -1,
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      letterSpacing: -0.5,
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 16.h),
+                                SizedBox(height: 14.h),
                                 Text(
-                                  state.name.isEmpty ? "User Name" : state.name,
+                                  state.name.isEmpty ? "Pengguna MIErp" : state.name,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
-                                    fontSize: 20.sp,
-                                    fontWeight: AppFontWeight.semiBold,
-                                    color: AppColors.grayTitle,
-                                    letterSpacing: -0.5,
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF0F172A),
+                                    letterSpacing: -0.4,
                                   ),
                                 ),
-                                SizedBox(height: 8.h),
+                                if (state.email.isNotEmpty) ...[
+                                  SizedBox(height: 4.h),
+                                  Text(
+                                    state.email,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12.5.sp,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                ],
+                                SizedBox(height: 10.h),
+                                // Refined MIErp Signature Purple Pill
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 4.5.h),
                                   decoration: BoxDecoration(
-                                    color: AppColors.softWhite,
-                                    borderRadius: BorderRadius.circular(20.w),
+                                    color: AppColors.purpleTransparent,
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    border: Border.all(color: AppColors.lavenderMist, width: 1.w),
                                   ),
                                   child: Text(
-                                    state.role.isEmpty ? "ROLE" : state.role.toUpperCase(),
+                                    (state.role.isEmpty ? "STAFF" : state.role).toUpperCase(),
                                     style: GoogleFonts.inter(
-                                      fontSize: 11.sp,
-                                      fontWeight: AppFontWeight.bold,
-                                      color: AppColors.grayThin,
-                                      letterSpacing: 0.5,
+                                      fontSize: 10.5.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.vividPurple,
+                                      letterSpacing: 0.6,
                                     ),
                                   ),
                                 ),
@@ -181,19 +216,19 @@ class ProfileView extends StatelessWidget {
                             ),
                           ),
 
-                          SizedBox(height: 24.h),
+                          SizedBox(height: 16.h),
 
-                          // Actions Group Card
+                          // 3.2. Actions & Settings Card
                           Container(
-                            width: 335.w,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(24.w),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 24.w,
-                                  offset: Offset(0, 8.w),
+                                  color: const Color(0xFF1E293B).withValues(alpha: 0.04),
+                                  blurRadius: 18.r,
+                                  offset: Offset(0, 6.h),
                                 ),
                               ],
                             ),
@@ -201,32 +236,71 @@ class ProfileView extends StatelessWidget {
                               children: [
                                 _buildProfileMenuItem(
                                   icon: "user-profile",
-                                  label: "Account Info",
+                                  title: "Informasi Akun",
+                                  subtitle: "Lihat dan ubah data profil",
+                                  iconGradient: AppColors.premiumDarkGradient,
+                                  iconColor: Colors.white,
                                   onTap: () => context.push('/account_info'),
                                 ),
-                                Divider(height: 1, thickness: 1, color: AppColors.softWhite, indent: 64.w),
+                                Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: const Color(0xFFF1F5F9),
+                                  indent: 68.w,
+                                  endIndent: 16.w,
+                                ),
                                 _buildProfileMenuItem(
                                   icon: "link",
-                                  label: state.isVerif ? "Unlink Google Account" : "Link Google Account",
+                                  title: state.isVerif
+                                      ? "Putuskan Akun Google"
+                                      : "Tautkan Akun Google",
+                                  subtitle: state.isVerif
+                                      ? "Akun Google terhubung"
+                                      : "Masuk lebih cepat dengan Google",
+                                  iconBgColor: AppColors.purpleTransparent,
+                                  iconColor: AppColors.vividPurple,
                                   onTap: () {
                                     if (state.isVerif) {
-                                      context.read<ProfileBloc>().add(ProfileUnlinkGoogleRequested());
+                                      context
+                                          .read<ProfileBloc>()
+                                          .add(ProfileUnlinkGoogleRequested());
                                     } else {
-                                      context.read<ProfileBloc>().add(ProfileLinkGoogleRequested());
+                                      context
+                                          .read<ProfileBloc>()
+                                          .add(ProfileLinkGoogleRequested());
                                     }
                                   },
                                 ),
-                                Divider(height: 1, thickness: 1, color: AppColors.softWhite, indent: 64.w),
+                                Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: const Color(0xFFF1F5F9),
+                                  indent: 68.w,
+                                  endIndent: 16.w,
+                                ),
                                 _buildProfileMenuItem(
                                   icon: "logout",
-                                  label: "Logout",
-                                  onTap: () => context.read<ProfileBloc>().add(ProfileLogoutRequested()),
+                                  title: "Keluar Akun",
+                                  subtitle: "Akhiri sesi login di perangkat ini",
+                                  iconBgColor: const Color(0xFFF1F5F9),
+                                  iconColor: const Color(0xFF475569),
+                                  onTap: () => context
+                                      .read<ProfileBloc>()
+                                      .add(ProfileLogoutRequested()),
                                 ),
-                                Divider(height: 1, thickness: 1, color: AppColors.softWhite, indent: 64.w),
+                                Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: const Color(0xFFF1F5F9),
+                                  indent: 68.w,
+                                  endIndent: 16.w,
+                                ),
                                 _buildProfileMenuItem(
                                   icon: "delete",
-                                  label: "Delete Account",
-                                  isDestructive: true,
+                                  title: "Hapus Akun",
+                                  subtitle: "Tutup akun dan akses sistem secara permanen",
+                                  iconGradient: AppColors.premiumDarkGradient,
+                                  iconColor: Colors.white,
                                   onTap: () => _showConfirmDelete(context, state),
                                 ),
                               ],
@@ -244,7 +318,7 @@ class ProfileView extends StatelessWidget {
                     child: Center(
                       child: LoadingAnimationWidget.stretchedDots(
                         color: Colors.white,
-                        size: 70.w,
+                        size: 60.w,
                       ),
                     ),
                   ),
@@ -258,66 +332,72 @@ class ProfileView extends StatelessWidget {
 
   Widget _buildProfileMenuItem({
     required String icon,
-    required String label,
-    required VoidCallback? onTap,
-    bool isDestructive = false,
+    required String title,
+    required String subtitle,
+    Color? iconBgColor,
+    Gradient? iconGradient,
+    required Color iconColor,
+    required VoidCallback onTap,
   }) {
-    final textColor = isDestructive ? Colors.red : AppColors.grayTitle;
-    final iconColor = isDestructive ? Colors.red : AppColors.vividPurple;
-    final iconBgColor = isDestructive ? Colors.red.withValues(alpha: 0.1) : AppColors.purpleTransparent;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24.w), // Match card radius
+        borderRadius: BorderRadius.circular(20.r),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: iconBgColor,
+                  gradient: iconGradient,
+                  borderRadius: BorderRadius.circular(11.r),
+                  border: iconGradient == null
+                      ? Border.all(color: const Color(0xFFE2E8F0), width: 1.w)
+                      : null,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    "assets/icons/$icon.svg",
+                    width: 18.w,
+                    height: 18.w,
+                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                  ),
+                ),
+              ),
+              SizedBox(width: 14.w),
               Expanded(
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 44.w,
-                      height: 44.w,
-                      decoration: BoxDecoration(
-                        color: iconBgColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          "assets/icons/$icon.svg",
-                          width: 20.w,
-                          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                        ),
+                    Text(
+                      title,
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF0F172A),
+                        letterSpacing: -0.2,
                       ),
                     ),
-                    SizedBox(width: 14.w),
-                    Expanded(
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 14.5.w,
-                          fontWeight: AppFontWeight.semiBold,
-                          color: textColor,
-                        ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5.sp,
+                        color: const Color(0xFF64748B),
                       ),
                     ),
                   ],
                 ),
               ),
-              if (onTap != null) ...[
-                SizedBox(width: 6.w),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.coolGray,
-                  size: 22.w,
-                ),
-              ],
+              Icon(
+                Icons.chevron_right_rounded,
+                color: const Color(0xFF94A3B8),
+                size: 20.w,
+              ),
             ],
           ),
         ),
