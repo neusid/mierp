@@ -839,22 +839,22 @@ class _SummaryViewState extends State<SummaryView> {
           SvgPicture.asset('assets/images/folder_empty.svg', width: 220.w),
           SizedBox(height: 24.h),
           Text(
-            "Oops! No Data Available",
+            "Belum Ada Data Tersedia",
             style: GoogleFonts.inter(
-              fontSize: 22.sp,
+              fontSize: 20.sp,
               fontWeight: AppFontWeight.bold,
               color: const Color(0xFF0F172A),
               letterSpacing: -0.5,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
             child: Text(
-              "The data you're looking for isn't available yet.",
+              "Data transaksi atau produk belum tercatat di sistem saat ini.",
               style: GoogleFonts.inter(
-                fontSize: 14.sp,
+                fontSize: 13.5.sp,
                 fontWeight: AppFontWeight.medium,
                 color: const Color(0xFF64748B),
                 height: 1.5,
