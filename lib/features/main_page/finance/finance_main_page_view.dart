@@ -63,11 +63,42 @@ class FinanceMainPageView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(context, "assets/icons/home-2.svg", "Home", 0, currentIndex),
-                _buildNavItem(context, "assets/icons/task-square.svg", "Approvals", 1, currentIndex),
-                _buildNavItem(context, "assets/icons/graph.svg", "Analytics", 2, currentIndex),
-                _buildNavItem(context, "assets/icons/clock.svg", "History", 3, currentIndex),
-                _buildNavItem(context, "assets/icons/user.svg", "User", 4, currentIndex),
+                _buildNavItem(
+                  context,
+                  label: "Dashboard",
+                  index: 0,
+                  currentIndex: currentIndex,
+                  activeIcon: Icons.grid_view_rounded,
+                  inactiveIcon: Icons.grid_view_outlined,
+                ),
+                _buildNavItem(
+                  context,
+                  iconPath: "assets/icons/task-square.svg",
+                  label: "Approvals",
+                  index: 1,
+                  currentIndex: currentIndex,
+                ),
+                _buildNavItem(
+                  context,
+                  iconPath: "assets/icons/graph.svg",
+                  label: "Analytics",
+                  index: 2,
+                  currentIndex: currentIndex,
+                ),
+                _buildNavItem(
+                  context,
+                  iconPath: "assets/icons/clock.svg",
+                  label: "History",
+                  index: 3,
+                  currentIndex: currentIndex,
+                ),
+                _buildNavItem(
+                  context,
+                  iconPath: "assets/icons/user.svg",
+                  label: "User",
+                  index: 4,
+                  currentIndex: currentIndex,
+                ),
               ],
             ),
           );
@@ -77,7 +108,15 @@ class FinanceMainPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, String iconPath, String label, int index, int currentIndex) {
+  Widget _buildNavItem(
+    BuildContext context, {
+    String? iconPath,
+    IconData? activeIcon,
+    IconData? inactiveIcon,
+    required String label,
+    required int index,
+    required int currentIndex,
+  }) {
     bool isActive = index == currentIndex;
     return Material(
       color: Colors.transparent,
@@ -102,7 +141,14 @@ class FinanceMainPageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildNavIcon(iconPath, isActive),
+              if (activeIcon != null && inactiveIcon != null)
+                Icon(
+                  isActive ? activeIcon : inactiveIcon,
+                  size: isActive ? 18.w : 22.w,
+                  color: isActive ? Colors.white : AppColors.grayTitle,
+                )
+              else if (iconPath != null)
+                _buildNavIcon(iconPath, isActive),
               if (isActive) ...[
                 SizedBox(width: 5.w),
                 Flexible(
