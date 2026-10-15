@@ -74,11 +74,11 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(0, "Dashboard", UIcons.solidRounded.apps, UIcons.regularRounded.apps),
-                _buildNavItem(1, "Staf", UIcons.solidRounded.users, UIcons.regularRounded.users),
-                _buildNavItem(2, "Gudang", UIcons.solidRounded.box, UIcons.regularRounded.box),
-                _buildNavItem(3, "Finansial", UIcons.solidRounded.pie, UIcons.regularRounded.pie),
-                _buildNavItem(4, "Profil", UIcons.solidRounded.user, UIcons.regularRounded.user),
+                _buildNavItem(0, "Dashboard", UIcons.solidStraight.apps, UIcons.regularStraight.apps),
+                _buildNavItem(1, "Staf", UIcons.solidStraight.users, UIcons.regularStraight.users),
+                _buildNavItem(2, "Gudang", UIcons.solidStraight.box, UIcons.regularStraight.box),
+                _buildNavItem(3, "Finansial", UIcons.solidStraight.pie, UIcons.regularStraight.pie),
+                _buildNavItem(4, "Profil", UIcons.solidStraight.user, UIcons.regularStraight.user),
               ],
             ),
           ),
@@ -93,7 +93,7 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20.w),
+        borderRadius: BorderRadius.circular(8.r),
         onTap: () => _onTabTapped(index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
@@ -105,7 +105,7 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
           decoration: BoxDecoration(
             gradient: isActive ? AppColors.premiumDarkGradient : null,
             color: isActive ? null : Colors.transparent,
-            borderRadius: BorderRadius.circular(100.w),
+            borderRadius: BorderRadius.circular(8.r),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

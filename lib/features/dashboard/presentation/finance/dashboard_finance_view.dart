@@ -166,7 +166,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                         aspectRatio: 1.0,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16.r),
+                            borderRadius: BorderRadius.circular(6.r),
                             gradient: const LinearGradient(
                               colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                               begin: Alignment.topLeft,
@@ -179,7 +179,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                           ),
                           child: Center(
                             child: Icon(
-                              UIcons.regularRounded.user,
+                              UIcons.regularStraight.user,
                               color: const Color(0xFFE9D5FF),
                               size: 28.w,
                             ),
@@ -258,13 +258,13 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                           onTap: () {
                             context.push('/notification');
                           },
-                          borderRadius: BorderRadius.circular(13.w),
+                          borderRadius: BorderRadius.circular(6.r),
                           child: Container(
                             width: 42.w,
                             height: 42.w,
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(13.w),
+                              borderRadius: BorderRadius.circular(6.r),
                               border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.14),
                                 width: 1.2.w,
@@ -274,7 +274,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                               alignment: Alignment.center,
                               children: [
                                 Icon(
-                                  UIcons.regularRounded.bell,
+                                  UIcons.regularStraight.bell,
                                   color: const Color(0xFFF1F5F9),
                                   size: 20.w,
                                 ),
@@ -422,7 +422,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                     ),
                                     SizedBox(width: 5.w),
                                     Icon(
-                                      Icons.trending_up_rounded,
+                                      UIcons.regularStraight.arrow_trend_up,
                                       color: const Color(0xFF34D399),
                                       size: 13.w,
                                     ),
@@ -525,7 +525,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(UIcons.regularRounded.share, size: 13.w, color: const Color(0xFF7C3AED)),
+                                Icon(UIcons.regularStraight.share, size: 13.w, color: const Color(0xFF7C3AED)),
                                 SizedBox(width: 4.w),
                                 Text(
                                   "Export",
@@ -638,9 +638,9 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                         ),
                                         SizedBox(width: 3.w),
                                         Icon(
-                                          Icons.arrow_forward_ios_rounded,
+                                          UIcons.regularStraight.angle_small_right,
                                           color: const Color(0xFF7C3AED),
-                                          size: 10.w,
+                                          size: 14.w,
                                         ),
                                       ],
                                     ),
@@ -673,14 +673,14 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                                     Container(
                                       width: 44.w,
                                       height: 44.w,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xFFECFDF5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(6.r),
+                                        color: const Color(0xFFECFDF5),
                                       ),
                                       child: Icon(
-                                        Icons.check_circle_outline_rounded,
+                                        UIcons.regularStraight.check,
                                         color: const Color(0xFF059669),
-                                        size: 24.w,
+                                        size: 20.w,
                                       ),
                                     ),
                                     SizedBox(height: 10.h),
@@ -910,7 +910,7 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
               value: ConvertDollar().intToDollar(payables),
               accentColor: const Color(0xFF475569),
               bgAccentColor: const Color(0xFFF8FAFC),
-              icon: UIcons.regularRounded.arrow_up_right,
+              icon: UIcons.regularStraight.arrow_up_right,
               onTap: () {
                 context.read<DashboardFinanceBloc>().add(const DashboardFinanceTabChanged("orders"));
               },
@@ -929,7 +929,7 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
               value: ConvertDollar().intToDollar(receivables),
               accentColor: const Color(0xFF475569),
               bgAccentColor: const Color(0xFFF8FAFC),
-              icon: UIcons.regularRounded.arrow_down,
+              icon: UIcons.regularStraight.arrow_down,
               onTap: () {
                 context.read<DashboardFinanceBloc>().add(const DashboardFinanceTabChanged("sales_orders"));
               },
@@ -948,7 +948,7 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
               value: ConvertDollar().intToDollar(settled),
               accentColor: const Color(0xFF475569),
               bgAccentColor: const Color(0xFFF8FAFC),
-              icon: UIcons.regularRounded.check,
+              icon: UIcons.regularStraight.check,
               onTap: () {
                 try {
                   context.read<MainPageCubit>().changeIndex(3);
@@ -985,7 +985,7 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
                 height: 20.w,
                 decoration: BoxDecoration(
                   color: bgAccentColor,
-                  borderRadius: BorderRadius.circular(6.w),
+                  borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Center(
                   child: Icon(

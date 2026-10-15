@@ -74,7 +74,7 @@ class QuickAddCard extends StatelessWidget {
                   width: 36.w,
                   height: 33.h,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.w),
+                    borderRadius: BorderRadius.circular(6.r),
                     gradient: (iconBgColor == null && iconBorderColor == null)
                         ? (gradient ?? AppColors.premiumDarkGradient)
                         : null,
@@ -94,7 +94,7 @@ class QuickAddCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Icon(
-                      icon ?? UIcons.regularRounded.plus,
+                      icon ?? UIcons.regularStraight.plus,
                       color: iconColor ?? Colors.white,
                       size: 16.w,
                     ),

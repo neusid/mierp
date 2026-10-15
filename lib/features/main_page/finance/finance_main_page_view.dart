@@ -69,40 +69,40 @@ class FinanceMainPageView extends StatelessWidget {
                   label: "Dashboard",
                   index: 0,
                   currentIndex: currentIndex,
-                  activeIcon: UIcons.solidRounded.apps,
-                  inactiveIcon: UIcons.regularRounded.apps,
+                  activeIcon: UIcons.solidStraight.apps,
+                  inactiveIcon: UIcons.regularStraight.apps,
                 ),
                 _buildNavItem(
                   context,
                   label: "Approvals",
                   index: 1,
                   currentIndex: currentIndex,
-                  activeIcon: UIcons.solidRounded.list_check,
-                  inactiveIcon: UIcons.regularRounded.list_check,
+                  activeIcon: UIcons.solidStraight.list_check,
+                  inactiveIcon: UIcons.regularStraight.list_check,
                 ),
                 _buildNavItem(
                   context,
                   label: "Analytics",
                   index: 2,
                   currentIndex: currentIndex,
-                  activeIcon: UIcons.solidRounded.pie,
-                  inactiveIcon: UIcons.regularRounded.pie,
+                  activeIcon: UIcons.solidStraight.pie,
+                  inactiveIcon: UIcons.regularStraight.pie,
                 ),
                 _buildNavItem(
                   context,
                   label: "History",
                   index: 3,
                   currentIndex: currentIndex,
-                  activeIcon: UIcons.solidRounded.time_past,
-                  inactiveIcon: UIcons.regularRounded.time_past,
+                  activeIcon: UIcons.solidStraight.time_past,
+                  inactiveIcon: UIcons.regularStraight.time_past,
                 ),
                 _buildNavItem(
                   context,
                   label: "User",
                   index: 4,
                   currentIndex: currentIndex,
-                  activeIcon: UIcons.solidRounded.user,
-                  inactiveIcon: UIcons.regularRounded.user,
+                  activeIcon: UIcons.solidStraight.user,
+                  inactiveIcon: UIcons.regularStraight.user,
                 ),
               ],
             ),
@@ -126,7 +126,7 @@ class FinanceMainPageView extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20.w),
+        borderRadius: BorderRadius.circular(8.r),
         onTap: () {
           context.read<MainPageCubit>().changeIndex(index);
         },
@@ -140,7 +140,7 @@ class FinanceMainPageView extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: isActive ? AppColors.premiumDarkGradient : null,
             color: isActive ? null : Colors.transparent,
-            borderRadius: BorderRadius.circular(100.w),
+            borderRadius: BorderRadius.circular(8.r),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

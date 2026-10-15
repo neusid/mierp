@@ -110,7 +110,7 @@ class ModalDeleteConfirmation extends StatelessWidget {
                     height: 44.w,
                     decoration: BoxDecoration(
                       gradient: AppColors.premiumDarkGradient,
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(6.r),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.premiumDarkSolid.withValues(alpha: 0.22),
@@ -121,7 +121,7 @@ class ModalDeleteConfirmation extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        UIcons.regularRounded.trash,
+                        UIcons.regularStraight.trash,
                         color: Colors.white,
                         size: 20.w,
                       ),
@@ -287,7 +287,7 @@ class ModalDeleteConfirmation extends StatelessWidget {
             height: 40.w,
             decoration: BoxDecoration(
               gradient: AppColors.premiumDarkGradient,
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(6.r),
             ),
             child: Center(
               child: Text(
@@ -335,7 +335,7 @@ class ModalDeleteConfirmation extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
               decoration: BoxDecoration(
                 color: AppColors.purpleTransparent,
-                borderRadius: BorderRadius.circular(6.r),
+                borderRadius: BorderRadius.circular(4.r),
                 border: Border.all(color: AppColors.lavenderMist, width: 1.w),
               ),
               child: Text(

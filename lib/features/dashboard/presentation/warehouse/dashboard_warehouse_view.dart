@@ -114,7 +114,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                     aspectRatio: 1.0,
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16.r),
+                                        borderRadius: BorderRadius.circular(6.r),
                                         gradient: const LinearGradient(
                                           colors: [Color(0xFF3B1566), Color(0xFF1E0B36)],
                                           begin: Alignment.topLeft,
@@ -127,9 +127,9 @@ class DashboardWarehouseView extends StatelessWidget {
                                       ),
                                       child: Center(
                                         child: Icon(
-                                          Icons.person_rounded,
+                                          UIcons.regularStraight.user,
                                           color: const Color(0xFFE9D5FF),
-                                          size: 32.w,
+                                          size: 28.w,
                                         ),
                                       ),
                                     ),
@@ -195,7 +195,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                           color: Colors.white.withValues(
                                             alpha: 0.08,
                                           ),
-                                          borderRadius: BorderRadius.circular(13.w),
+                                          borderRadius: BorderRadius.circular(6.r),
                                           border: Border.all(
                                             color: Colors.white.withValues(alpha: 0.14),
                                             width: 1.2.w,
@@ -205,7 +205,7 @@ class DashboardWarehouseView extends StatelessWidget {
                                           alignment: Alignment.center,
                                           children: [
                                             Icon(
-                                              UIcons.regularRounded.bell,
+                                              UIcons.regularStraight.bell,
                                               color: const Color(0xFFF1F5F9),
                                               size: 20.w,
                                             ),
@@ -250,7 +250,7 @@ class DashboardWarehouseView extends StatelessWidget {
                               title: "Product",
                               subtitle: "All registered products\nin active inventory",
                               value: state.totalProducts.toString(),
-                              icon: UIcons.regularRounded.box,
+                              icon: UIcons.regularStraight.box,
                               iconColor: const Color(0xFF475569),
                               squircleBg: const Color(0xFFF8FAFC),
                               squircleBorder: const Color(0xFFE2E8F0),
@@ -263,7 +263,7 @@ class DashboardWarehouseView extends StatelessWidget {
                               subtitle: "Total combined units\navailable in stock",
                               value: state.totalQty.toString(),
                               unit: "items",
-                              icon: UIcons.regularRounded.boxes,
+                              icon: UIcons.regularStraight.boxes,
                               iconColor: const Color(0xFF475569),
                               squircleBg: const Color(0xFFF8FAFC),
                               squircleBorder: const Color(0xFFE2E8F0),
@@ -285,7 +285,7 @@ class DashboardWarehouseView extends StatelessWidget {
                               subtitle: "All stock items that\nare low inventory",
                               value: state.totalLowStock.toString(),
                               unit: "Items",
-                              icon: UIcons.regularRounded.exclamation,
+                              icon: UIcons.regularStraight.exclamation,
                               iconColor: const Color(0xFF475569),
                               squircleBg: const Color(0xFFF8FAFC),
                               squircleBorder: const Color(0xFFE2E8F0),
@@ -303,7 +303,7 @@ class DashboardWarehouseView extends StatelessWidget {
                               subtitle: "All scheduled items\nfor incoming restock",
                               value: state.totalUpcomingStock.toString(),
                               unit: "Items",
-                              icon: UIcons.regularRounded.calendar,
+                              icon: UIcons.regularStraight.calendar,
                               iconColor: const Color(0xFF475569),
                               squircleBg: const Color(0xFFF8FAFC),
                               squircleBorder: const Color(0xFFE2E8F0),
@@ -360,7 +360,7 @@ class DashboardWarehouseView extends StatelessWidget {
                           SizedBox(height: 10.h),
                           QuickAddCard(
                             title: "Export Laporan Stok Gudang",
-                            icon: Icons.ios_share_rounded,
+                            icon: UIcons.regularStraight.share,
                             onTap: () {
                               ModalExportSheet.show(
                                 context,
@@ -468,9 +468,9 @@ class DashboardWarehouseView extends StatelessWidget {
                                         ),
                                         SizedBox(width: 3.w),
                                         Icon(
-                                          Icons.arrow_forward_ios_rounded,
+                                          UIcons.regularStraight.angle_small_right,
                                           color: const Color(0xFF7C3AED),
-                                          size: 10.w,
+                                          size: 14.w,
                                         ),
                                       ],
                                     ),
@@ -504,14 +504,14 @@ class DashboardWarehouseView extends StatelessWidget {
                                       Container(
                                         width: 44.w,
                                         height: 44.w,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFFECFDF5),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFECFDF5),
+                                          borderRadius: BorderRadius.circular(6.r),
                                         ),
                                         child: Icon(
-                                          Icons.check_circle_outline_rounded,
+                                          UIcons.regularStraight.check,
                                           color: const Color(0xFF059669),
-                                          size: 24.w,
+                                          size: 20.w,
                                         ),
                                       ),
                                       SizedBox(height: 10.h),
@@ -655,7 +655,7 @@ class DashboardWarehouseView extends StatelessWidget {
                 height: 32.w,
                 decoration: BoxDecoration(
                   color: squircleBg,
-                  borderRadius: BorderRadius.circular(10.w),
+                  borderRadius: BorderRadius.circular(4.r),
                   border: Border.all(color: squircleBorder, width: 1.w),
                 ),
                 child: Center(
