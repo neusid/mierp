@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
@@ -73,11 +74,11 @@ class _AdminMainPageViewState extends State<AdminMainPageView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavItem(0, "Dashboard", Icons.grid_view_rounded, Icons.grid_view_outlined),
-                _buildNavItem(1, "Staf", Icons.people_rounded, Icons.people_outline_rounded),
-                _buildNavItem(2, "Gudang", Icons.inventory_2_rounded, Icons.inventory_2_outlined),
-                _buildNavItem(3, "Finansial", Icons.analytics_rounded, Icons.analytics_outlined),
-                _buildNavItem(4, "Profil", Icons.person_rounded, Icons.person_outline_rounded),
+                _buildNavItem(0, "Dashboard", UIcons.solidRounded.apps, UIcons.regularRounded.apps),
+                _buildNavItem(1, "Staf", UIcons.solidRounded.users, UIcons.regularRounded.users),
+                _buildNavItem(2, "Gudang", UIcons.solidRounded.box, UIcons.regularRounded.box),
+                _buildNavItem(3, "Finansial", UIcons.solidRounded.pie, UIcons.regularRounded.pie),
+                _buildNavItem(4, "Profil", UIcons.solidRounded.user, UIcons.regularRounded.user),
               ],
             ),
           ),

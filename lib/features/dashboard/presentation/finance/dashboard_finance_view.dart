@@ -6,6 +6,7 @@ import 'package:mierp_apps/features/dashboard/presentation/finance/bloc/dashboar
 import 'package:mierp_apps/core/di/injection_container.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/utils/convert_dollar.dart';
 
@@ -178,9 +179,9 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                           ),
                           child: Center(
                             child: Icon(
-                              Icons.person_rounded,
+                              UIcons.regularRounded.user,
                               color: const Color(0xFFE9D5FF),
-                              size: 32.w,
+                              size: 28.w,
                             ),
                           ),
                         ),
@@ -273,9 +274,9 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                               alignment: Alignment.center,
                               children: [
                                 Icon(
-                                  Icons.notifications_none_rounded,
+                                  UIcons.regularRounded.bell,
                                   color: const Color(0xFFF1F5F9),
-                                  size: 22.w,
+                                  size: 20.w,
                                 ),
                                 Positioned(
                                   top: 9.w,
@@ -524,7 +525,7 @@ class _DashboardFinanceViewState extends State<DashboardFinanceView> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.ios_share_rounded, size: 14.w, color: const Color(0xFF7C3AED)),
+                                Icon(UIcons.regularRounded.share, size: 13.w, color: const Color(0xFF7C3AED)),
                                 SizedBox(width: 4.w),
                                 Text(
                                   "Export",
@@ -907,9 +908,9 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
             child: _buildMetricItem(
               title: "Payables",
               value: ConvertDollar().intToDollar(payables),
-              accentColor: const Color(0xFFEF4444),
-              bgAccentColor: const Color(0xFFFEF2F2),
-              icon: Icons.arrow_outward_rounded,
+              accentColor: const Color(0xFF475569),
+              bgAccentColor: const Color(0xFFF8FAFC),
+              icon: UIcons.regularRounded.arrow_up_right,
               onTap: () {
                 context.read<DashboardFinanceBloc>().add(const DashboardFinanceTabChanged("orders"));
               },
@@ -926,9 +927,9 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
             child: _buildMetricItem(
               title: "Receivable",
               value: ConvertDollar().intToDollar(receivables),
-              accentColor: const Color(0xFF4F46E5),
-              bgAccentColor: const Color(0xFFEEF2FF),
-              icon: Icons.south_west_rounded,
+              accentColor: const Color(0xFF475569),
+              bgAccentColor: const Color(0xFFF8FAFC),
+              icon: UIcons.regularRounded.arrow_down,
               onTap: () {
                 context.read<DashboardFinanceBloc>().add(const DashboardFinanceTabChanged("sales_orders"));
               },
@@ -945,9 +946,9 @@ class _ConsolidatedMetricsCard extends StatelessWidget {
             child: _buildMetricItem(
               title: "Settled",
               value: ConvertDollar().intToDollar(settled),
-              accentColor: const Color(0xFF10B981),
-              bgAccentColor: const Color(0xFFECFDF5),
-              icon: Icons.check_circle_outline_rounded,
+              accentColor: const Color(0xFF475569),
+              bgAccentColor: const Color(0xFFF8FAFC),
+              icon: UIcons.regularRounded.check,
               onTap: () {
                 try {
                   context.read<MainPageCubit>().changeIndex(3);

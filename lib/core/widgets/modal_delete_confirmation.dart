@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 
@@ -120,9 +121,9 @@ class ModalDeleteConfirmation extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        Icons.delete_outline_rounded,
+                        UIcons.regularRounded.trash,
                         color: Colors.white,
-                        size: 22.w,
+                        size: 20.w,
                       ),
                     ),
                   ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 
 class QuickAddCard extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
-  final IconData icon;
+  final IconData? icon;
   final Gradient? gradient;
   final Color? iconColor;
   final Color? iconBgColor;
@@ -16,7 +17,7 @@ class QuickAddCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.onTap,
-    this.icon = Icons.add_rounded,
+    this.icon,
     this.gradient,
     this.iconColor,
     this.iconBgColor,
@@ -93,9 +94,9 @@ class QuickAddCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Icon(
-                      icon,
+                      icon ?? UIcons.regularRounded.plus,
                       color: iconColor ?? Colors.white,
-                      size: 18.w,
+                      size: 16.w,
                     ),
                   ),
                 ),

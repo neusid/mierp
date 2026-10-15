@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/models/user_model.dart';
 import 'package:mierp_apps/core/services/tenant_service.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
@@ -212,9 +213,9 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           ),
                           child: Center(
                             child: Icon(
-                              Icons.person_rounded,
+                              UIcons.regularRounded.user,
                               color: const Color(0xFFE9D5FF),
-                              size: 32.w,
+                              size: 28.w,
                             ),
                           ),
                         ),
@@ -308,9 +309,9 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                               alignment: Alignment.center,
                               children: [
                                 Icon(
-                                  Icons.notifications_none_rounded,
+                                  UIcons.regularRounded.bell,
                                   color: const Color(0xFFF1F5F9),
-                                  size: 22.w,
+                                  size: 20.w,
                                 ),
                                 Positioned(
                                   top: 9.w,
@@ -364,7 +365,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Seluruh staf aktif\nFinance & Warehouse",
                           count: "$_staffCount",
                           unit: "Staf",
-                          icon: Icons.people_outline_rounded,
+                          icon: UIcons.regularRounded.users,
                           iconColor: const Color(0xFF475569),
                           squircleBg: const Color(0xFFF8FAFC),
                           squircleBorder: const Color(0xFFE2E8F0),
@@ -378,7 +379,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Total jenis SKU\ndalam inventaris",
                           count: "$_productCount",
                           unit: "SKU",
-                          icon: Icons.inventory_2_outlined,
+                          icon: UIcons.regularRounded.box,
                           iconColor: const Color(0xFF475569),
                           squircleBg: const Color(0xFFF8FAFC),
                           squircleBorder: const Color(0xFFE2E8F0),
@@ -396,7 +397,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Total pesanan penjualan\ntercatat di tenant",
                           count: "$_orderCount",
                           unit: "Orders",
-                          icon: Icons.receipt_long_outlined,
+                          icon: UIcons.regularRounded.receipt,
                           iconColor: const Color(0xFF475569),
                           squircleBg: const Color(0xFFF8FAFC),
                           squircleBorder: const Color(0xFFE2E8F0),
@@ -410,7 +411,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                           subtitle: "Stok menipis\nperlu restock (<= 5)",
                           count: "$_lowStockCount",
                           unit: "Items",
-                          icon: Icons.notifications_none_rounded,
+                          icon: UIcons.regularRounded.exclamation,
                           iconColor: const Color(0xFF475569),
                           squircleBg: const Color(0xFFF8FAFC),
                           squircleBorder: const Color(0xFFE2E8F0),
@@ -448,7 +449,7 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
 
                   QuickAddCard(
                     title: "Add New Staff Account",
-                    icon: Icons.person_add_outlined,
+                    icon: UIcons.regularRounded.user_add,
                     onTap: () async {
                       final created = await context.push<bool>('/add_staff');
                       if (created == true && mounted) {
@@ -459,13 +460,13 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
                   SizedBox(height: 10.h),
                   QuickAddCard(
                     title: "Monitor Warehouse Inventory",
-                    icon: Icons.inventory_2_outlined,
+                    icon: UIcons.regularRounded.box,
                     onTap: () => widget.onTabChange(2),
                   ),
                   SizedBox(height: 10.h),
                   QuickAddCard(
                     title: "Review Financial Transactions",
-                    icon: Icons.receipt_long_outlined,
+                    icon: UIcons.regularRounded.receipt,
                     onTap: () => widget.onTabChange(3),
                   ),
                 ]),

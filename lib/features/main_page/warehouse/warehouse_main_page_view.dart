@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uicons/uicons.dart';
 import 'package:mierp_apps/core/theme/app_colors.dart';
 import 'package:mierp_apps/core/theme/app_font_weight.dart';
 import 'package:mierp_apps/features/dashboard/presentation/warehouse/dashboard_warehouse_view.dart';
@@ -68,36 +69,40 @@ class WarehouseMainPageView extends StatelessWidget {
                   label: "Dashboard",
                   index: 0,
                   currentIndex: currentIndex,
-                  activeIcon: Icons.grid_view_rounded,
-                  inactiveIcon: Icons.grid_view_outlined,
+                  activeIcon: UIcons.solidRounded.apps,
+                  inactiveIcon: UIcons.regularRounded.apps,
                 ),
                 _buildNavItem(
                   context,
-                  iconPath: "assets/icons/search-normal.svg",
                   label: "Search",
                   index: 1,
                   currentIndex: currentIndex,
+                  activeIcon: UIcons.solidRounded.search,
+                  inactiveIcon: UIcons.regularRounded.search,
                 ),
                 _buildNavItem(
                   context,
-                  iconPath: "assets/icons/graph.svg",
                   label: "Graph",
                   index: 2,
                   currentIndex: currentIndex,
+                  activeIcon: UIcons.solidRounded.stats,
+                  inactiveIcon: UIcons.regularRounded.stats,
                 ),
                 _buildNavItem(
                   context,
-                  iconPath: "assets/icons/clock.svg",
                   label: "History",
                   index: 3,
                   currentIndex: currentIndex,
+                  activeIcon: UIcons.solidRounded.time_past,
+                  inactiveIcon: UIcons.regularRounded.time_past,
                 ),
                 _buildNavItem(
                   context,
-                  iconPath: "assets/icons/user.svg",
                   label: "User",
                   index: 4,
                   currentIndex: currentIndex,
+                  activeIcon: UIcons.solidRounded.user,
+                  inactiveIcon: UIcons.regularRounded.user,
                 ),
               ],
             ),
